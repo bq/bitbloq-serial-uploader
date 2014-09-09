@@ -1,19 +1,34 @@
-<!--<!DOCTYPE html>-->
+<!doctype html>
 <html>
-	<body>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="Serial Sketch Uploader for bitbloq">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serial Sketch Uploader</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
     <div id="container">
-      <label>
-        Port:
-        <select id="port-picker"></select>
-      </label>
+
+        <h1 class="title">bitbloq - Serial Sketch Uploader</h1>
+
+        <div id="connect_board">
+            <button class="connect_board_button">Connect to board</button>
+            <div id="modal_select_port">
+                <select id="port-picker">
+                    <option value="port1">port1</option>
+                    <option value="port2">port2</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="program_board">
+            <p>
+                <button id="program_board_button">Program Board</button>
+            </p>
+        </div>
+
     </div>
-
-<!--<button style="position: absolute; bottom: 0" id="button">Press me</button>-->
-<button style="position: absolute; bottom: 0">Program Board</button>
-
-
-	<script type="text/javascript" src="sizeof.js"></script>
-
-   <script src="main.js"></script>
-  </body>
+    <script src="main.js"></script>
+</body>
 </html>
