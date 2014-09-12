@@ -1,19 +1,39 @@
-<!--<!DOCTYPE html>-->
+<!doctype html>
 <html>
-	<body>
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="Serial Sketch Uploader for bitbloq">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serial Sketch Uploader</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
     <div id="container">
-      <label>
-        Port:
-        <select id="port-picker"></select>
-      </label>
+
+        <h1 class="title">bitbloq - Serial Sketch Uploader</h1>
+
+        <div id="connect_board">
+
+            <div class="program__actions__item">
+                <span>Selecciona puerto:</span>
+                <select id="port-picker"></select>
+            </div>
+
+            <div class="program__actions__item">
+                <span>Selecciona placa:</span>
+                <select id="board-picker" class="program__actions__select">
+                    <option data-option="Arduino_Uno" value="Arduino_Uno">Arduino Uno</option>
+                    <option data-option="FT232R_USB_UART" value="FT232R_USB_UART">bq ZUM</option>
+                </select>
+            </div>
+        </div>
+
+        <p id="program_board">
+            <button id="program_board_button">Program Board</button>
+        </p>
+
     </div>
-
-<!--<button style="position: absolute; bottom: 0" id="button">Press me</button>-->
-<button style="position: absolute; bottom: 0">Program Board</button>
-
-
-	<script type="text/javascript" src="sizeof.js"></script>
-
-   <script src="main.js"></script>
-  </body>
+    <script src="sizeof.js"></script>
+    <script src="main.js"></script>
+</body>
 </html>
