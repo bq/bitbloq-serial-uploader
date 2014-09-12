@@ -249,16 +249,16 @@ function program_page(it) {
             setTimeout(function() {
                 resolve();
             }, bitbloqSerial.getCurrentBoard().delays[5]);
-
-        });
-
-    p.then(function(buffer) {
-        buffer = new Uint8Array(trimmed_commands[it].length);
-        for (var i = 0; i < buffer.length; i++) {
-            buffer[i] = trimmed_commands[it][i];
-        }
-        serialSendPage(buffer, it);
     });
+
+p.then(function(buffer){
+		var buffer=new Uint8Array(trimmed_commands[it].length);
+		for (var i=0; i<buffer.length; i++){ 
+		buffer[i]=trimmed_commands[it][i];
+		}
+		serialSendPage( buffer, it);
+	});
+
 }
 
 // Send the commands to program the current memory page
@@ -276,10 +276,10 @@ function serialSendPage(buffer, it) {
     p.then(
         function() {
             if (it == trimmed_commands.length - 1) { //go to next step
-                //console.log("goto leave_progmode()");
+//                console.log("goto leave_progmode()");
                 leave_progmode();
             } else if (it < trimmed_commands.length - 1) { // continue the loop
-                //console.log("goto load_address()");
+//                console.log("goto load_address()");
                 it++;
                 load_address(it);
             }
@@ -324,13 +324,15 @@ var bitbloqSerial = (function() {
         id: 'Arduino_Uno',
         name: 'Arduino Uno',
         bitrate: 115200,
+//        delays: [300, 300, 300, 30, 70, 5, 30, 70],
         delays: [300, 300, 300, 30, 70, 5, 30, 70],
         max_size: 32256
     }, {
         id: 'FT232R_USB_UART',
         name: 'ZUM BT',
         bitrate: 19200,
-        delays: [300, 300, 300, 50, 90, 20, 100, 70],
+//        delays: [300, 300, 300, 50, 90, 20, 100, 70],
+        delays: [400, 400, 400, 50, 90, 20, 100, 70],
         max_size: 28672
     }];
 
@@ -353,6 +355,7 @@ var bitbloqSerial = (function() {
                 }, function(info) {
                     console.log('BOARD connected', info);
                     if (info.connectionId != -1) {
+                    		console.log
                         connectionId = info.connectionId;
                         boardConnected = true;
                         console.log('***Board Connected***');
@@ -442,6 +445,7 @@ var bitbloqSerial = (function() {
     }
      */
     var setControlSignals = function(infoObject) {
+    		console.log("Setcontrolsignals ", connectionId, infoObject); 
         chrome.serial.setControlSignals(connectionId, infoObject, function() {});
     };
 
@@ -607,6 +611,7 @@ var onLoadApp = function() {
     /* Listeners */
 
     document.querySelector('#program_board_button').addEventListener('click', function() {
+			transform_data();
 
         console.log('Program size: ', sizeof(trimmed_commands), '. Max size available in the board: ', bitbloqSerial.getCurrentBoard().max_size);
 
