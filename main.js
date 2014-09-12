@@ -251,14 +251,13 @@ function program_page(it) {
             }, bitbloqSerial.getCurrentBoard().delays[5]);
     });
 
-p.then(function(buffer){
-		var buffer=new Uint8Array(trimmed_commands[it].length);
-		for (var i=0; i<buffer.length; i++){ 
-		buffer[i]=trimmed_commands[it][i];
-		}
-		serialSendPage( buffer, it);
-	});
-
+	p.then(function(buffer){
+			var buffer=new Uint8Array(trimmed_commands[it].length);
+			for (var i=0; i<buffer.length; i++){ 
+				buffer[i]=trimmed_commands[it][i];
+			}
+			serialSendPage( buffer, it);
+		});
 }
 
 // Send the commands to program the current memory page
@@ -331,8 +330,7 @@ var bitbloqSerial = (function() {
         id: 'FT232R_USB_UART',
         name: 'ZUM BT',
         bitrate: 19200,
-//        delays: [300, 300, 300, 50, 90, 20, 100, 70],
-        delays: [400, 400, 400, 50, 90, 20, 100, 70],
+        delays: [300, 300, 300, 50, 90, 20, 100, 70],
         max_size: 28672
     }];
 
@@ -347,32 +345,7 @@ var bitbloqSerial = (function() {
         return currentBoard;
     };
 
-    var connect = new Promise(
-        function(resolve, reject) {
-            try {
-                chrome.serial.connect(currentPort, {
-                    bitrate: currentBoard.bitrate
-                }, function(info) {
-                    console.log('BOARD connected', info);
-                    if (info.connectionId != -1) {
-                    		console.log
-                        connectionId = info.connectionId;
-                        boardConnected = true;
-                        console.log('***Board Connected***');
-                        resolve();
-                    } else {
-                        boardConnected = false;
-                        connectionId = -1;
-                        console.log('***Closed USB Port***');
-                        reject();
-                    }
-                });
-            } catch (e) {
-                connectionId = -1;
-                boardConnected = false;
-                reject(e);
-            }
-        });
+    
 
     var disconnect = function() {
         chrome.serial.disconnect(connectionId, function() {
@@ -401,7 +374,32 @@ var bitbloqSerial = (function() {
                         console.log('currentBoard', currentBoard, 'currentPort', currentPort);
 
                         addChromeSerialListeners();
-
+							var connect = new Promise(
+									  function(resolve, reject) {
+											try {
+													console.log("connecting");
+												 chrome.serial.connect(currentPort, {
+													  bitrate: currentBoard.bitrate
+												 }, function(info) {
+													  console.log('BOARD connected', info);
+													  if (info.connectionId != -1) {
+													  		console.log
+														   connectionId = info.connectionId;
+														   boardConnected = true;
+														   console.log('***Board Connected***');
+													  } else {
+														   boardConnected = false;
+														   connectionId = -1;
+														   console.log('***Closed USB Port***');
+														   reject();
+													  }
+												 });
+											} catch (e) {
+												 connectionId = -1;
+												 boardConnected = false;
+												 reject(e);
+											}
+								});
                         connect.then(function() {
                             resolve();
                         }).fail(function() {
@@ -445,7 +443,7 @@ var bitbloqSerial = (function() {
     }
      */
     var setControlSignals = function(infoObject) {
-    		console.log("Setcontrolsignals ", connectionId, infoObject); 
+//    		console.log("Setcontrolsignals ", connectionId, infoObject); 
         chrome.serial.setControlSignals(connectionId, infoObject, function() {});
     };
 
@@ -602,18 +600,15 @@ function buildPortPicker() {
 
 
 var onLoadApp = function() {
-
     bitbloqSerial.autoConfig.then(function() {
-        console.log('adasdasda');
         buildPortPicker();
     });
 
     /* Listeners */
 
     document.querySelector('#program_board_button').addEventListener('click', function() {
-			transform_data();
-
-        console.log('Program size: ', sizeof(trimmed_commands), '. Max size available in the board: ', bitbloqSerial.getCurrentBoard().max_size);
+		  transform_data();
+        console.log('Program size: ', sizeof(trimmed_commands), '. Max size available in the board: ', 						bitbloqSerial.getCurrentBoard().max_size);
 
         if (sizeof(trimmed_commands) < bitbloqSerial.getCurrentBoard().max_size) {
             changeSignals(0);
