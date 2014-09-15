@@ -1,0 +1,16 @@
+*~
+target
+nbproject
+.idea
+node_modules
+src/main/webapp/bower_components
+.bowerrc
+.editorconfig
+.jshintrc
+.selenium
+npm-debug.log
+
+# Editor File Ignore
+*.sublime-project
+*.sublime-workspace
+.idea/
