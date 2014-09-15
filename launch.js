@@ -4,8 +4,8 @@ window.chrome.app.runtime.onLaunched.addListener(function(launchData) {
     window.chrome.app.window.create('index.html', {
             id: 'blink1',
             innerBounds: {
-                width: 320,
-                height: 120
+                width: 420,
+                height: 200
             },
             resizable: false
         },

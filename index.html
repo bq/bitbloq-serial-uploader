@@ -12,24 +12,17 @@
 
         <h1 class="title">bitbloq - Serial Sketch Uploader</h1>
 
-        <div id="connect_board">
-
-            <div class="program__actions__item">
-                <span>Selecciona puerto:</span>
-                <select id="port-picker"></select>
-            </div>
-
-            <div class="program__actions__item">
-                <span>Selecciona placa:</span>
-                <select id="board-picker" class="program__actions__select">
-                    <option data-option="Arduino_Uno" value="Arduino_Uno">Arduino Uno</option>
-                    <option data-option="FT232R_USB_UART" value="FT232R_USB_UART">bq ZUM</option>
-                </select>
-            </div>
+        <div class="program__actions">
+            <p class="program__actions__item board">
+                Placa detectada: <span class="program__actions__item__info"></span>
+            </p>
+            <p class="program__actions__item port">
+                Puerto detectado: <span class="program__actions__item__info"></span>
+            </p>
         </div>
 
-        <p id="program_board">
-            <button id="program_board_button">Program Board</button>
+        <p class="board_program_test">
+            <button class="board_program_test_button">Program Test</button>
         </p>
 
     </div>

@@ -34,15 +34,20 @@ Chrome app styles
     background-color:#94d31b;
 }
 
-#connect_board{
-    height: 50%;
+.program__actions{
+
 }
 
-.connect_board_button{
-/*    background-image:url('connect.png');
-    background-repeat: none;*/
+.board_program_test{
+    margin:0 auto;
+    margin-bottom: 20px;
+    width:100%;
+    position:absolute;
+    bottom:0;left:0;
 }
-
-#program_board{
-    height: 50%;
+.program__actions__item{
+    font-size: 1em;
+}
+.program__actions__item__info{
+    color:blue;
 }
