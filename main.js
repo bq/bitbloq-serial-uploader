@@ -115,7 +115,7 @@ function transform_data() {
 // var onReceiveCallback = function(info) {
 //     if (info.connectionId == expectedConnectionId && info.data) {
 //         var str = convertArrayBufferToString(info.data);
-//         if (str.charAt(str.length - 1) === '') {
+//         if (str.charAt(str.length - 1) === "\n") {
 //             stringReceived += str.substring(0, str.length - 1);
 //             onLineReceived(stringReceived);
 //             stringReceived = '';
@@ -131,7 +131,7 @@ function transform_data() {
 
 //     if (info.connectionId == expectedConnectionId && info.data) {
 //         var str = convertArrayBufferToString(info.data);
-//         if (str.charAt(str.length - 1) === '') {
+//         if (str.charAt(str.length - 1) === "\n") {
 //             stringReceived += str.substring(0, str.length - 1);
 //             onLineReceived(stringReceived);
 //             stringReceived = '';
@@ -216,7 +216,7 @@ function load_address(address) {
             load_address[1] = address_l[address];
             load_address[2] = address_r[address];
             load_address[3] = STK500.CRC_EOP;
-            console.log('Accessing address : ', address, '--------->', address_l[address], address_r[address], ' command: ', load_address);
+            console.log('Accessing address : ', address, '--------->', address_l[address], address_r[address], '\n command: ', load_address);
 
             bitbloqSerial.sendData(load_address.buffer);
 
@@ -378,7 +378,7 @@ var bitbloqSerial = (function() {
 
     };
 
-    var autoConfig = function(callback) {
+    var autoConfig = function() {
 
         return new Promise(
             function(resolve, reject) {
@@ -510,35 +510,26 @@ var bitbloqComm = (function(window) {
                             msg: 'chromeapp.ready',
                             params: bitbloqSerial.getCurrentBoard()
                         });
-                        // sendResponse({
-                        //     msg: 'chromeapp.ready',
-                        //     params: bitbloqSerial.getCurrentBoard()
-                        // });
+
                     });
-
-                    // sendResponse({
-                    //     msg: 'chromeapp.ready',
-                    //     params: bitbloqSerial.getCurrentBoard()
-                    // });
-
 
                 } else if (request.msg === 'bitbloq.checkboard') {
 
                     bitbloqSerial.autoConfig().then(function() {
                         console.log('Placa conectada');
-                        // sendResponse({
-                        //     msg: 'chromeapp.boardConnected',
-                        //     params: bitbloqSerial.getCurrentBoard()
-                        // });
+                        port.postMessage({
+                            msg: 'chromeapp.boardConnected',
+                            params: bitbloqSerial.getCurrentBoard()
+                        });
                     });
 
 
                 } else if (request.msg === 'bitbloq.config') {
 
                     //Set config on chrome app
-                    // sendResponse({
-                    //     msg: 'chromeapp.configured'
-                    // });
+                    port.postMessage({
+                        msg: 'chromeapp.configured'
+                    });
 
                 } else if (request.msg === 'bitbloq.programming') {
 
@@ -551,9 +542,9 @@ var bitbloqComm = (function(window) {
 
                         if (sizeof(trimmed_commands) < bitbloqSerial.getCurrentBoard().max_size) {
                             changeSignals(0);
-                            // sendResponse({
-                            //     msg: 'chromeapp.programmed'
-                            // });
+                            port.postMessage({
+                                msg: 'chromeapp.programmed'
+                            });
                         } else {
                             console.log('ERROR: program larger than available memory');
                         }
@@ -562,9 +553,9 @@ var bitbloqComm = (function(window) {
 
                 } else if (request.msg === 'bitbloq.isSuccess') {
 
-                    // sendResponse({
-                    //     msg: 'chromeapp.isSuccess'
-                    // });
+                    port.postMessage({
+                        msg: 'chromeapp.isSuccess'
+                    });
 
                 }
 
@@ -589,17 +580,6 @@ function paintBoardInfo() {
 
     document.querySelector('.board > .program__actions__item__info').innerText = bitbloqSerial.getCurrentBoard().name;
     document.querySelector('.port > .program__actions__item__info').innerText = bitbloqSerial.getCurrentPort();
-
-
-    // var eligiblePorts = bitbloqSerial.portsOnSystem.filter(function(port) {
-    //     return !port.path.match(/[Bb]luetooth/);
-    // });
-    // var portPicker = document.getElementById('port-picker');
-    // eligiblePorts.forEach(function(port) {
-    //     var portOption = document.createElement('option');
-    //     portOption.value = portOption.innerText = port.path;
-    //     portPicker.appendChild(portOption);
-    // });
 
 }
 
