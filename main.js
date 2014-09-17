@@ -363,9 +363,7 @@ var programmingBoard = function(code) {
             changeSignals(0).then(function() {
                 changeSignals(1).then(function() {
                     enter_progmode();
-                }).then(function() {
-                    bitbloqSerial.disconnect();
-                });
+                })
                 resolve();
             });
 
