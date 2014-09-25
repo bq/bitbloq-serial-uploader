@@ -558,8 +558,10 @@ var bitbloqSerial = (function() {
     };
 
     var onReceiveCallback = function(e) {
-        console.log('chrome.serial.onReceive');
-        console.log(e);
+        var str=String.fromCharCode.apply(null, new Uint16Array(e.data));
+//        console.log('chrome.serial.onReceive' , str); // unicode character
+        console.log('chrome.serial.onReceive', str.charCodeAt(0).toString(16));
+
         //window.dispatchEvent(bitbloqSerialEvent);
     };
 
