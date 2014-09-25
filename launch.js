@@ -1,10 +1,12 @@
 'use strict';
-window.chrome.app.runtime.onLaunched.addListener(function() {
+window.chrome.app.runtime.onLaunched.addListener(function(launchData) {
+
+    console.log(launchData);
+
     window.chrome.app.window.create('index.html', {
-        id: 'bitbloq_serial_uploader',
-        innerBounds: {
-            width: 320,
-            height: 100
+        bounds: {
+            width: 380,
+            height: 200
         },
         resizable: false
     });

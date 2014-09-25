@@ -8,7 +8,8 @@
     "permissions": ["serial"],
     "app": {
         "background": {
-            "scripts": ["launch.js"]
+            "scripts": ["launch.js"],
+            "persistent": false
         }
     },
     "icons": {
@@ -17,6 +18,14 @@
     },
     "externally_connectable": {
         "matches": ["http://localhost:9000/*"]
+    },
+    "url_handlers": {
+        "launcher": {
+            "matches": [
+                "https://localhost:9000/*"
+            ],
+            "title": "Launcher Serial Uploader"
+        }
     }
 
 }
