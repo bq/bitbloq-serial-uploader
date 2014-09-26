@@ -54,13 +54,9 @@ function sizeof(object) {
     return size;
 }
 
-/* ******************
- * Board configuration
- ********************* */
-// Number of memory pages
-var page_number = 256;
-// Memory page size
-var page_size = 128;
+// Number of memory pages for current program
+var page_number = 0;
+
 
 //Useful parameters throughout the code:
 var trimmed_commands; // trimmed_commands store the hex commands that will be passed to the board.
@@ -85,17 +81,6 @@ var STK500 = {
 // Memory addresses of the different memory pages ---> ATMega328
 var address_l = [];
 var address_r = [];
-for (var i = 0; i < page_number / 4; i++) {
-    address_l.push(0x00);
-    address_l.push(0x40);
-    address_l.push(0x80);
-    address_l.push(0xc0);
-
-    address_r.push('0x' + i);
-    address_r.push('0x' + i);
-    address_r.push('0x' + i);
-    address_r.push('0x' + i);
-}
 
 /*
 Board management functions
@@ -145,14 +130,28 @@ function transform_data(hex) {
     //load commands
     var command = load_hex(hex);
     //obtain the page number that is needed
-    var page_number = Math.ceil(command.length / (page_size));
+    page_number = Math.ceil(command.length / (bitbloqSerial.getCurrentBoard().maxPageSize));
     console.log('Total page number -->', page_number);
     var i = 0;
     trimmed_commands = [];
     while (trimmed_commands.length < page_number) {
-        trimmed_commands.push(command.slice(page_size * i, (page_size) * (i + 1)));
+        trimmed_commands.push(command.slice(bitbloqSerial.getCurrentBoard().maxPageSize * i, (bitbloqSerial.getCurrentBoard().maxPageSize) * (i + 1)));
         i += 1;
     }
+
+    // init adresses
+    for (var i = 0; i < page_number / 4; i++) {
+        address_l.push(0x00);
+        address_l.push(0x40);
+        address_l.push(0x80);
+        address_l.push(0xc0);
+
+        address_r.push('0x' + i);
+        address_r.push('0x' + i);
+        address_r.push('0x' + i);
+        address_r.push('0x' + i);
+    }
+
 }
 
 // var stringReceived = '';
@@ -192,34 +191,34 @@ function transform_data(hex) {
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // Reset the board and trigger the next function
-var changeSignals = function(type) {
+var changeSignals = function() {
     console.log('*** Reset arduino ***');
     return new Promise(function(resolve) {
+
         // DTR-RTS ON
         setTimeout(function() {
 
             bitbloqSerial.setControlSignals({
                 dtr: true,
                 rts: true
-            });
+            }).then(function() {
 
-            console.log('DTR-RTS ON');
-            setTimeout(function() {
-
-                // DTR-RTS OFF
-                bitbloqSerial.setControlSignals({
-                    dtr: false,
-                    rts: false
-                });
-
-                console.log('DTR-RTS OFF');
+                console.log('DTR-RTS ON');
                 setTimeout(function() {
 
-                    resolve(type);
+                    // DTR-RTS OFF
+                    bitbloqSerial.setControlSignals({
+                        dtr: false,
+                        rts: false
+                    }).then(function() {
+                        console.log('DTR-RTS OFF');
+                        setTimeout(function() {
+                            resolve();
+                        }, bitbloqSerial.getCurrentBoard().delays[0]);
+                    });
 
-                }, bitbloqSerial.getCurrentBoard().delays[0]);
-
-            }, bitbloqSerial.getCurrentBoard().delays[1]);
+                }, bitbloqSerial.getCurrentBoard().delays[1]);
+            });
 
         }, bitbloqSerial.getCurrentBoard().delays[2]);
 
@@ -229,7 +228,7 @@ var changeSignals = function(type) {
 
 // Send the commands to enter the programming mode
 function enter_progmode() {
-    var p = new Promise(function(resolve) {
+    return new Promise(function(resolve) {
         console.log('*** Entering progmode ***');
         var buffer = new Uint8Array(2);
         buffer[0] = STK500.STK_ENTER_PROGMODE;
@@ -239,96 +238,74 @@ function enter_progmode() {
             setTimeout(function() {
                 resolve(0);
             }, bitbloqSerial.getCurrentBoard().delays[3]);
+            console.info('...writing finished');
         });
 
-    }).then(load_address);
+    });
 
 }
 
 // Create and send the commands needed to specify in which memory address we are writting currently
 function load_address(address) {
-    var p = new Promise(
-        function(resolve) {
-            var load_address = new Uint8Array(4);
-            load_address[0] = STK500.STK_LOAD_ADDRESS;
-            load_address[1] = address_l[address];
-            load_address[2] = address_r[address];
-            load_address[3] = STK500.CRC_EOP;
-            console.log('Accessing address : ', address, '--------->', address_l[address], address_r[address], '\n command: ', load_address);
+    return new Promise(function(resolve) {
+        var load_address = new Uint8Array(4);
+        load_address[0] = STK500.STK_LOAD_ADDRESS;
+        load_address[1] = address_l[address];
+        load_address[2] = address_r[address];
+        load_address[3] = STK500.CRC_EOP;
+        console.log('Accessing address : ', address, '--------->', address_l[address], address_r[address], '\n command: ', load_address);
 
-            bitbloqSerial.sendData(load_address.buffer).then(function() {
-                setTimeout(resolve, bitbloqSerial.getCurrentBoard().delays[4]);
-            });
-
+        bitbloqSerial.sendData(load_address.buffer).then(function() {
+            setTimeout(function() {
+                resolve(address);
+            }, bitbloqSerial.getCurrentBoard().delays[4]);
+            console.info('...writing finished');
         });
-    p.then(function() {
-        program_page(address);
+
     });
 }
 
 // Create the command structure needed to program the current memory page
 function program_page(it) {
-    var p = new Promise(
-        function(resolve) {
-            console.log('Message length: ', trimmed_commands[it].length);
-            var init_part = [STK500.STK_PROG_PAGE, 0x00, 0x80, 0x46];
+    return new Promise(function(resolve) {
+        console.log('Message length: ', trimmed_commands[it].length);
+        var init_part = [STK500.STK_PROG_PAGE, 0x00, 0x80, 0x46];
 
-            console.log('Programming page ', it);
+        console.log('Programming page ', it);
 
-            trimmed_commands[it] = init_part.concat(trimmed_commands[it]);
-            trimmed_commands[it].push(STK500.CRC_EOP);
+        trimmed_commands[it] = init_part.concat(trimmed_commands[it]);
+        trimmed_commands[it].push(STK500.CRC_EOP);
 
-            console.log(trimmed_commands[it]); // log the page that it is currently programming
+        console.log(trimmed_commands[it]); // log the page that it is currently programming
 
-            setTimeout(function() {
-                resolve();
-            }, bitbloqSerial.getCurrentBoard().delays[5]);
-        });
-
-    p.then(function() {
         var buffer = new Uint8Array(trimmed_commands[it].length);
         for (var i = 0; i < buffer.length; i++) {
             buffer[i] = trimmed_commands[it][i];
         }
-        serialSendPage(buffer, it);
+
+        setTimeout(function() {
+            bitbloqSerial.sendData(buffer.buffer).then(function() {
+                setTimeout(resolve, bitbloqSerial.getCurrentBoard().delays[6]);
+                console.info('...writing finished');
+            });
+        }, bitbloqSerial.getCurrentBoard().delays[5]);
     });
-}
 
-// Send the commands to program the current memory page
-function serialSendPage(buffer, it) {
-    new Promise(function(resolve) {
-
-        bitbloqSerial.sendData(buffer.buffer).then(function() {
-            setTimeout(resolve, bitbloqSerial.getCurrentBoard().delays[6]);
-        });
-
-    }).then(function() {
-        if (it == trimmed_commands.length - 1) { //go to next step
-            leave_progmode();
-        } else if (it < trimmed_commands.length - 1) { // continue the loop
-            it++;
-            load_address(it);
-        }
-    });
 }
 
 // Send the commands to leave the programming mode
 function leave_progmode() {
-    new Promise(
-        function(resolve) {
-            console.log('*** Leaving progmode ***');
-            var leave_progmode = new Uint8Array(2);
-            leave_progmode[0] = STK500.STK_LEAVE_PROGMODE;
-            leave_progmode[1] = STK500.CRC_EOP;
+    return new Promise(function(resolve) {
+        console.log('*** Leaving progmode ***');
+        var leave_progmode = new Uint8Array(2);
+        leave_progmode[0] = STK500.STK_LEAVE_PROGMODE;
+        leave_progmode[1] = STK500.CRC_EOP;
 
-            bitbloqSerial.sendData(leave_progmode.buffer).then(function() {
-                setTimeout(resolve, bitbloqSerial.getCurrentBoard().delays[7]);
-            });
-
-        }).then(function() {
-        changeSignals(2).then(function() {
-            bitbloqSerial.disconnect();
+        bitbloqSerial.sendData(leave_progmode.buffer).then(function() {
+            setTimeout(resolve, bitbloqSerial.getCurrentBoard().delays[7]);
+            console.info('...writing finished');
         });
+
     });
 }
 
@@ -337,6 +314,8 @@ function leave_progmode() {
  */
 
 var programmingBoard = function(code) {
+
+    var p;
 
     return new Promise(function(resolve, reject) {
 
@@ -347,20 +326,51 @@ var programmingBoard = function(code) {
         if (sizeof(trimmed_commands) < bitbloqSerial.getCurrentBoard().max_size) {
 
             //TODO The promise must be resolve here
-            changeSignals(0).then(function() {
-                changeSignals(1).then(function() {
-                    setTimeout(enter_progmode, 300);
-                    //resolve();
-                });
-            });
+            changeSignals().then(function() {
+                return changeSignals();
+            }).then(function() {
+                console.log('enter_progmode');
+                return enter_progmode();
+            }).then(function() {
 
+                p = writePage(0);
+                for (var i = 1; i < page_number; i++) {
+                    p = addWriteStep(p, i);
+                }
+                return p;
+
+            }).then(function() {
+                console.log('leave_progmode');
+                return leave_progmode();
+            }).then(function() {
+                return changeSignals();
+            }).then(function() {
+                return changeSignals();
+            }).then(function() {
+                bitbloqSerial.disconnect();
+            });
         } else {
             reject();
             console.log('ERROR: program larger than available memory');
         }
+    });
 
+};
+
+var addWriteStep = function(promise, it) {
+    return promise.then(function() {
+        console.log('addWriteStep', it);
+        return writePage(it);
+    });
+}
+
+var writePage = function(address) {
+    console.log('writePage', address);
+    return load_address(address).then(function(address) {
+        return program_page(address);
     });
 };
+
 
 /* *******************************************************
 bitbloqSerial - Chrome.serial communication functionality
@@ -381,6 +391,7 @@ var bitbloqSerial = (function() {
         arch: 'arduino',
         board: 'uno',
         bitrate: 115200,
+        maxPageSize: 128,
         delays: [300, 300, 300, 30, 70, 5, 30, 70],
         max_size: 32256
     }, {
@@ -389,7 +400,8 @@ var bitbloqSerial = (function() {
         arch: 'arduino',
         board: 'bt328',
         bitrate: 19200,
-        delays: [300, 300, 300, 50, 90, 20, 100, 70],
+        maxPageSize: 128,
+        delays: [200, 200, 200, 50, 90, 20, 100, 70],
         max_size: 28672
     }];
 
@@ -509,7 +521,11 @@ var bitbloqSerial = (function() {
     }
      */
     var setControlSignals = function(infoObject) {
-        chrome.serial.setControlSignals(connectionId, infoObject, function() {});
+        return new Promise(function(resolve) {
+            chrome.serial.setControlSignals(connectionId, infoObject, function() {
+                resolve();
+            });
+        });
     };
 
     var sendData = function(data) {
@@ -521,7 +537,6 @@ var bitbloqSerial = (function() {
                     console.log('board connected');
                     console.info('Chrome is writing on board...');
                     chrome.serial.send(connectionId, data, function() {
-                        console.info('...writing finished');
                         resolve();
                     });
                 }).catch(function() {
@@ -535,7 +550,6 @@ var bitbloqSerial = (function() {
                 console.warn('board is already connected!');
                 console.info('Chrome is writing on board...');
                 chrome.serial.send(connectionId, data, function() {
-                    console.info('...writing finished');
                     resolve();
                 });
             }
@@ -553,13 +567,14 @@ var bitbloqSerial = (function() {
             chrome.serial.onReceiveError.addListener(onReceiveCallback);
 
         } catch (e) {
-            console.log(e);
+            console.log('UNABLE ADD CHROME.SERIAL LISTENERS', e);
         }
     };
 
     var onReceiveCallback = function(e) {
-        console.log('chrome.serial.onReceive');
-        console.log(e);
+        var str = String.fromCharCode.apply(null, new Uint16Array(e.data));
+        //console.log('chrome.serial.onReceive' , str); // unicode character
+        console.log('chrome.serial.onReceive', str.charCodeAt(0).toString(16));
         //window.dispatchEvent(bitbloqSerialEvent);
     };
 
