@@ -214,13 +214,13 @@ var changeSignals = function() {
                         console.log('DTR-RTS OFF');
                         setTimeout(function() {
                             resolve();
-                        }, bitbloqSerial.getCurrentBoard().delays[0]);
+                        }, bitbloqSerial.getCurrentBoard().delay_reset);
                     });
 
-                }, bitbloqSerial.getCurrentBoard().delays[1]);
+                }, bitbloqSerial.getCurrentBoard().delay_reset);
             });
 
-        }, bitbloqSerial.getCurrentBoard().delays[2]);
+        }, bitbloqSerial.getCurrentBoard().delay_reset);
 
     });
 
@@ -235,10 +235,8 @@ function enter_progmode() {
         buffer[1] = STK500.CRC_EOP;
 
         bitbloqSerial.sendData(buffer.buffer).then(function() {
-            setTimeout(function() {
-                resolve(0);
-            }, bitbloqSerial.getCurrentBoard().delays[3]);
-            console.info('...writing finished');
+        resolve(0);
+        console.info('...writing finished');
         });
 
     });
@@ -256,9 +254,7 @@ function load_address(address) {
         console.log('Accessing address : ', address, '--------->', address_l[address], address_r[address], '\n command: ', load_address);
 
         bitbloqSerial.sendData(load_address.buffer).then(function() {
-            setTimeout(function() {
-                resolve(address);
-            }, bitbloqSerial.getCurrentBoard().delays[4]);
+            resolve(address);
             console.info('...writing finished');
         });
 
@@ -283,12 +279,12 @@ function program_page(it) {
             buffer[i] = trimmed_commands[it][i];
         }
 
-        setTimeout(function() {
+       
             bitbloqSerial.sendData(buffer.buffer).then(function() {
-                setTimeout(resolve, bitbloqSerial.getCurrentBoard().delays[6]);
+                resolve();
                 console.info('...writing finished');
             });
-        }, bitbloqSerial.getCurrentBoard().delays[5]);
+        
     });
 
 }
@@ -302,7 +298,7 @@ function leave_progmode() {
         leave_progmode[1] = STK500.CRC_EOP;
 
         bitbloqSerial.sendData(leave_progmode.buffer).then(function() {
-            setTimeout(resolve, bitbloqSerial.getCurrentBoard().delays[7]);
+            resolve();
             console.info('...writing finished');
         });
 
@@ -375,6 +371,7 @@ var writePage = function(address) {
 /* *******************************************************
 bitbloqSerial - Chrome.serial communication functionality
 ********************************************************* */
+//var a=200;
 
 var bitbloqSerial = (function() {
 
@@ -392,7 +389,8 @@ var bitbloqSerial = (function() {
         board: 'uno',
         bitrate: 115200,
         maxPageSize: 128,
-        delays: [300, 300, 300, 30, 70, 5, 30, 70],
+//        delays: [300, 300, 300, 30, 70, 5, 30, 70],
+        delay_reset: 200,
         max_size: 32256
     }, {
         id: 'FT232R_USB_UART',
@@ -401,7 +399,8 @@ var bitbloqSerial = (function() {
         board: 'bt328',
         bitrate: 19200,
         maxPageSize: 128,
-        delays: [200, 200, 200, 50, 90, 20, 100, 70],
+//        delays: [200, 200, 200, 50, 90, 20, 100, 70],
+        delay_reset: 200,
         max_size: 28672
     }];
 
