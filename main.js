@@ -3,6 +3,9 @@
 var chrome = window.chrome,
     console = window.console;
 
+var bitbloqEmitter = new Emitter();
+
+
 /* sizeof.js
 A function to calculate the approximate memory usage of objects
 Created by Stephen Morley - http://code.stephenmorley.org/ - and released under
@@ -53,9 +56,6 @@ function sizeof(object) {
     // return the calculated size
     return size;
 }
-
-// Number of memory pages for current program
-var page_number = 0;
 
 
 //Useful parameters throughout the code:
@@ -129,8 +129,8 @@ function load_hex(hex) {
 function transform_data(hex) {
     //load commands
     var command = load_hex(hex);
-    //obtain the page number that is needed
-    page_number = Math.ceil(command.length / (bitbloqSerial.getCurrentBoard().maxPageSize));
+    //Number of memory pages for current program that is needed
+    var page_number = Math.ceil(command.length / (bitbloqSerial.getCurrentBoard().maxPageSize));
     console.log('Total page number -->', page_number);
     var i = 0;
     trimmed_commands = [];
@@ -152,75 +152,36 @@ function transform_data(hex) {
         address_r.push('0x' + i);
     }
 
+    return page_number;
+
 }
-
-// var stringReceived = '';
-
-// var onReceiveCallback = function(info) {
-//     if (info.connectionId == expectedConnectionId && info.data) {
-//         var str = convertArrayBufferToString(info.data);
-//         if (str.charAt(str.length - 1) === "\n") {
-//             stringReceived += str.substring(0, str.length - 1);
-//             onLineReceived(stringReceived);
-//             stringReceived = '';
-//         } else {
-//             stringReceived += str;
-//         }
-//     }
-//     console.log("received: " + stringReceived);
-// };
-
-// window.addEventListener('bitbloqSerial_onreceive', function(info) {
-//     console.log('bitbloqSerial_onreceive', info);
-
-//     if (info.connectionId == expectedConnectionId && info.data) {
-//         var str = convertArrayBufferToString(info.data);
-//         if (str.charAt(str.length - 1) === "\n") {
-//             stringReceived += str.substring(0, str.length - 1);
-//             onLineReceived(stringReceived);
-//             stringReceived = '';
-//         } else {
-//             stringReceived += str;
-//         }
-//     }
-//     console.log('received: ' + stringReceived);
-
-// }, false);
 
 ///////////////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////
 
 // Reset the board and trigger the next function
-var changeSignals = function() {
+function changeSignals() {
     console.log('*** Reset arduino ***');
     return new Promise(function(resolve) {
 
         // DTR-RTS ON
-        setTimeout(function() {
+        var signalControlOn = {
+            dtr: true,
+            rts: true
+        };
+        // DTR-RTS OFF
+        var signalControlOff = {
+            dtr: false,
+            rts: false
+        };
 
-            bitbloqSerial.setControlSignals({
-                dtr: true,
-                rts: true
-            }).then(function() {
-
-                console.log('DTR-RTS ON');
-                setTimeout(function() {
-
-                    // DTR-RTS OFF
-                    bitbloqSerial.setControlSignals({
-                        dtr: false,
-                        rts: false
-                    }).then(function() {
-                        console.log('DTR-RTS OFF');
-                        setTimeout(function() {
-                            resolve();
-                        }, bitbloqSerial.getCurrentBoard().delay_reset);
-                    });
-
-                }, bitbloqSerial.getCurrentBoard().delay_reset);
-            });
-
-        }, bitbloqSerial.getCurrentBoard().delay_reset);
+        bitbloqSerial.setControlSignals(signalControlOn).then(function() {
+            console.log('DTR-RTS ON');
+            return bitbloqSerial.setControlSignals(signalControlOff);
+        }).then(function() {
+            console.log('DTR-RTS OFF');
+            resolve();
+        });
 
     });
 
@@ -235,8 +196,7 @@ function enter_progmode() {
         buffer[1] = STK500.CRC_EOP;
 
         bitbloqSerial.sendData(buffer.buffer).then(function() {
-        resolve(0);
-        console.info('...writing finished');
+            resolve();
         });
 
     });
@@ -255,7 +215,6 @@ function load_address(address) {
 
         bitbloqSerial.sendData(load_address.buffer).then(function() {
             resolve(address);
-            console.info('...writing finished');
         });
 
     });
@@ -279,12 +238,10 @@ function program_page(it) {
             buffer[i] = trimmed_commands[it][i];
         }
 
-       
-            bitbloqSerial.sendData(buffer.buffer).then(function() {
-                resolve();
-                console.info('...writing finished');
-            });
-        
+        bitbloqSerial.sendData(buffer.buffer).then(function() {
+            resolve();
+        });
+
     });
 
 }
@@ -293,78 +250,144 @@ function program_page(it) {
 function leave_progmode() {
     return new Promise(function(resolve) {
         console.log('*** Leaving progmode ***');
-        var leave_progmode = new Uint8Array(2);
-        leave_progmode[0] = STK500.STK_LEAVE_PROGMODE;
-        leave_progmode[1] = STK500.CRC_EOP;
+        var leaveProgmodeValue = new Uint8Array(2);
+        leaveProgmodeValue[0] = STK500.STK_LEAVE_PROGMODE;
+        leaveProgmodeValue[1] = STK500.CRC_EOP;
 
-        bitbloqSerial.sendData(leave_progmode.buffer).then(function() {
+        bitbloqSerial.sendData(leaveProgmodeValue.buffer).then(function() {
             resolve();
-            console.info('...writing finished');
         });
 
     });
 }
 
-/**
- * Programming board
- */
 
+//////////////////////////////////////////////
+///Composite programming functions
+//////////////////////////////////////7
+
+function resetBoard() {
+    return changeSignals().then(function() {
+        return changeSignals();
+    });
+}
+
+function writePage(address) {
+    return load_address(address).then(function(address) {
+        return program_page(address);
+    });
+};
+
+function addWriteStep(promise, it) {
+    return promise.then(function() {
+        return writePage(it);
+    });
+};
+
+/**
+ * [programmingBoard description]
+ * @date        2014-09-27
+ * @anotherdate 2014-09-27T10:22:13+0100
+ * @param       {[type]}                 code [description]
+ * @return      {[type]}                      [description]
+ */
 var programmingBoard = function(code) {
 
     var p;
 
+    //Reset .> prog_mode -> (writing_pages * num_pages) -> leave_progmode -> resetBoard -> disconnect
+    var programmingBoardOperationList = [
+        resetBoard,
+        enter_progmode
+    ];
+
     return new Promise(function(resolve, reject) {
 
-        transform_data(code);
+        var numberOfCurrentProgramPages = transform_data(code);
 
         console.log('Program size: ', sizeof(trimmed_commands), '. Max size available in the board: ', bitbloqSerial.getCurrentBoard().max_size);
 
         if (sizeof(trimmed_commands) < bitbloqSerial.getCurrentBoard().max_size) {
 
-            //TODO The promise must be resolve here
-            changeSignals().then(function() {
-                return changeSignals();
-            }).then(function() {
-                console.log('enter_progmode');
-                return enter_progmode();
-            }).then(function() {
+            //adding as many writing page operations as
+            for (var i = 0; i < numberOfCurrentProgramPages; i++) {
+                programmingBoardOperationList.push(addWriteStep);
+            }
 
-                p = writePage(0);
-                for (var i = 1; i < page_number; i++) {
-                    p = addWriteStep(p, i);
-                }
-                return p;
+            programmingBoardOperationList.push(leave_progmode, resetBoard, bitbloqSerial.disconnect);
 
-            }).then(function() {
-                console.log('leave_progmode');
-                return leave_progmode();
-            }).then(function() {
-                return changeSignals();
-            }).then(function() {
-                return changeSignals();
-            }).then(function() {
-                bitbloqSerial.disconnect();
+            console.log(programmingBoardOperationList);
+
+            var sizeOfProgrammingBoardOperationList = programmingBoardOperationList.length;
+
+            //Reset
+            var preliminaryOperations = programmingBoardOperationList[0]().then(function() {
+                //enter_progmode
+                return programmingBoardOperationList[1]();
             });
+
+            //Triggering writing_pages process
+            var j = 0;
+
+            bitbloqEmitter.on('progmode_finished', function() {
+                //Triggering prog_page mode
+                p = programmingBoardOperationList[2](preliminaryOperations, 0);
+            });
+
+            bitbloqEmitter.on('next_prog_page', function() {
+                console.log('--- board_response -> writing page_number: ---', j);
+                console.log('j value : ', j);
+
+                if (j < sizeOfProgrammingBoardOperationList - 3) {
+                    j += 1;
+                    p = programmingBoardOperationList[j + 2](p, j);
+                } else {
+                    bitbloqEmitter.emit('all_pages_programmed');
+                }
+
+            });
+
+            bitbloqEmitter.on('all_pages_programmed', function() {
+                p.then(function() {
+                    //leave_progmode
+                    return programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 3]();
+                }).then(function() {
+                    //reset
+                    return programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 2]();
+                }).then(function() {
+                    //disconnect
+                    programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 1]();
+                });
+            });
+
+
+            // resetBoard().then(function() {
+            //     console.log('enter_progmode');
+            //     return enter_progmode();
+            // }).then(function() {
+
+            //     p = writePage(0);
+            //     for (var i = 1; i < numberOfCurrentProgramPages; i++) {
+            //         p = addWriteStep(p, i);
+            //     }
+            //     return p;
+
+            // }).then(function() {
+            //     console.log('leave_progmode');
+            //     return leave_progmode();
+            // }).then(function() {
+            //     return changeSignals();
+            // }).then(function() {
+            //     return changeSignals();
+            // }).then(function() {
+            //     bitbloqSerial.disconnect();
+            // });
         } else {
             reject();
             console.log('ERROR: program larger than available memory');
         }
     });
 
-};
-
-var addWriteStep = function(promise, it) {
-    return promise.then(function() {
-        console.log('addWriteStep', it);
-        return writePage(it);
-    });
-}
-
-var writePage = function(address) {
-    console.log('writePage', address);
-    return load_address(address).then(function(address) {
-        return program_page(address);
-    });
 };
 
 
@@ -379,6 +402,7 @@ var bitbloqSerial = (function() {
     var currentPort = null;
     var boardConnected = false;
     var connectionId = -1;
+    var st = null;
 
     var portsOnSystem = [];
     //TODO Setting configuration on config file
@@ -389,8 +413,9 @@ var bitbloqSerial = (function() {
         board: 'uno',
         bitrate: 115200,
         maxPageSize: 128,
-//        delays: [300, 300, 300, 30, 70, 5, 30, 70],
-        delay_reset: 200,
+        //        delays: [300, 300, 300, 30, 70, 5, 30, 70],
+        delay_reset: 100,
+        delay_sendData: 100,
         max_size: 32256
     }, {
         id: 'FT232R_USB_UART',
@@ -399,8 +424,9 @@ var bitbloqSerial = (function() {
         board: 'bt328',
         bitrate: 19200,
         maxPageSize: 128,
-//        delays: [200, 200, 200, 50, 90, 20, 100, 70],
+        //        delays: [200, 200, 200, 50, 90, 20, 100, 70],
         delay_reset: 200,
+        delay_sendData: 100,
         max_size: 28672
     }];
 
@@ -444,31 +470,47 @@ var bitbloqSerial = (function() {
     };
 
     var connect = function() {
+
+        //Disconnect before 10 seconds by safety
+        if (!st) {
+            st = setTimeout(function() {
+                bitbloqSerial.disconnect();
+                clearTimeout(st);
+                st = null;
+            }, 10000);
+        }
+
         return new Promise(function(resolve, reject) {
-            try {
-                console.log('Connecting to board...');
-                chrome.serial.connect(currentPort, {
-                    bitrate: currentBoard.bitrate
-                }, function(info) {
-                    if (info.connectionId != -1) {
-                        connectionId = info.connectionId;
-                        boardConnected = true;
-                        console.info('Connection board TEST', 'OK', info);
-                        resolve();
-                    } else {
-                        boardConnected = false;
-                        connectionId = -1;
-                        console.error('Connection board TEST', 'KO');
-                        reject();
-                    }
-                });
-            } catch (e) {
-                connectionId = -1;
-                boardConnected = false;
-                console.error('Connection board TEST', 'KO');
-                reject(e);
+
+            if (!boardConnected) {
+                try {
+                    console.log('Connecting to board...');
+                    chrome.serial.connect(currentPort, {
+                        bitrate: currentBoard.bitrate
+                    }, function(info) {
+                        if (info.connectionId != -1) {
+                            connectionId = info.connectionId;
+                            boardConnected = true;
+                            console.info('Connection board TEST', 'OK', info);
+                            resolve();
+                        } else {
+                            boardConnected = false;
+                            connectionId = -1;
+                            console.error('Connection board TEST', 'KO');
+                            reject();
+                        }
+                    });
+                } catch (e) {
+                    connectionId = -1;
+                    boardConnected = false;
+                    console.error('Connection board TEST', 'KO');
+                    reject(e);
+                }
+            } else {
+                resolve();
             }
         });
+
     };
 
     var autoConfig = function() {
@@ -479,9 +521,8 @@ var bitbloqSerial = (function() {
 
             getDevicesList(function() {
 
-                addChromeSerialListeners();
-
                 connect().then(function() {
+                    addChromeSerialListeners();
                     resolve();
                 }).catch(function() {
                     connectionId = -1;
@@ -522,7 +563,9 @@ var bitbloqSerial = (function() {
     var setControlSignals = function(infoObject) {
         return new Promise(function(resolve) {
             chrome.serial.setControlSignals(connectionId, infoObject, function() {
-                resolve();
+                setTimeout(function() {
+                    resolve();
+                }, bitbloqSerial.getCurrentBoard().delay_reset);
             });
         });
     };
@@ -531,28 +574,21 @@ var bitbloqSerial = (function() {
 
         return new Promise(function(resolve, reject) {
 
-            if (!boardConnected) {
-                connect().then(function() {
-                    console.log('board connected');
-                    console.info('Chrome is writing on board...');
-                    chrome.serial.send(connectionId, data, function() {
-                        resolve();
-                    });
-                }).catch(function() {
-                    connectionId = -1;
-                    boardConnected = false;
-                    currentBoard = null;
-                    console.error('board NOT connected');
-                    reject();
-                });
-            } else {
-                console.warn('board is already connected!');
-                console.info('Chrome is writing on board...');
+            console.info('Chrome is writing on board...');
+            connect().then(function() {
                 chrome.serial.send(connectionId, data, function() {
-                    resolve();
+                    setTimeout(function() {
+                        resolve();
+                    }, bitbloqSerial.getCurrentBoard().delay_sendData);
+                    console.info('...writing finished');
                 });
-            }
-
+            }).catch(function() {
+                connectionId = -1;
+                boardConnected = false;
+                currentBoard = null;
+                console.error('board NOT connected');
+                reject();
+            });
         });
     };
 
@@ -560,21 +596,41 @@ var bitbloqSerial = (function() {
     var addChromeSerialListeners = function() {
 
         try {
-            //bitbloqSerialEvent = new Event('bitbloqSerial_onreceive');
-
             chrome.serial.onReceive.addListener(onReceiveCallback);
-            chrome.serial.onReceiveError.addListener(onReceiveCallback);
-
+            chrome.serial.onReceiveError.addListener(onReceiveErrorCallback);
         } catch (e) {
             console.log('UNABLE ADD CHROME.SERIAL LISTENERS', e);
         }
     };
 
     var onReceiveCallback = function(e) {
-        var str = String.fromCharCode.apply(null, new Uint16Array(e.data));
-        //        console.log('chrome.serial.onReceive' , str); // unicode character
-        console.log('chrome.serial.onReceive', str.charCodeAt(0).toString(16));
-        //window.dispatchEvent(bitbloqSerialEvent);
+        var str;
+        (e.data.byteLength === 2) ? str = String.fromCharCode.apply(null, new Uint16Array(e.data)) : str = String.fromCharCode.apply(null, new Uint8Array(e.data));
+        var responseCode = parseInt(str.charCodeAt(0).toString(16), 10);
+        console.log('chrome.serial.onReceive', responseCode);
+        if (responseCode === 1014) {
+            counterEvents += 1;
+            if (counterEvents === 2) {
+                counterEvents = 0;
+                console.info('----- EVENTO EMITIDO ----');
+                bitbloqEmitter.emit('next_prog_page');
+            }
+        } else if ((counterInitialEvents !== null) && responseCode === 10 || responseCode === 14) {
+            counterInitialEvents += 1;
+            console.log('oooooooooooooooooo', counterInitialEvents);
+            if (counterInitialEvents === 4) {
+                counterInitialEvents = null;
+                console.info('----- EVENTO EMITIDO ----');
+                bitbloqEmitter.emit('progmode_finished');
+            }
+        }
+    };
+
+    var onReceiveErrorCallback = function(e) {
+        var str;
+        (e.data.byteLength === 2) ? str = String.fromCharCode.apply(null, new Uint16Array(e.data)) : str = String.fromCharCode.apply(null, new Uint8Array(e.data));
+        var responseCode = parseInt(str.charCodeAt(0).toString(16), 10);
+        console.error('chrome.serial.onReceiveError', responseCode);
     };
 
     return {
@@ -592,6 +648,8 @@ var bitbloqSerial = (function() {
 
 })();
 
+var counterEvents = 0,
+    counterInitialEvents = 0;
 
 /* *******************************************************
 bitbloqComm - Chrome Message Passing functionality
@@ -649,9 +707,6 @@ var bitbloqComm = (function() {
 
     });
 
-    // function errorManager() {
-    //     //TODO
-    // }
 })();
 
 /* *****************************

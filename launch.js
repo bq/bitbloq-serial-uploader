@@ -5,7 +5,7 @@ window.chrome.app.runtime.onLaunched.addListener(function(launchData) {
 
     window.chrome.app.window.create('index.html', {
         bounds: {
-            width: 380,
+            width: 400,
             height: 200
         },
         resizable: false
