@@ -255,6 +255,7 @@ function leave_progmode() {
         leaveProgmodeValue[1] = STK500.CRC_EOP;
 
         bitbloqSerial.sendData(leaveProgmodeValue.buffer).then(function() {
+            console.log('leave_progmode finished');
             resolve();
         });
 
@@ -292,6 +293,9 @@ function addWriteStep(promise, it) {
  * @return      {[type]}                      [description]
  */
 var programmingBoard = function(code) {
+
+    lineBuffer = 0;
+    progmodeflag = true;
 
     var p;
 
@@ -332,27 +336,35 @@ var programmingBoard = function(code) {
             bitbloqEmitter.on('progmode_finished', function() {
                 //Triggering prog_page mode
                 p = programmingBoardOperationList[2](preliminaryOperations, 0);
+                console.log('--- board_response -> writing page_number: ---', 0);
+                console.log('j value : ', j);
             });
 
             bitbloqEmitter.on('next_prog_page', function() {
-                console.log('--- board_response -> writing page_number: ---', j);
-                console.log('j value : ', j);
 
-                if (j < sizeOfProgrammingBoardOperationList - 3) {
-                    j += 1;
+                console.log('sizeOfProgrammingBoardOperationList', sizeOfProgrammingBoardOperationList);
+                j += 1;
+                if (j < sizeOfProgrammingBoardOperationList - 5) {
                     p = programmingBoardOperationList[j + 2](p, j);
+                    console.log('--- board_response -> writing page_number: ---', j);
+                    console.log('j value : ', j);
+                    console.log('****************************writing operation:', programmingBoardOperationList[j + 2]);
                 } else {
+                    console.log('all_pages_programmed');
                     bitbloqEmitter.emit('all_pages_programmed');
                 }
+
 
             });
 
             bitbloqEmitter.on('all_pages_programmed', function() {
                 p.then(function() {
                     //leave_progmode
+                    console.log(programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 3]);
                     return programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 3]();
                 }).then(function() {
                     //reset
+                    console.log(programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 2]);
                     return programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 2]();
                 }).then(function() {
                     //disconnect
@@ -415,7 +427,7 @@ var bitbloqSerial = (function() {
         maxPageSize: 128,
         //        delays: [300, 300, 300, 30, 70, 5, 30, 70],
         delay_reset: 100,
-        delay_sendData: 100,
+        //delay_sendData: 100,
         max_size: 32256
     }, {
         id: 'FT232R_USB_UART',
@@ -425,8 +437,8 @@ var bitbloqSerial = (function() {
         bitrate: 19200,
         maxPageSize: 128,
         //        delays: [200, 200, 200, 50, 90, 20, 100, 70],
-        delay_reset: 200,
-        delay_sendData: 100,
+        delay_reset: 100,
+        //delay_sendData: 5,
         max_size: 28672
     }];
 
@@ -577,10 +589,10 @@ var bitbloqSerial = (function() {
             console.info('Chrome is writing on board...');
             connect().then(function() {
                 chrome.serial.send(connectionId, data, function() {
-                    setTimeout(function() {
-                        resolve();
-                    }, bitbloqSerial.getCurrentBoard().delay_sendData);
-                    console.info('...writing finished');
+                    //setTimeout(function() {
+                    resolve();
+                    //}, bitbloqSerial.getCurrentBoard().delay_sendData);
+                    //console.info('...writing finished');
                 });
             }).catch(function() {
                 connectionId = -1;
@@ -608,22 +620,42 @@ var bitbloqSerial = (function() {
         (e.data.byteLength === 2) ? str = String.fromCharCode.apply(null, new Uint16Array(e.data)) : str = String.fromCharCode.apply(null, new Uint8Array(e.data));
         var responseCode = parseInt(str.charCodeAt(0).toString(16), 10);
         console.log('chrome.serial.onReceive', responseCode);
-        if (responseCode === 1014) {
-            counterEvents += 1;
-            if (counterEvents === 2) {
-                counterEvents = 0;
-                console.info('----- EVENTO EMITIDO ----');
+
+        if (responseCode !== 0) {
+
+            var output = [],
+                sNumber = responseCode.toString();
+
+            for (var i = 0, len = sNumber.length; i < len; i += 1) {
+                output.push(+sNumber.charAt(i));
+            }
+            for (var j = 0; j < output.length; j++) {
+                lineBuffer += output[j];
+            }
+            console.log(lineBuffer);
+
+            if (progmodeflag && lineBuffer === 12) {
+                lineBuffer = 0;
+                progmodeflag = false;
+                console.info('----- progmode_finished event emit----');
+                bitbloqEmitter.emit('progmode_finished');
+
+            } else if (!progmodeflag && lineBuffer === 24) {
+                lineBuffer = 0;
+                console.info('----- next_prog_page event emit----');
                 bitbloqEmitter.emit('next_prog_page');
             }
-        } else if ((counterInitialEvents !== null) && responseCode === 10 || responseCode === 14) {
-            counterInitialEvents += 1;
-            console.log('oooooooooooooooooo', counterInitialEvents);
-            if (counterInitialEvents === 4) {
-                counterInitialEvents = null;
-                console.info('----- EVENTO EMITIDO ----');
-                bitbloqEmitter.emit('progmode_finished');
-            }
+
         }
+        // else if ((counterInitialEvents !== null) && responseCode === 10 || responseCode === 14) {
+        //     counterInitialEvents += 1;
+        //     console.log('oooooooooooooooooo', counterInitialEvents);
+        //     if (counterInitialEvents === 4) {
+        //         counterInitialEvents = null;
+        //         console.info('----- EVENTO EMITIDO ----');
+        //         bitbloqEmitter.emit('progmode_finished');
+        //     }
+        // }
     };
 
     var onReceiveErrorCallback = function(e) {
@@ -648,6 +680,8 @@ var bitbloqSerial = (function() {
 
 })();
 
+var lineBuffer = 0;
+var progmodeflag = true;
 var counterEvents = 0,
     counterInitialEvents = 0;
 
