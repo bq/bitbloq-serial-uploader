@@ -189,23 +189,22 @@ function changeSignals() {
 
 // Send the commands to enter the programming mode
 function enter_progmode() {
-    return new Promise(function(resolve) {
+//    return new Promise(function(resolve) {
         console.log('*** Entering progmode ***');
         var buffer = new Uint8Array(2);
         buffer[0] = STK500.STK_ENTER_PROGMODE;
         buffer[1] = STK500.CRC_EOP;
 
         bitbloqSerial.sendData(buffer.buffer).then(function() {
-            resolve();
+//            resolve();
         });
 
-    });
-
+//    });
 }
 
 // Create and send the commands needed to specify in which memory address we are writting currently
 function load_address(address) {
-    return new Promise(function(resolve) {
+//    return new Promise(function(resolve) {
         var load_address = new Uint8Array(4);
         load_address[0] = STK500.STK_LOAD_ADDRESS;
         load_address[1] = address_l[address];
@@ -217,7 +216,7 @@ function load_address(address) {
             resolve(address);
         });
 
-    });
+//    });
 }
 
 // Create the command structure needed to program the current memory page
@@ -318,7 +317,8 @@ var programmingBoard = function(code) {
 
             //adding as many writing page operations as
             for (var i = 0; i < numberOfCurrentProgramPages; i++) {
-                programmingBoardOperationList.push(addWriteStep);
+                programmingBoardOperationList.push(load_address);
+                programmingBoardOperationList.push(program_page);
             }
 
             programmingBoardOperationList.push(leave_progmode, resetBoard, bitbloqSerial.disconnect);
@@ -338,7 +338,7 @@ var programmingBoard = function(code) {
 
             bitbloqEmitter.on('progmode_finished', function() {
                 //Triggering prog_page mode
-                p = programmingBoardOperationList[2](preliminaryOperations, 0);
+                p = programmingBoardOperationList[2](0);
                 console.log('--- board_response -> writing page_number: ---', 0);
                 console.log('pageIndex value : ', pageIndex);
             });
@@ -347,12 +347,20 @@ var programmingBoard = function(code) {
 
                 console.log('sizeOfProgrammingBoardOperationList', sizeOfProgrammingBoardOperationList);
                 pageIndex += 1;
+                
                 if (pageIndex < sizeOfProgrammingBoardOperationList - 5) {
-                    p = programmingBoardOperationList[pageIndex + 2](p, pageIndex);
-                    console.log('--- board_response -> writing page_number: ---', pageIndex);
-                    console.log('pageIndex value : ', pageIndex);
-                    console.log('****************************writing operation:', programmingBoardOperationList[pageIndex + 2]);
-                } else {
+                    if ( pageIndex % 2 ===0){
+                        programmingBoardOperationList[pageIndex + 2](pageIndex/2);
+                        console.log('--- board_response -> writing page_number: ---', pageIndex/2);
+                    }
+                    else{
+                        programmingBoardOperationList[pageIndex + 2]((pageIndex-1)/2);
+                        console.log('--- board_response -> writing page_number: ---', (pageIndex-1)/2);
+                    }
+
+//                    console.log('pageIndex value : ', pageIndex);
+//                    console.log('****************************writing operation:', programmingBoardOperationList[pageIndex + 2]);
+                } else if (pageIndex === sizeOfProgrammingBoardOperationList - 5) {
                     console.log('all_pages_programmed');
                     bitbloqEmitter.emit('all_pages_programmed');
                 }
@@ -361,11 +369,10 @@ var programmingBoard = function(code) {
             });
 
             bitbloqEmitter.on('all_pages_programmed', function() {
-                p.then(function() {
-                    //leave_progmode
+                //leave_progmode
                     console.log(programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 3]);
-                    return programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 3]();
-                }).then(function() {
+                programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 3]().then(
+               function() {
                     //reset
                     console.log(programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 2]);
                     return programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 2]();
@@ -621,10 +628,6 @@ var bitbloqSerial = (function() {
         }
     };
 
-    var deleteChromeSerialListeners = function () {
-        // body...
-    }
-
     var onReceiveCallback = function(e) {
         var str;
         (e.data.byteLength === 2) ? str = String.fromCharCode.apply(null, new Uint16Array(e.data)) : str = String.fromCharCode.apply(null, new Uint8Array(e.data));
@@ -652,22 +655,13 @@ var bitbloqSerial = (function() {
                 console.info('----- progmode_finished event emit----');
                 bitbloqEmitter.emit('progmode_finished');
 
-            } else if (!progmodeflag && lineBuffer === 24) {
+            } else if (!progmodeflag && lineBuffer === 12) {
                 lineBuffer = 0;
                 console.info('----- next_prog_page event emit----');
                 bitbloqEmitter.emit('next_prog_page');
             }
 
         }
-        // else if ((counterInitialEvents !== null) && responseCode === 10 || responseCode === 14) {
-        //     counterInitialEvents += 1;
-        //     console.log('oooooooooooooooooo', counterInitialEvents);
-        //     if (counterInitialEvents === 4) {
-        //         counterInitialEvents = null;
-        //         console.info('----- EVENTO EMITIDO ----');
-        //         bitbloqEmitter.emit('progmode_finished');
-        //     }
-        // }
     };
 
     var onReceiveErrorCallback = function(e) {
