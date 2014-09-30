@@ -189,22 +189,18 @@ function changeSignals() {
 
 // Send the commands to enter the programming mode
 function enter_progmode() {
-//    return new Promise(function(resolve) {
         console.log('*** Entering progmode ***');
         var buffer = new Uint8Array(2);
         buffer[0] = STK500.STK_ENTER_PROGMODE;
         buffer[1] = STK500.CRC_EOP;
 
         bitbloqSerial.sendData(buffer.buffer).then(function() {
-//            resolve();
         });
 
-//    });
 }
 
 // Create and send the commands needed to specify in which memory address we are writting currently
 function load_address(address) {
-//    return new Promise(function(resolve) {
         var load_address = new Uint8Array(4);
         load_address[0] = STK500.STK_LOAD_ADDRESS;
         load_address[1] = address_l[address];
@@ -212,16 +208,11 @@ function load_address(address) {
         load_address[3] = STK500.CRC_EOP;
         console.log('Accessing address : ', address, '--------->', address_l[address], address_r[address], '\n command: ', load_address);
 
-        bitbloqSerial.sendData(load_address.buffer).then(function() {
-            resolve(address);
-        });
-
-//    });
+        bitbloqSerial.sendData(load_address.buffer).then(function() {});
 }
 
 // Create the command structure needed to program the current memory page
 function program_page(it) {
-    return new Promise(function(resolve) {
         console.log('Message length: ', trimmed_commands[it].length);
         var init_part = [STK500.STK_PROG_PAGE, 0x00, 0x80, 0x46];
 
@@ -237,12 +228,7 @@ function program_page(it) {
             buffer[i] = trimmed_commands[it][i];
         }
 
-        bitbloqSerial.sendData(buffer.buffer).then(function() {
-            resolve();
-        });
-
-    });
-
+        bitbloqSerial.sendData(buffer.buffer).then(function() {});
 }
 
 // Send the commands to leave the programming mode
@@ -272,18 +258,6 @@ function resetBoard() {
     });
 }
 
-function writePage(address) {
-    return load_address(address).then(function(address) {
-        return program_page(address);
-    });
-};
-
-function addWriteStep(promise, it) {
-    return promise.then(function() {
-        return writePage(it);
-    });
-};
-
 /**
  * [programmingBoard description]
  * @date        2014-09-27
@@ -298,119 +272,91 @@ var programmingBoard = function(code) {
 
     bitbloqEmitter.removeAllListeners();
 
-    var p;
-
-
     //Reset .> prog_mode -> (writing_pages * num_pages) -> leave_progmode -> resetBoard -> disconnect
     var programmingBoardOperationList = [
         resetBoard,
         enter_progmode
     ];
 
-    return new Promise(function(resolve, reject) {
+    var numberOfCurrentProgramPages = transform_data(code);
 
-        var numberOfCurrentProgramPages = transform_data(code);
+    console.log('Program size: ', sizeof(trimmed_commands), '. Max size available in the board: ', bitbloqSerial.getCurrentBoard().max_size);
 
-        console.log('Program size: ', sizeof(trimmed_commands), '. Max size available in the board: ', bitbloqSerial.getCurrentBoard().max_size);
+    if (sizeof(trimmed_commands) < bitbloqSerial.getCurrentBoard().max_size) {
 
-        if (sizeof(trimmed_commands) < bitbloqSerial.getCurrentBoard().max_size) {
+        //adding as many writing page operations as
+        for (var i = 0; i < numberOfCurrentProgramPages; i++) {
+            programmingBoardOperationList.push(load_address);
+            programmingBoardOperationList.push(program_page);
+        }
 
-            //adding as many writing page operations as
-            for (var i = 0; i < numberOfCurrentProgramPages; i++) {
-                programmingBoardOperationList.push(load_address);
-                programmingBoardOperationList.push(program_page);
-            }
+        programmingBoardOperationList.push(leave_progmode, resetBoard, bitbloqSerial.disconnect);
 
-            programmingBoardOperationList.push(leave_progmode, resetBoard, bitbloqSerial.disconnect);
+        console.log(programmingBoardOperationList);
 
-            console.log(programmingBoardOperationList);
+        var sizeOfProgrammingBoardOperationList = programmingBoardOperationList.length;
 
-            var sizeOfProgrammingBoardOperationList = programmingBoardOperationList.length;
+        //Reset
+        var preliminaryOperations = programmingBoardOperationList[0]().then(function() {
+            //enter_progmode
+            return programmingBoardOperationList[1]();
+        });
 
-            //Reset
-            var preliminaryOperations = programmingBoardOperationList[0]().then(function() {
-                //enter_progmode
-                return programmingBoardOperationList[1]();
-            });
+        //Triggering writing_pages process
+        pageIndex = 0;
 
-            //Triggering writing_pages process
-            pageIndex = 0;
+        bitbloqEmitter.on('progmode_finished', function() {
+            //Triggering prog_page mode
+            programmingBoardOperationList[2](0);
+            console.log('--- board_response -> writing page_number: ---', 0);
+            console.log('pageIndex value : ', pageIndex);
+        });
 
-            bitbloqEmitter.on('progmode_finished', function() {
-                //Triggering prog_page mode
-                p = programmingBoardOperationList[2](0);
-                console.log('--- board_response -> writing page_number: ---', 0);
-                console.log('pageIndex value : ', pageIndex);
-            });
+        bitbloqEmitter.on('next_prog_page', function() {
 
-            bitbloqEmitter.on('next_prog_page', function() {
-
-                console.log('sizeOfProgrammingBoardOperationList', sizeOfProgrammingBoardOperationList);
-                pageIndex += 1;
-                
-                if (pageIndex < sizeOfProgrammingBoardOperationList - 5) {
-                    if ( pageIndex % 2 ===0){
-                        programmingBoardOperationList[pageIndex + 2](pageIndex/2);
-                        console.log('--- board_response -> writing page_number: ---', pageIndex/2);
-                    }
-                    else{
-                        programmingBoardOperationList[pageIndex + 2]((pageIndex-1)/2);
-                        console.log('--- board_response -> writing page_number: ---', (pageIndex-1)/2);
-                    }
+            console.log('sizeOfProgrammingBoardOperationList', sizeOfProgrammingBoardOperationList);
+            pageIndex += 1;
+            
+            if (pageIndex < sizeOfProgrammingBoardOperationList - 5) {
+                if ( pageIndex % 2 ===0){
+                    programmingBoardOperationList[pageIndex + 2](pageIndex/2);
+                    console.log('--- board_response -> writing page_number: ---', pageIndex/2);
+                }
+                else{
+                    programmingBoardOperationList[pageIndex + 2]((pageIndex-1)/2);
+                    console.log('--- board_response -> writing page_number: ---', (pageIndex-1)/2);
+                }
 
 //                    console.log('pageIndex value : ', pageIndex);
 //                    console.log('****************************writing operation:', programmingBoardOperationList[pageIndex + 2]);
-                } else if (pageIndex === sizeOfProgrammingBoardOperationList - 5) {
-                    console.log('all_pages_programmed');
-                    bitbloqEmitter.emit('all_pages_programmed');
-                }
+            } else if (pageIndex === sizeOfProgrammingBoardOperationList - 5) {
+                console.log('all_pages_programmed');
+                bitbloqEmitter.emit('all_pages_programmed');
+            }
 
 
+        });
+
+        bitbloqEmitter.on('all_pages_programmed', function() {
+            //leave_progmode
+                console.log(programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 3]);
+            programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 3]().then(
+           function() {
+                //reset
+                console.log(programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 2]);
+                return programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 2]();
+            }).then(function() {
+                //disconnect
+                programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 1]();
+                clearTimeout(st);
+                lineBuffer = 0;
             });
+        });
 
-            bitbloqEmitter.on('all_pages_programmed', function() {
-                //leave_progmode
-                    console.log(programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 3]);
-                programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 3]().then(
-               function() {
-                    //reset
-                    console.log(programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 2]);
-                    return programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 2]();
-                }).then(function() {
-                    //disconnect
-                    programmingBoardOperationList[sizeOfProgrammingBoardOperationList - 1]();
-                    clearTimeout(st);
-                    lineBuffer = 0;
-                });
-            });
+    } else {
+        console.log('ERROR: program larger than available memory');
+    }
 
-
-            // resetBoard().then(function() {
-            //     console.log('enter_progmode');
-            //     return enter_progmode();
-            // }).then(function() {
-
-            //     p = writePage(0);
-            //     for (var i = 1; i < numberOfCurrentProgramPages; i++) {
-            //         p = addWriteStep(p, i);
-            //     }
-            //     return p;
-
-            // }).then(function() {
-            //     console.log('leave_progmode');
-            //     return leave_progmode();
-            // }).then(function() {
-            //     return changeSignals();
-            // }).then(function() {
-            //     return changeSignals();
-            // }).then(function() {
-            //     bitbloqSerial.disconnect();
-            // });
-        } else {
-            reject();
-            console.log('ERROR: program larger than available memory');
-        }
-    });
 
 };
 
