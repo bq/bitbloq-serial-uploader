@@ -1,20 +1,19 @@
 {
-    "name": "Serial Arduino Upload",
-    "description": "Serial Arduino Upload description",
+    "name": "Serial Sketch Uploader for bitbloq",
+    "description": "Serial Sketch Uploader for bitbloq",
     "author": "bitbloq developer team - bq",
-    "version": "0.5",
+    "version": "0.0.1",
     "manifest_version": 2,
     "minimum_chrome_version": "23",
     "permissions": ["serial"],
     "app": {
         "background": {
-            "scripts": ["launch.js"],
-            "persistent": false
+            "scripts": ["js/launch.js"]
         }
     },
     "icons": {
-        "16": "icon_16.png",
-        "128": "icon_128.png"
+        "16": "img/icon_16.png",
+        "128": "img/icon_128.png"
     },
     "externally_connectable": {
         "matches": ["http://localhost:9000/*"]
@@ -22,7 +21,7 @@
     "url_handlers": {
         "launcher": {
             "matches": [
-                "https://localhost:9000/*"
+                "http://localhost:9000/*"
             ],
             "title": "Launcher Serial Uploader"
         }
