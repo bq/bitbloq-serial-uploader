@@ -103,7 +103,7 @@ var bitbloqSerial = (function() {
                         bitrate: currentBoard.bitrate,
                         sendTimeout: 2000,
                         receiveTimeout: 2000,
-                        // ctsFlowControl: true,
+                        ctsFlowControl: true,
                         name: 'bitbloqSerialConnection'
                     }, function(info) {
                         if (info.connectionId != -1) {
@@ -201,7 +201,7 @@ var bitbloqSerial = (function() {
                     console.info('sendInfo', sendInfo);
                     setTimeout(function() {
                         resolve();
-                    }, 200);
+                    }, 100);
                 });
 
             } else {
@@ -225,58 +225,58 @@ var bitbloqSerial = (function() {
     //     // body...
     // };
 
-    var onReceiveCallbackPromise = new Promise(function() {});
-    var onReceiveCallback = function(e) {
-        // var str;
-        // (e.data.byteLength === 2) ? str = String.fromCharCode.apply(null, new Uint16Array(e.data)) : str = String.fromCharCode.apply(null, new Uint8Array(e.data));
-        // var responseCode = parseInt(str.charCodeAt(0).toString(16), 10);
-        // console.log('SerialAPI.onReceive', responseCode);
+    //var onReceiveCallbackPromise = new Promise(function() {});
+    //var onReceiveCallback = function(e) {
+    // var str;
+    // (e.data.byteLength === 2) ? str = String.fromCharCode.apply(null, new Uint16Array(e.data)) : str = String.fromCharCode.apply(null, new Uint8Array(e.data));
+    // var responseCode = parseInt(str.charCodeAt(0).toString(16), 10);
+    // console.log('SerialAPI.onReceive', responseCode);
 
-        // if (responseCode !== 0) {
+    // if (responseCode !== 0) {
 
-        // var output = [],
-        //     sNumber = responseCode.toString();
+    // var output = [],
+    //     sNumber = responseCode.toString();
 
-        // for (var i = 0, len = sNumber.length; i < len; i += 1) {
-        //     output.push(+sNumber.charAt(i));
-        // }
-        // for (var j = 0; j < output.length; j++) {
-        //     lineBuffer += output[j];
-        // }
-        lineBuffer += e.data.byteLength;
-        console.log(lineBuffer);
+    // for (var i = 0, len = sNumber.length; i < len; i += 1) {
+    //     output.push(+sNumber.charAt(i));
+    // }
+    // for (var j = 0; j < output.length; j++) {
+    //     lineBuffer += output[j];
+    // }
+    // lineBuffer += e.data.byteLength;
+    // console.log(lineBuffer);
 
-        if (progmodeflag && lineBuffer >= 4) {
+    // if (progmodeflag && lineBuffer >= 4) {
 
-            console.log('progmodeflag', progmodeflag, 'lineBuffer', lineBuffer);
-            lineBuffer = 0;
-            progmodeflag = false;
-            console.info('----- progmode_finished event emit----');
-            bitbloqEmitter.emit('progmode_finished');
-            onReceiveCallbackPromise.resolve();
+    //     console.log('progmodeflag', progmodeflag, 'lineBuffer', lineBuffer);
+    //     lineBuffer = 0;
+    //     progmodeflag = false;
+    //     console.info('----- progmode_finished event emit----');
+    //     bitbloqEmitter.emit('progmode_finished');
+    //     onReceiveCallbackPromise.resolve();
 
-        } else if (!progmodeflag && lineBuffer >= 8) {
-            lineBuffer = 0;
-            console.info('----- next_prog_page event emit----');
-            bitbloqEmitter.emit('next_prog_page');
-            onReceiveCallbackPromise.resolve();
-        }
+    // } else if (!progmodeflag && lineBuffer >= 8) {
+    //     lineBuffer = 0;
+    //     console.info('----- next_prog_page event emit----');
+    //     bitbloqEmitter.emit('next_prog_page');
+    //     onReceiveCallbackPromise.resolve();
+    // }
 
-        // }
-        // else if ((counterInitialEvents !== null) && responseCode === 10 || responseCode === 14) {
-        //     counterInitialEvents += 1;
-        //     console.log('oooooooooooooooooo', counterInitialEvents);
-        //     if (counterInitialEvents === 4) {
-        //         counterInitialEvents = null;
-        //         console.info('----- EVENTO EMITIDO ----');
-        //         bitbloqEmitter.emit('progmode_finished');
-        //     }
-        // }
-    };
+    // }
+    // else if ((counterInitialEvents !== null) && responseCode === 10 || responseCode === 14) {
+    //     counterInitialEvents += 1;
+    //     console.log('oooooooooooooooooo', counterInitialEvents);
+    //     if (counterInitialEvents === 4) {
+    //         counterInitialEvents = null;
+    //         console.info('----- EVENTO EMITIDO ----');
+    //         bitbloqEmitter.emit('progmode_finished');
+    //     }
+    // }
+    //};
 
-    var onReceiveErrorCallback = function(e) {
-        console.error('SerialAPI.onReceiveError', e);
-    };
+    // var onReceiveErrorCallback = function(e) {
+    //     console.error('SerialAPI.onReceiveError', e);
+    // };
 
     return {
         getDevicesList: getDevicesList,
@@ -288,8 +288,7 @@ var bitbloqSerial = (function() {
         portsOnSystem: portsOnSystem,
         sendData: sendData,
         connect: connect,
-        disconnect: disconnect,
-        onReceiveCallbackPromise: onReceiveCallbackPromise
+        disconnect: disconnect
     };
 
 })();

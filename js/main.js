@@ -2,12 +2,6 @@
 
 /* global sizeof, bitbloqSerial, console */
 
-
-var bitbloqEmitter = new Emitter();
-
-
-
-
 /*
 Board management functions
  */
@@ -223,13 +217,6 @@ function addWriteStep(promise, it) {
 }
 
 
-
-
-
-
-
-
-
 /**
  * [programmingBoard description]
  * @date        2014-09-27
@@ -242,7 +229,7 @@ var programmingBoard = function(code) {
     lineBuffer = 0;
     progmodeflag = true;
 
-    bitbloqEmitter.removeAllListeners();
+    //bitbloqEmitter.removeAllListeners();
 
     var p;
 
