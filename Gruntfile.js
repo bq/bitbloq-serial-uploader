@@ -15,15 +15,15 @@ module.exports = function(grunt) {
         copy: {
             img: {
                 expand: true,
-                src: 'src/img/*',
-                dest: 'dist/img/*',
+                src: 'src/img/*.png',
+                dest: 'dist/img',
                 flatten: true,
                 filter: 'isFile',
             },
             index: {
                 expand: true,
-                src: 'src/index.html',
-                dest: 'dist/',
+                src: 'src/*',
+                dest: 'dist',
                 flatten: true,
                 filter: 'isFile',
             }
@@ -38,12 +38,17 @@ module.exports = function(grunt) {
                 footer: 'logger.debugmode=0'
             },
             dist: {
-                src: ['src/js/*.js', '!src/js/initDev.js'],
-                dest: 'tmp/js/main.js'
+                files: [{
+                    src: ['src/css/*.css'],
+                    dest: 'tmp/css/style.css'
+                }, {
+                    src: ['src/js/*.js', '!src/js/initDev.js'],
+                    dest: 'tmp/js/main.js'
+                }]
             }
         },
         uglify: {
-            dist_js: {
+            dist: {
                 src: 'tmp/js/*.js',
                 dest: 'dist/js/main.min.js'
             }
@@ -58,7 +63,7 @@ module.exports = function(grunt) {
             dist: {
                 files: [{
                     expand: true,
-                    cwd: 'src/css',
+                    cwd: 'tmp/css',
                     src: ['*.css', '!*.min.css'],
                     dest: 'dist/css',
                     ext: '.min.css'
@@ -77,13 +82,13 @@ module.exports = function(grunt) {
     ]);
 
     grunt.registerTask('build', [
+        'clean',
         'jshint',
         'concat:dist',
         'copy',
-        'usemin',
         'uglify',
         'cssmin',
-        'clean:tmp'
+        'usemin',
     ]);
 
 };
