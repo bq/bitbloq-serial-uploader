@@ -1,21 +1,17 @@
 'use strict';
-/* global bitbloqSerial, programmingBoard*/
-
-var logger = window.console;
-
+/* global bitbloqSerial, bitbloqProgram, logger */
 
 /* *******************************************************
 bitbloqComm - Chrome Message Passing functionality
 ********************************************************* */
-
 (function() {
 
     window.chrome.runtime.onConnectExternal.addListener(function(port) {
 
         port.onMessage.addListener(function(request) {
 
-            logger.log('request.msg', request.msg);
-            logger.log('request.params', request.params);
+            logger.log.info('request.msg', request.msg);
+            logger.log.info('request.params', request.params);
 
             var programming = false;
 
@@ -40,18 +36,18 @@ bitbloqComm - Chrome Message Passing functionality
             }
 
             bitbloqSerial.autoConfig().then(function() {
-                logger.log('Sending Response...');
+                logger.log.info('Sending Response...');
                 if (programming) {
-                    programmingBoard(request.params.code).then(function() {
+                    bitbloqProgram.load(request.params.code).then(function() {
                         port.postMessage(responseMsg);
-                        logger.log('responseMsg', responseMsg);
+                        logger.log.info('responseMsg', responseMsg);
                     }).catch(function(e) {
                         responseMsg.msg = 'chromeapp.error';
-                        logger.log(e);
+                        logger.log.info(e);
                     });
                 } else {
                     port.postMessage(responseMsg);
-                    logger.log('responseMsg', responseMsg);
+                    logger.log.info('responseMsg', responseMsg);
                 }
 
             });

@@ -2,13 +2,13 @@
     "name": "Serial Sketch Uploader for bitbloq",
     "description": "Serial Sketch Uploader for bitbloq",
     "author": "bitbloq developer team - bq",
-    "version": "0.0.1",
+    "version": "0.1.0",
     "manifest_version": 2,
     "minimum_chrome_version": "23",
     "permissions": ["serial"],
     "app": {
         "background": {
-            "scripts": ["js/launch.js"]
+            "scripts": ["launch.js"]
         }
     },
     "icons": {
@@ -21,7 +21,7 @@
     "url_handlers": {
         "launcher": {
             "matches": [
-                "http://localhost:9000/*"
+                "http://chromeapp.local/"
             ],
             "title": "Launcher Serial Uploader"
         }
