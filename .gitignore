@@ -1,7 +1,5 @@
 *~
-target
-nbproject
-.idea
+dist
 node_modules
 src/main/webapp/bower_components
 .bowerrc
@@ -14,3 +12,4 @@ npm-debug.log
 *.sublime-project
 *.sublime-workspace
 .idea/
+nbproject

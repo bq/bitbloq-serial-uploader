@@ -32,7 +32,7 @@ Chrome app styles
 #container{
     text-align: center;
     background-color:#94d31b;
-    background-image: url('icon_128.png');
+    background-image: url('../img/icon_128.png');
     background-position: left center;
     background-repeat: no-repeat;
 }
