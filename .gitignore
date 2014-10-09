@@ -2,10 +2,6 @@
 dist
 node_modules
 src/main/webapp/bower_components
-.bowerrc
-.editorconfig
-.jshintrc
-.selenium
 npm-debug.log
 
 # Editor File Ignore
