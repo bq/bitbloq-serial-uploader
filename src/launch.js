@@ -15,7 +15,13 @@ window.chrome.app.runtime.onLaunched.addListener(function(launchData) {
             id: 'bitbloqSSU',
             resizable: false,
             hidden: true,
-            state: 'minimized'
+            state: 'minimized',
+            innerBounds: {
+                width: 300,
+                height: 100,
+                left: 0,
+                top: 0
+            }
         });
     } else {
         window.console.warn('Extension open from chrome extensions page');

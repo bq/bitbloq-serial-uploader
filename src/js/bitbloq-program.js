@@ -78,7 +78,9 @@ var bitbloqProgram = (function() {
         var command = load_hex(hex);
         //Number of memory pages for current program that is needed
         var page_number = Math.ceil(command.length / (bitbloqSerial.getCurrentBoard().maxPageSize));
-        logger.log.info('Total page number -->', page_number);
+        logger.info({
+            'Total page number': page_number
+        });
         var i = 0;
         trimmed_commands = [];
         while (trimmed_commands.length < page_number) {
@@ -108,7 +110,7 @@ var bitbloqProgram = (function() {
 
     // Reset the board and trigger the next function
     function changeSignals() {
-        logger.log.info('*** Reset arduino ***');
+        logger.warn('*** Reset arduino ***');
         return new Promise(function(resolve) {
 
             // DTR-RTS ON
@@ -123,10 +125,10 @@ var bitbloqProgram = (function() {
             };
 
             bitbloqSerial.setControlSignals(signalControlOn).then(function() {
-                logger.log.info('DTR-RTS ON');
+                logger.warn('DTR-RTS ON');
                 return bitbloqSerial.setControlSignals(signalControlOff);
             }).then(function() {
-                logger.log.info('DTR-RTS OFF');
+                logger.warn('DTR-RTS OFF');
                 resolve();
             });
 
@@ -137,7 +139,7 @@ var bitbloqProgram = (function() {
     // Send the commands to enter the programming mode
     function enter_progmode() {
         return new Promise(function(resolve) {
-            logger.log.info('*** Entering progmode ***');
+            logger.warn('*** Entering progmode ***');
             var buffer = new Uint8Array(2);
             buffer[0] = STK500.STK_ENTER_PROGMODE;
             buffer[1] = STK500.CRC_EOP;
@@ -158,7 +160,12 @@ var bitbloqProgram = (function() {
             load_address[1] = address_l[address];
             load_address[2] = address_r[address];
             load_address[3] = STK500.CRC_EOP;
-            logger.log.info('Accessing address : ', address, '--------->', address_l[address], address_r[address], '\n command: ', load_address);
+            logger.info('Accessing address', {
+                'address': address,
+                'address_l': address_l[address],
+                'address_r': address_r[address],
+                'command': load_address
+            });
 
             bitbloqSerial.sendData(load_address.buffer).then(function() {
                 resolve(address);
@@ -176,15 +183,21 @@ var bitbloqProgram = (function() {
     // Create the command structure needed to program the current memory page
     function program_page(it) {
         return new Promise(function(resolve) {
-            logger.log.info('Message length: ', trimmed_commands[it].length);
+            logger.info({
+                'Message length': trimmed_commands[it].length
+            });
             var init_part = [STK500.STK_PROG_PAGE, 0x00, 0x80, 0x46];
 
-            logger.log.info('Programming page ', it);
+            logger.info({
+                'Programming page ': it
+            });
 
             trimmed_commands[it] = init_part.concat(trimmed_commands[it]);
             trimmed_commands[it].push(STK500.CRC_EOP);
 
-            logger.log.info(trimmed_commands[it]); // log the page that it is currently programming
+            logger.info({
+                'trimmed_commands[it]': trimmed_commands[it]
+            }); // log the page that it is currently programming
 
             var buffer = new Uint8Array(trimmed_commands[it].length);
             for (var i = 0; i < buffer.length; i++) {
@@ -207,13 +220,13 @@ var bitbloqProgram = (function() {
     // Send the commands to leave the programming mode
     function leave_progmode() {
         return new Promise(function(resolve) {
-            logger.log.info('*** Leaving progmode ***');
+            logger.info('*** Leaving progmode ***');
             var leaveProgmodeValue = new Uint8Array(2);
             leaveProgmodeValue[0] = STK500.STK_LEAVE_PROGMODE;
             leaveProgmodeValue[1] = STK500.CRC_EOP;
 
             bitbloqSerial.sendData(leaveProgmodeValue.buffer).then(function() {
-                logger.log.info('leave_progmode finished');
+                logger.info('leave_progmode finished');
                 resolve();
             });
 
@@ -262,13 +275,13 @@ var bitbloqProgram = (function() {
 
             var numberOfCurrentProgramPages = transform_data(code);
 
-            logger.log.info('Program size: ', sizeof(trimmed_commands), '. Max size available in the board: ', bitbloqSerial.getCurrentBoard().max_size);
+            logger.info('Program size: ', sizeof(trimmed_commands), '. Max size available in the board: ', bitbloqSerial.getCurrentBoard().max_size);
 
             if (sizeof(trimmed_commands) < bitbloqSerial.getCurrentBoard().max_size) {
 
                 //TODO The promise must be resolve here
                 resetBoard().then(function() {
-                    logger.log.info('enter_progmode');
+                    logger.info('enter_progmode');
                     return enter_progmode();
                 }).then(function() {
 
@@ -279,19 +292,19 @@ var bitbloqProgram = (function() {
                     return p;
 
                 }).then(function() {
-                    logger.log.info('leave_progmode');
+                    logger.info('leave_progmode');
                     return leave_progmode();
                 }).then(function() {
                     return resetBoard();
                 }).then(function() {
                     bitbloqSerial.disconnect();
                 }).catch(function() {
-                    logger.log.error('program flow error ', arguments);
+                    logger.error('program flow error ', arguments);
                 });
 
             } else {
                 reject();
-                logger.log.info('ERROR: program larger than available memory');
+                logger.info('ERROR: program larger than available memory');
             }
         });
 

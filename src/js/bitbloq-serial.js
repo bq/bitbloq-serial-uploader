@@ -35,7 +35,7 @@ var bitbloqSerial = (function() {
         bitrate: 19200,
         maxPageSize: 128,
         delay_reset: 200,
-        delay_sendData: 50,
+        delay_sendData: 100,
         max_size: 28672
     }];
 
@@ -51,15 +51,15 @@ var bitbloqSerial = (function() {
                     };
                     if (setConfig(boardInfo)) {
                         currentPort = port.path;
-                        logger.log.info('Board detected -> ', currentBoard);
-                        logger.log.info('Board detected on port -> ', currentPort);
+                        logger.info('Board detected -> ', currentBoard);
+                        logger.info('Board detected on port -> ', currentPort);
                         break;
                     }
                 }
                 callback();
             });
         } catch (e) {
-            logger.log.error(e);
+            logger.error(e);
         }
     };
 
@@ -82,7 +82,7 @@ var bitbloqSerial = (function() {
         bitbloqSerial.getConnections().then(function(connections) {
             if (connections.length > 0) {
                 SerialAPI.disconnect(connectionId, function() {
-                    logger.log.info('Port disconnected!');
+                    logger.info('Port disconnected!');
                     connectionId = -1;
                     boardConnected = false;
                 }); // Close port
@@ -106,7 +106,7 @@ var bitbloqSerial = (function() {
 
             if (!boardConnected) {
                 try {
-                    logger.log.info('Connecting to board...');
+                    logger.info('Connecting to board...');
                     SerialAPI.connect(currentPort, {
                         bitrate: currentBoard.bitrate,
                         sendTimeout: 2000,
@@ -117,19 +117,19 @@ var bitbloqSerial = (function() {
                         if (info.connectionId !== -1) {
                             connectionId = info.connectionId;
                             boardConnected = true;
-                            logger.log.info('Connection board TEST', 'OK', info);
+                            logger.info('Connection board TEST', 'OK', info);
                             resolve();
                         } else {
                             boardConnected = false;
                             connectionId = -1;
-                            logger.log.error('Connection board TEST', 'KO');
+                            logger.error('Connection board TEST', 'KO');
                             reject();
                         }
                     });
                 } catch (e) {
                     connectionId = -1;
                     boardConnected = false;
-                    logger.log.error('Connection board TEST', 'KO');
+                    logger.error('Connection board TEST', 'KO');
                     reject(e);
                 }
             } else {
@@ -143,7 +143,7 @@ var bitbloqSerial = (function() {
 
         return new Promise(function(resolve, reject) {
 
-            logger.log.info('Detecting boards....');
+            logger.info('Detecting boards....');
 
             getDevicesList(function() {
 
@@ -164,7 +164,7 @@ var bitbloqSerial = (function() {
                     boardConnected = false;
                     currentBoard = null;
                     reject();
-                    logger.log.error('currentPort is not defined');
+                    logger.error('currentPort is not defined');
                 }
 
             });
@@ -202,18 +202,18 @@ var bitbloqSerial = (function() {
 
         return new Promise(function(resolve) {
 
-            logger.log.info('Chrome is writing on board...');
+            logger.info('Chrome is writing on board...');
             if (boardConnected) {
 
                 SerialAPI.send(connectionId, data, function(sendInfo) {
-                    logger.log.info('sendInfo', sendInfo);
+                    logger.info('sendInfo', sendInfo);
                     setTimeout(function() {
                         resolve();
                     }, 100);
                 });
 
             } else {
-                logger.log.error('sendData error');
+                logger.error('sendData error');
             }
         });
     };
@@ -225,7 +225,7 @@ var bitbloqSerial = (function() {
     //         SerialAPI.onReceive.addListener(onReceiveCallback);
     //         //SerialAPI.onReceiveError.addListener(onReceiveErrorCallback);
     //     } catch (e) {
-    //         logger.log.info('UNABLE ADD CHROME.SERIAL LISTENERS', e);
+    //         logger.info('UNABLE ADD CHROME.SERIAL LISTENERS', e);
     //     }
     // };
 
@@ -238,7 +238,7 @@ var bitbloqSerial = (function() {
     // var str;
     // (e.data.byteLength === 2) ? str = String.fromCharCode.apply(null, new Uint16Array(e.data)) : str = String.fromCharCode.apply(null, new Uint8Array(e.data));
     // var responseCode = parseInt(str.charCodeAt(0).toString(16), 10);
-    // logger.log.info('SerialAPI.onReceive', responseCode);
+    // logger.info('SerialAPI.onReceive', responseCode);
 
     // if (responseCode !== 0) {
 
@@ -252,20 +252,20 @@ var bitbloqSerial = (function() {
     //     lineBuffer += output[j];
     // }
     // lineBuffer += e.data.byteLength;
-    // logger.log.info(lineBuffer);
+    // logger.info(lineBuffer);
 
     // if (progmodeflag && lineBuffer >= 4) {
 
-    //     logger.log.info('progmodeflag', progmodeflag, 'lineBuffer', lineBuffer);
+    //     logger.info('progmodeflag', progmodeflag, 'lineBuffer', lineBuffer);
     //     lineBuffer = 0;
     //     progmodeflag = false;
-    //     logger.log.info('----- progmode_finished event emit----');
+    //     logger.info('----- progmode_finished event emit----');
     //     bitbloqEmitter.emit('progmode_finished');
     //     onReceiveCallbackPromise.resolve();
 
     // } else if (!progmodeflag && lineBuffer >= 8) {
     //     lineBuffer = 0;
-    //     logger.log.info('----- next_prog_page event emit----');
+    //     logger.info('----- next_prog_page event emit----');
     //     bitbloqEmitter.emit('next_prog_page');
     //     onReceiveCallbackPromise.resolve();
     // }
@@ -273,17 +273,17 @@ var bitbloqSerial = (function() {
     // }
     // else if ((counterInitialEvents !== null) && responseCode === 10 || responseCode === 14) {
     //     counterInitialEvents += 1;
-    //     logger.log.info('oooooooooooooooooo', counterInitialEvents);
+    //     logger.info('oooooooooooooooooo', counterInitialEvents);
     //     if (counterInitialEvents === 4) {
     //         counterInitialEvents = null;
-    //         logger.log.info('----- EVENTO EMITIDO ----');
+    //         logger.info('----- EVENTO EMITIDO ----');
     //         bitbloqEmitter.emit('progmode_finished');
     //     }
     // }
     //};
 
     // var onReceiveErrorCallback = function(e) {
-    //     logger.log.error('SerialAPI.onReceiveError', e);
+    //     logger.error('SerialAPI.onReceiveError', e);
     // };
 
     return {
