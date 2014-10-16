@@ -30,20 +30,23 @@ module.exports = function(grunt) {
         },
         // Task configuration.
         concat: {
-            options: {
-                // Only on 'use_strict' in file
-                process: function(src, filepath) {
-                    return '// Source: ' + filepath + '\n' + src.replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1');
+            dist_js: {
+                options: {
+                    // Only on 'use_strict' in file
+                    process: function(src, filepath) {
+                        return '// Source: ' + filepath + '\n' + src.replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1');
+                    },
+                    footer: 'logger.debugmode=0'
                 },
-                footer: 'logger.debugmode=0'
+                files: [{
+                    src: ['src/js/*.js', '!src/js/initDev.js'],
+                    dest: 'tmp/js/main.js'
+                }]
             },
-            dist: {
+            dist_css: {
                 files: [{
                     src: ['src/css/*.css'],
                     dest: 'tmp/css/style.css'
-                }, {
-                    src: ['src/js/*.js', '!src/js/initDev.js'],
-                    dest: 'tmp/js/main.js'
                 }]
             }
         },
@@ -84,7 +87,7 @@ module.exports = function(grunt) {
     grunt.registerTask('build', [
         'clean',
         'jshint',
-        'concat:dist',
+        'concat',
         'copy',
         'uglify',
         'cssmin',
