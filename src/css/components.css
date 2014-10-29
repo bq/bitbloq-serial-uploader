@@ -1,0 +1,182 @@
+/*
+  ===================================================
+  Components
+  ===================================================
+*/
+
+/* Window */
+.window{
+  position: relative;
+  width: 100%;
+  height: 100%;
+  padding-top: 30px;
+}
+
+  .window--modal{
+    display: inline-block;
+    text-align: left;
+    background: white;
+    z-index: 200;
+    width: 350px;
+    min-height: 110px;
+    height: auto;
+  }
+
+  .window--modal.window--stretch{
+    display: block;
+    position: absolute;
+    top: 30px;
+    left: 30px;
+    right: 30px;
+    bottom: 30px;
+    width: auto;
+    height: auto;
+  }
+
+  .window--modal.window--center > .window__viewport{
+    max-height: 400px;
+  }
+
+  .window__title-bar{
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+  }
+
+  .window--app > .window__title-bar{
+    z-index: 100;
+    -webkit-app-region: drag;
+  }
+
+  .window--modal .window__title-bar .title-bar__title{
+    text-align: left;
+  }
+
+  .window__viewport{
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+  }
+
+  .window__overlay{
+    display: table;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    z-index: 199;
+  }
+
+  .window__overlay-inner{
+    display: table-cell;
+    text-align: center;
+    vertical-align: middle;
+  }
+
+
+/* Title Bar */
+.title-bar{
+  background: #333;
+  color: #fff;
+  height: 30px;
+}
+
+  .title-bar__title{
+    text-align: center;
+    font-size: 100%;
+    line-height: 30px;
+    text-transform: uppercase;
+    margin: 0;
+    padding: 0 10px;
+  }
+
+  .title-bar__buttons{
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .title-bar__button{
+    display: inline-block;
+    -webkit-app-region: no-drag;
+  }
+
+
+/* brand band */
+.brandband{
+    width: 100%;
+    height: 80px;
+    background-color:#94d31b;
+    background-image: url('/img/logo-bitbloq.png');
+    background-position: 5% center;
+    background-repeat: no-repeat;
+}
+
+.program__actions{
+    padding:10px;
+}
+
+.program__actions__title{
+    font-size: 1em;
+    border-bottom:2px solid #999;
+}
+
+
+.board_program_test{
+    margin:0 auto;
+    margin-bottom: 20px;
+    width:100%;
+    position:absolute;
+    bottom:0;left:0;
+}
+.program__actions__item{
+    font-size: 1em;
+}
+.program__actions__item__info{
+    color:blue;
+}
+
+
+
+/* Status */
+.status{
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  background: #42484a;
+  color: #fff;
+  height: 30px;
+  width: 100%;
+}
+
+  .status__message{
+    display: inline-block;
+    font-size: 100%;
+    line-height: 30px;
+    text-transform: uppercase;
+    margin: 0;
+    padding: 0 10px;
+  }
+
+/* Progress */
+.status__progress{
+  position: relative;
+  display: inline-block;
+  width: 180px;
+  height: 4px;
+  margin: 13px 13px;
+  vertical-align: middle;
+  background: rgba(0,0,0,0.2);
+}
+
+  .status__progress-bar{
+    background: #2ecc71;
+    width: 0%;
+    height: 4px;
+    max-width: 100% !important;
+  }

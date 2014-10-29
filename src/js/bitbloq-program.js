@@ -298,6 +298,7 @@ var bitbloqProgram = (function() {
                     return resetBoard();
                 }).then(function() {
                     bitbloqSerial.disconnect();
+                    resolve();
                 }).catch(function() {
                     logger.error('program flow error ', arguments);
                 });

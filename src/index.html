@@ -6,22 +6,57 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Serial Sketch Uploader for bitbloq</title>
         <!-- build:css css/style.min.css -->
-        <link rel="stylesheet" type="text/css" href="css/style.css">
+        <link rel="stylesheet" type="text/css" href="css/reset.css">
+        <link rel="stylesheet" type="text/css" href="css/main.css">
+        <link rel="stylesheet" type="text/css" href="css/components.css">
+        <link rel="stylesheet" type="text/css" href="css/icons.css">
         <!-- endbuild -->
     </head>
     <body>
-        <div id="container">
-            <h1 class="title">Serial Sketch Uploader for bitbloq</h1>
-            <div class="program__actions">
-                <p class="program__actions__item board">
-                Placa detectada: <span class="program__actions__item__info"></span>
-                </p>
-                <p class="program__actions__item port">
-                Puerto detectado: <span class="program__actions__item__info"></span>
-                </p>
-            </div>
+        <div class="window window--app">
+
+            <!-- Title Bar -->
+            <header class="window__title-bar title-bar">
+              <h1 class="title-bar__title">Serial Sketch Uploader for bitbloq</h1>
+              <div class="title-bar__buttons">
+                <a id="icon-minimize" class="icon-minus sml title-bar__button title-bar__button--minimize" title="Minimize Window" data-icon-order="1000"></a>
+                <a id="icon-maximize" class="icon-window sml title-bar__button title-bar__button--maximize" title="Maximize / Restore Window" data-icon-order="1001"></a>
+                <a id="icon-close" class="icon-cross sml title-bar__button title-bar__button--close" title="Close Window" data-icon-order="1002"></a>
+              </div>
+            </header>
+
+            <!-- Main content -->
+            <content class="window__viewport">
+
+                <div class="brandband"></div>
+
+                <div class="program__actions">
+                    <h2 class="program__actions__title">Serial Sketch Uploader</h2>
+                    <div class="program__actions__item board">
+                        <h3 class="program__actions__item__title">Placa detectada</h3>
+                        <div class="program__actions__item__info">Ninguna</div>
+                    </div>
+                    <div class="program__actions__item port">
+                        <h3 class="program__actions__item__title">Puerto detectado</h3>
+                        <div class="program__actions__item__info">Ninguno</div>
+                    </div>
+                </div>
+
+            </content>
+
+             <!-- Status -->
+            <footer class="status">
+                <div class="h-split">
+                    <div class="h-split__left status__left"></div>
+                    <div class="h-split__right status__right"></div>
+                </div>
+            </footer>
+
         </div>
+
         <!-- build:js js/main.min.js -->
+        <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script>window.jQuery || document.write('<script src="js/vendor/jquery-2.1.1.min.js"><\/script>')</script>
         <script src="js/sizeof.js"></script>
         <script src="js/logger.js"></script>
         <script src="js/bitbloq-serial.js"></script>
