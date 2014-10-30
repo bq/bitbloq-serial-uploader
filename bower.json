@@ -1,0 +1,19 @@
+{
+    "name": "bitbloq-serial-uploader",
+    "description": "bitbloq serial uploader",
+    "version": "0.1.0",
+    "main": "dist/roboblocks.js",
+    "keywords": "arduino bitbloq bq",
+    "author": {
+        "name": "bq"
+    },
+    "homepage": "https://bitbucket.org/mundoreader/bitbloq-arduino-serial-uploader.git",
+    "repository": {
+        "type": "git",
+        "url": "https://bitbucket.org/mundoreader/bitbloq-arduino-serial-uploader.git"
+    },
+    "dependencies": {
+        "jquery": "2.1.1"
+    },
+    "devDependencies": {}
+}

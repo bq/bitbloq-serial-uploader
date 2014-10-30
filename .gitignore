@@ -2,7 +2,7 @@
 tmp
 dist
 node_modules
-src/main/webapp/bower_components
+src/bower_components
 npm-debug.log
 
 # Editor File Ignore

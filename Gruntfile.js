@@ -59,7 +59,10 @@ module.exports = function(grunt) {
         jshint: {
             options: grunt.file.readJSON('.jshintrc'),
             src: {
-                src: ['src/**/*.js']
+                src: [
+                    'src/**/*.js',
+                    '!src/bower_components/**/*.js'
+                ]
             }
         },
         cssmin: {
