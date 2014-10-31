@@ -1,0 +1,6 @@
+ {
+     "bitbloq": {
+         "title": "bitbloq serial uploader",
+         "description": "The string we search for. Put %20 between words that go together."
+     }
+ }
