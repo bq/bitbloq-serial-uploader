@@ -9,7 +9,7 @@
   position: relative;
   width: 100%;
   height: 100%;
-  padding-top: 30px;
+  padding-top: 25px;
 }
 
   .window--modal{
@@ -82,13 +82,16 @@
 .title-bar{
   background: #333;
   color: #fff;
-  height: 30px;
+  height: 25px;
+}
+.program__actions__container {
+    padding-left: 1em;
 }
 
   .title-bar__title{
     text-align: center;
-    font-size: 100%;
-    line-height: 30px;
+    font-size: .8em;
+    line-height: 25px;
     text-transform: uppercase;
     margin: 0;
     padding: 0 10px;
@@ -96,8 +99,9 @@
 
   .title-bar__buttons{
     position: absolute;
-    top: 0;
-    right: 0;
+    top: 4px;
+    right: 5px;
+    height: 1.5em;
   }
 
   .title-bar__button{
@@ -115,14 +119,23 @@
     background-position: 5% center;
     background-repeat: no-repeat;
 }
-
-.program__actions{
-    padding:10px;
+.chromeapp-section {
+    padding: 10px;
+    padding-top: 0;
+    color: #666666;
+}
+.program__actions__item__title {
+    color: rgb(100, 100, 100);
+    font-weight: normal;
 }
 
 .program__actions__title{
-    font-size: 1em;
-    border-bottom:2px solid #999;
+    margin: 0;
+    padding-left: 10px;
+    font-size: 1.7em;
+    line-height: 2.2em;
+    font-weight: normal;
+    border-bottom: 1px solid #999;
 }
 
 
@@ -137,7 +150,7 @@
     font-size: 1em;
 }
 .program__actions__item__info{
-    color:blue;
+    color: #729216;
 }
 
 
