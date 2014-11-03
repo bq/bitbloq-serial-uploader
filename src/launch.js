@@ -13,7 +13,7 @@ var createCustomWin = function(params) {
         }
     }
     var _params = {
-        //frame: 'none',
+        frame: 'none',
         id: 'bitbloqSSU',
         resizable: false,
         hidden: false,

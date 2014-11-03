@@ -1,6 +1,31 @@
- {
-     "bitbloq": {
-         "title": "bitbloq serial uploader",
-         "description": "The string we search for. Put %20 between words that go together."
-     }
- }
+{
+    "chromeapp_title": {
+        "message": "Serial Sketch Uploader para bitbloq",
+        "description": ""
+    },
+    "chromeapp_title_bar_title": {
+        "message": "Serial Sketch Uploader para bitbloq",
+        "description": ""
+    },
+    "chromeapp_program_actions_title": {
+        "message": "Serial Sketch Uploader",
+        "description": ""
+    },
+    "chromeapp_program_actions_item_title": {
+        "message": "Placa detectada",
+        "description": ""
+    },
+    "chromeapp_program_actions_item_info": {
+        "message": "Ninguno",
+        "description": ""
+    },
+    "chromeapp_program_actions_item_port_title": {
+        "message": "Puerto detectado",
+        "description": ""
+    },
+    "chromeapp_program_actions_item_port_info": {
+        "message": "",
+        "description": "Ninguno"
+    }
+
+}

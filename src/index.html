@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="description" content="Serial Sketch Uploader for bitbloq">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Serial Sketch Uploader for bitbloq</title>
+        <title data-i18n="chromeapp-title"></title>
         <!-- build:css css/style.min.css -->
         <link rel="stylesheet" type="text/css" href="css/reset.css">
         <link rel="stylesheet" type="text/css" href="css/main.css">
@@ -17,7 +17,7 @@
 
             <!-- Title Bar -->
             <header class="window__title-bar title-bar">
-              <h1 class="title-bar__title">Serial Sketch Uploader for bitbloq</h1>
+              <h1 data-i18n="chromeapp_title" class="title-bar__title"></h1>
               <div class="title-bar__buttons">
                 <a id="icon-minimize" class="icon-minus sml title-bar__button title-bar__button--minimize" title="Minimize Window" data-icon-order="1000"></a>
                 <a id="icon-maximize" class="icon-window sml title-bar__button title-bar__button--maximize" title="Maximize / Restore Window" data-icon-order="1001"></a>
@@ -30,15 +30,15 @@
 
                 <div class="brandband"></div>
                     <div class="program__actions">
-                        <h2 class="program__actions__title">Serial Sketch Uploader</h2>
+                        <h2 data-i18n="chromeapp_program_actions_title" class="program__actions__title"></h2>
                 <div class="program__actions__container">
                         <div class="program__actions__item board">
-                            <h3 class="program__actions__item__title">Placa detectada</h3>
-                            <div class="program__actions__item__info">Ninguna</div>
+                            <h3 data-i18n="chromeapp_program_actions_item_title" class="program__actions__item__title"></h3>
+                            <div data-i18n="chromeapp_program_actions_item_info" class="program__actions__item__info"></div>
                         </div>
                         <div class="program__actions__item port">
-                            <h3 class="program__actions__item__title">Puerto detectado</h3>
-                            <div class="program__actions__item__info">Ninguno</div>
+                            <h3 data-i18n="chromeapp_program_actions_item_port_title" class="program__actions__item__title"></h3>
+                            <div data-i18n="chromeapp_program_actions_item_port_info" class="program__actions__item__info"></div>
                         </div>
                     </div>
                 </div>
@@ -63,6 +63,7 @@
         <script src="js/bitbloq-program.js"></script>
         <script src="js/bitbloq-comm.js"></script>
         <script src="js/initDev.js"></script>
+        <script src="js/i18n.js"></script>
         <!-- endbuild -->
     </body>
 </html>
