@@ -26,8 +26,10 @@ bitbloqComm - Chrome Message Passing functionality
             };
 
             if (request.msg === 'connect') {
+
                 responseMsg.msg = 'connect.ready';
                 respondent(responseMsg);
+
             } else if (request.msg === 'board') {
 
                 bitbloqSerial.autoConfig().then(function() {
@@ -44,31 +46,30 @@ bitbloqComm - Chrome Message Passing functionality
             } else if (request.msg === 'programming') {
 
                 bitbloqSerial.autoConfig().then(function() {
-                        logger.info('Sending Response...');
+                    logger.info('Sending Response...');
 
-                        bitbloqProgram.load(request.params.code).then(function() {
-                            logger.info('bitbloqProgram.load finished');
-                            responseMsg.msg = 'programming.ok';
-                            respondent(responseMsg);
-                        }).catch(function(e) {
-                            logger.info(e);
-                            responseMsg.msg = 'programming.ko';
-                            respondent(responseMsg);
-                        });
-
-                    }, function() {
-                        responseMsg.msg = 'board.notready';
-                        port.postMessage(responseMsg);
+                    bitbloqProgram.load(request.params.code).then(function() {
+                        logger.info('bitbloqProgram.load finished');
+                        responseMsg.msg = 'programming.ok';
                         respondent(responseMsg);
+                    }).catch(function(e) {
+                        logger.info(e);
+                        responseMsg.msg = 'programming.ko';
+                        respondent(responseMsg);
+                    });
 
-                        //@TODO
-                        //responseMsg.msg = 'programming.ko';
-                        //programming = false;
-                    }
+                }).catch(function() {
+                    responseMsg.msg = 'board.notready';
+                    port.postMessage(responseMsg);
+                    respondent(responseMsg);
 
-                }
+                    //@TODO
+                    //responseMsg.msg = 'programming.ko';
+                    //programming = false;
+                });
 
             }
+
 
         });
 
