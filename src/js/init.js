@@ -14,15 +14,28 @@ function addDOMListeners() {
     $('body').on('contextmenu', function() {
         return false;
     });
-    $('#icon-minimize').on('click', function() {
-
+    $('#icon-minimize').on('click', function(event) {
+        event.preventDefault();
+        window.chrome.app.window.current().minimize();
     });
-    $('#icon-maximize').on('click', function() {
-
+    $('#icon-maximize').on('click', function(event) {
+        event.preventDefault();
+        window.chrome.app.window.current().maximize();
     });
-    $('#icon-close').on('click', function() {
-
+    $('#icon-close').on('click', function(event) {
+        event.preventDefault();
+        window.chrome.app.window.current().close();
     });
+
+    // app.window.onfocus = function() {
+    //     console.log("focus");
+    //     focusTitlebars(true);
+    // }
+
+    // app.window.onblur = function() {
+    //     console.log("blur");
+    //     focusTitlebars(false);
+    // }
 }
 
 var init = function() {
@@ -32,8 +45,11 @@ var init = function() {
     });
 };
 
+
 /* Initializing chrome app */
 document.addEventListener('DOMContentLoaded', function() {
+
+
     init();
     addDOMListeners();
 });

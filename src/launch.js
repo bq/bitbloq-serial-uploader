@@ -15,10 +15,10 @@ var createCustomWin = function(params) {
     var _params = {
         frame: 'none',
         id: 'bitbloqSSU',
-        resizable: false,
+        resizable: true,
         hidden: false,
         outerBounds: {
-            width: 200,
+            width: 300,
             height: 180,
             left: 0,
             top: 0

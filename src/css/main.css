@@ -15,6 +15,7 @@ body {
   color: #000;
   font-family: 'Open Sans', arial, sans-serif;
   overflow: hidden;
+  border: 2px solid black;
 }
 
 a, button, .no-drag{

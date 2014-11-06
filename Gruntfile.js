@@ -8,6 +8,7 @@ module.exports = function(grunt) {
     grunt.initConfig({
         // Metadata.
         pkg: grunt.file.readJSON('package.json'),
+        boardConfig: grunt.file.readJSON('src/board_list.json'),
         clean: {
             tmp: ['tmp'],
             dist: ['dist']
@@ -18,28 +19,34 @@ module.exports = function(grunt) {
                 src: 'src/img/*.png',
                 dest: 'dist/img',
                 flatten: true,
-                filter: 'isFile',
+                filter: 'isFile'
+            },
+            locales: {
+                expand: true,
+                cwd: 'src/_locales',
+                src: '**/*.json',
+                dest: 'dist/_locales/'
             },
             index: {
                 expand: true,
                 src: 'src/*',
                 dest: 'dist',
                 flatten: true,
-                filter: 'isFile',
+                filter: 'isFile'
             }
         },
         // Task configuration.
         concat: {
             dist_js: {
                 options: {
-                    // Only on 'use_strict' in file
+                    //banner: JSON.stringify('<%= boardConfig %>'),
                     process: function(src, filepath) {
                         return '// Source: ' + filepath + '\n' + src.replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1');
                     },
-                    footer: 'logger.debugmode=0'
+                    footer: 'logger.debugmode=0;'
                 },
                 files: [{
-                    src: ['src/js/*.js', '!src/js/initDev.js'],
+                    src: ['src/js/*.js', 'src/bower_components/jquery/dist/*.js', '!src/js/initDev.js'],
                     dest: 'tmp/js/main.js'
                 }]
             },

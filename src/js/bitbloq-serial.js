@@ -25,7 +25,7 @@ var bitbloqSerial = (function() {
         bitrate: 115200,
         maxPageSize: 128,
         delay_reset: 200,
-        delay_sendData: 50,
+        delay_sendData: 150,
         max_size: 32256
     }, {
         id: 'FT232R_USB_UART',
@@ -35,7 +35,7 @@ var bitbloqSerial = (function() {
         bitrate: 19200,
         maxPageSize: 128,
         delay_reset: 200,
-        delay_sendData: 100,
+        delay_sendData: 150,
         max_size: 28672
     }];
 

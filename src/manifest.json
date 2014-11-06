@@ -6,7 +6,7 @@
     "manifest_version": 2,
     "minimum_chrome_version": "23",
     "default_locale": "es",
-    "permissions": ["serial", "background"],
+    "permissions": ["serial"],
     "app": {
         "background": {
             "scripts": ["launch.js"]

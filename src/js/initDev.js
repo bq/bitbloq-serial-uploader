@@ -1,5 +1,5 @@
 'use strict';
-/* global bitbloqSerial, bitbloqProgram, logger*/
+/* global bitbloqSerial, bitbloqProgram, logger, $*/
 
 var sampleCode;
 /* *****************************
@@ -64,7 +64,37 @@ var initDev = function() {
     init();
 };
 
+
+function addDOMListeners() {
+    $('body').on('contextmenu', function() {
+        return false;
+    });
+    $('#icon-minimize').on('click', function(event) {
+        event.preventDefault();
+        window.chrome.app.window.current().minimize();
+    });
+    $('#icon-maximize').on('click', function(event) {
+        event.preventDefault();
+        window.chrome.app.window.current().maximize();
+    });
+    $('#icon-close').on('click', function(event) {
+        event.preventDefault();
+        window.chrome.app.window.current().close();
+    });
+
+    // app.window.onfocus = function() {
+    //     console.log("focus");
+    //     focusTitlebars(true);
+    // }
+
+    // app.window.onblur = function() {
+    //     console.log("blur");
+    //     focusTitlebars(false);
+    // }
+}
+
 /* Initializing chrome app */
 document.addEventListener('DOMContentLoaded', function() {
     initDev();
+    addDOMListeners();
 });

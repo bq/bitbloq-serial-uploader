@@ -8,53 +8,67 @@ bitbloqComm - Chrome Message Passing functionality
 
     window.chrome.runtime.onConnectExternal.addListener(function(port) {
 
+        var respondent = function(responseMsg) {
+            port.postMessage(responseMsg);
+            logger.info({
+                'responseMsg': responseMsg.msg
+            });
+        };
+
         port.onMessage.addListener(function(request) {
 
             logger.info('request.msg', request.msg);
             logger.info('request.params', request.params);
-
-            var programming = false;
 
             var responseMsg = {
                 msg: null,
                 params: null
             };
 
-            if (request.msg === 'bitbloq.connect') {
-                responseMsg.msg = 'chromeapp.ready';
-                responseMsg.params = bitbloqSerial.getCurrentBoard();
-            } else if (request.msg === 'bitbloq.programming') {
-                responseMsg.msg = 'chromeapp.programmed';
-                programming = true;
-            }
+            if (request.msg === 'connect') {
+                responseMsg.msg = 'connect.ready';
+                respondent(responseMsg);
+            } else if (request.msg === 'board') {
 
-            bitbloqSerial.autoConfig().then(function() {
-                logger.info('Sending Response...');
-                logger.info({
-                    'bitbloqProgram programming flag': programming
-                });
-                if (programming) {
-                    bitbloqProgram.load(request.params.code).then(function() {
-                        port.postMessage(responseMsg);
-                        logger.info({
-                            'responseMsg': responseMsg.msg
-                        });
-                        logger.info('bitbloqProgram.load finished');
-                    }).catch(function(e) {
-                        responseMsg.msg = 'chromeapp.error';
-                        logger.info(e);
-                    });
-                } else {
+                bitbloqSerial.autoConfig().then(function() {
+                    logger.info('Sending Response...');
+                    responseMsg.msg = 'board.ready';
+                    responseMsg.params = bitbloqSerial.getCurrentBoard();
+                    respondent(responseMsg);
+                }, function() {
+                    responseMsg.msg = 'board.notready';
                     port.postMessage(responseMsg);
-                    logger.info({
-                        'responseMsg': responseMsg.msg
-                    });
+                    respondent(responseMsg);
+                });
+
+            } else if (request.msg === 'programming') {
+
+                bitbloqSerial.autoConfig().then(function() {
+                        logger.info('Sending Response...');
+
+                        bitbloqProgram.load(request.params.code).then(function() {
+                            logger.info('bitbloqProgram.load finished');
+                            responseMsg.msg = 'programming.ok';
+                            respondent(responseMsg);
+                        }).catch(function(e) {
+                            logger.info(e);
+                            responseMsg.msg = 'programming.ko';
+                            respondent(responseMsg);
+                        });
+
+                    }, function() {
+                        responseMsg.msg = 'board.notready';
+                        port.postMessage(responseMsg);
+                        respondent(responseMsg);
+
+                        //@TODO
+                        //responseMsg.msg = 'programming.ko';
+                        //programming = false;
+                    }
+
                 }
 
-            }, function() {
-                responseMsg.msg = 'chromeapp.noboard';
-                port.postMessage(responseMsg);
-            });
+            }
 
         });
 
