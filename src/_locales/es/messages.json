@@ -1,29 +1,25 @@
 {
-    "__MSG_chromeapp_title__": {
+    "chromeapp_title": {
         "message": "Serial Sketch Uploader para bitbloq",
         "description": ""
     },
-    "__MSG_chromeapp_program_actions_title__": {
-        "message": "Serial Sketch Uploader para bitbloq",
-        "description": ""
-    },
-    "__MSG_chromeapp_program_actions_title__": {
+    "chromeapp_info_title": {
         "message": "Serial Sketch Uploader",
         "description": ""
     },
-    "__MSG_chromeapp_program_actions_item_title__": {
+    "chromeapp_info_item_board_title": {
         "message": "Placa detectada",
         "description": ""
     },
-    "__MSG_chromeapp_program_actions_item_info__": {
+    "chromeapp_info_item_board_value": {
         "message": "Ninguno",
         "description": ""
     },
-    "__MSG_chromeapp_program_actions_item_port_title__": {
+    "chromeapp_info_item_port_title": {
         "message": "Puerto detectado",
         "description": ""
     },
-    "__MSG_chromeapp_program_actions_item_port_info__": {
+    "chromeapp_info_item_port_value": {
         "message": "Ninguno",
         "description": ""
     }

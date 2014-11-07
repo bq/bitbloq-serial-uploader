@@ -1,13 +1,14 @@
 'use strict';
 /* global bitbloqSerial, $ */
+/* jshint unused:false */
 
 /* *****************************
 Chrome App interface management
 ******************************** */
 // Board Info
 function paintBoardInfo() {
-    $('.board > .program__actions__item__info').html(bitbloqSerial.getCurrentBoard().name);
-    $('.port > .program__actions__item__info').html(bitbloqSerial.getCurrentPort());
+    $('.board > .chromeapp__info__item__value').html(bitbloqSerial.getCurrentBoard().name);
+    $('.port > .chromeapp__info__item__value').html(bitbloqSerial.getCurrentPort());
 }
 
 function addDOMListeners() {
@@ -39,17 +40,9 @@ function addDOMListeners() {
 }
 
 var init = function() {
+    addDOMListeners();
     bitbloqSerial.autoConfig().then(function() {
         paintBoardInfo();
         bitbloqSerial.disconnect();
     });
 };
-
-
-/* Initializing chrome app */
-document.addEventListener('DOMContentLoaded', function() {
-
-
-    init();
-    addDOMListeners();
-});

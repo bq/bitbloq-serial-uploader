@@ -148,9 +148,6 @@ var bitbloqSerial = (function() {
             getDevicesList(function() {
 
                 connect().then(function() {
-
-                    //addChromeSerialListeners();
-
                     resolve();
                 }).catch(function() {
                     connectionId = -1;

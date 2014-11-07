@@ -1,6 +1,6 @@
 {
-    "name": "Serial Uploader Beta",
-    "description": "Serial Uploader Beta for bitbloq",
+    "name": "bitbloq Serial Uploader",
+    "description": "Serial Uploader for bitbloq",
     "author": "bitbloq developer team - bq",
     "version": "0.1.0",
     "manifest_version": 2,
@@ -17,15 +17,7 @@
         "128": "img/icon_128.png"
     },
     "externally_connectable": {
-        "matches": ["http://localhost:9000/*"]
-    },
-    "url_handlers": {
-        "launcher": {
-            "matches": [
-                "http://bitbloq.serial/"
-            ],
-            "title": "Launcher Serial Uploader"
-        }
+        "matches": ["http://bitbloq.bq.com/*", "http://bitbloq.es/*", "http://localhost:9000/*"]
     }
 
 }

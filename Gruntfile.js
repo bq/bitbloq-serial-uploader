@@ -16,8 +16,15 @@ module.exports = function(grunt) {
         copy: {
             img: {
                 expand: true,
-                src: 'src/img/*.png',
+                src: 'src/img/*',
                 dest: 'dist/img',
+                flatten: true,
+                filter: 'isFile'
+            },
+            fonts: {
+                expand: true,
+                src: 'src/css/fonts/*',
+                dest: 'dist/css/fonts',
                 flatten: true,
                 filter: 'isFile'
             },
@@ -39,11 +46,10 @@ module.exports = function(grunt) {
         concat: {
             dist_js: {
                 options: {
-                    //banner: JSON.stringify('<%= boardConfig %>'),
+                    footer: ';\nlogger.debugmode=0;document.addEventListener("DOMContentLoaded", function() {init();});',
                     process: function(src, filepath) {
                         return '// Source: ' + filepath + '\n' + src.replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1');
-                    },
-                    footer: 'logger.debugmode=0;'
+                    }
                 },
                 files: [{
                     src: ['src/js/*.js', 'src/bower_components/jquery/dist/*.js', '!src/js/initDev.js'],

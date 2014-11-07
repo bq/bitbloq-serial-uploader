@@ -18,6 +18,11 @@ body {
   border: 2px solid black;
 }
 
+@font-face{
+    font-family: Comfortaa;
+    src: url(fonts/Comfortaa-Regular.ttf);
+}
+
 a, button, .no-drag{
   -webkit-app-region: no-drag;
 }

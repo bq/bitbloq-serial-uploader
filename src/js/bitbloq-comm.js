@@ -1,5 +1,5 @@
 'use strict';
-/* global bitbloqSerial, bitbloqProgram, logger */
+/* global bitbloqSerial, bitbloqProgram, logger, paintBoardInfo */
 
 /* *******************************************************
 bitbloqComm - Chrome Message Passing functionality
@@ -10,6 +10,7 @@ bitbloqComm - Chrome Message Passing functionality
 
         var respondent = function(responseMsg) {
             port.postMessage(responseMsg);
+            logger.info('Sending Response...');
             logger.info({
                 'responseMsg': responseMsg.msg
             });
@@ -33,7 +34,7 @@ bitbloqComm - Chrome Message Passing functionality
             } else if (request.msg === 'board') {
 
                 bitbloqSerial.autoConfig().then(function() {
-                    logger.info('Sending Response...');
+                    paintBoardInfo();
                     responseMsg.msg = 'board.ready';
                     responseMsg.params = bitbloqSerial.getCurrentBoard();
                     respondent(responseMsg);
@@ -46,8 +47,7 @@ bitbloqComm - Chrome Message Passing functionality
             } else if (request.msg === 'programming') {
 
                 bitbloqSerial.autoConfig().then(function() {
-                    logger.info('Sending Response...');
-
+                    paintBoardInfo();
                     bitbloqProgram.load(request.params.code).then(function() {
                         logger.info('bitbloqProgram.load finished');
                         responseMsg.msg = 'programming.ok';
@@ -58,7 +58,7 @@ bitbloqComm - Chrome Message Passing functionality
                         respondent(responseMsg);
                     });
 
-                }).catch(function() {
+                }, function() {
                     responseMsg.msg = 'board.notready';
                     port.postMessage(responseMsg);
                     respondent(responseMsg);

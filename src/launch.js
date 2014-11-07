@@ -15,7 +15,7 @@ var createCustomWin = function(params) {
     var _params = {
         frame: 'none',
         id: 'bitbloqSSU',
-        resizable: true,
+        resizable: false,
         hidden: false,
         outerBounds: {
             width: 300,
@@ -33,13 +33,14 @@ var createCustomWin = function(params) {
 
     if (!currentWin) {
         currentWin = window.chrome.app.window.get('bitbloqSSU');
-    }
-    currentWin.onClosed.addListener(function(data) {
-        window.console.warn('bitbloqSSU closed', data);
-        createCustomWin({
-            'hidden': true
+        currentWin.resizeTo(400, 300);
+        currentWin.onClosed.addListener(function(data) {
+            window.console.warn('bitbloqSSU closed', data);
+            createCustomWin({
+                'hidden': true
+            });
         });
-    });
+    }
 
 };
 
