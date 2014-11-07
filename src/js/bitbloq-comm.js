@@ -18,8 +18,12 @@ bitbloqComm - Chrome Message Passing functionality
 
         port.onMessage.addListener(function(request) {
 
-            logger.info('request.msg', request.msg);
-            logger.info('request.params', request.params);
+            logger.info({
+                'request.msg': request.msg
+            });
+            logger.info({
+                'request.params': request.params
+            });
 
             var responseMsg = {
                 msg: null,

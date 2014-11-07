@@ -45,7 +45,6 @@ var bitbloqSerial = (function() {
                 portsOnSystem = devices;
                 for (var i = 0; i < portsOnSystem.length; i++) {
                     var port = portsOnSystem[i];
-
                     var boardInfo = {
                         boardId: port.displayName
                     };
@@ -53,10 +52,11 @@ var bitbloqSerial = (function() {
                         currentPort = port.path;
                         logger.info('Board detected -> ', currentBoard);
                         logger.info('Board detected on port -> ', currentPort);
-                        break;
+                        callback(true);
+                        return true;
                     }
                 }
-                callback();
+                callback(false);
             });
         } catch (e) {
             logger.error(e);
@@ -145,18 +145,22 @@ var bitbloqSerial = (function() {
 
             logger.info('Detecting boards....');
 
-            getDevicesList(function() {
+            getDevicesList(function(statusOk) {
 
-                connect().then(function() {
-                    resolve();
-                }).catch(function() {
-                    connectionId = -1;
-                    boardConnected = false;
-                    currentBoard = null;
-                    reject();
-                });
+                if (statusOk) {
 
-                if (!currentPort) {
+                    connect().then(function() {
+                        resolve();
+                    }).catch(function() {
+                        connectionId = -1;
+                        boardConnected = false;
+                        currentBoard = null;
+                        reject();
+                    });
+
+                }
+
+                if (!currentPort || !statusOk) {
                     connectionId = -1;
                     boardConnected = false;
                     currentBoard = null;

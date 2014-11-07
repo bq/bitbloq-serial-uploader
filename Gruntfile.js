@@ -47,6 +47,7 @@ module.exports = function(grunt) {
             dist_js: {
                 options: {
                     footer: ';\nlogger.debugmode=0;document.addEventListener("DOMContentLoaded", function() {init();});',
+                    stripBanners: true,
                     process: function(src, filepath) {
                         return '// Source: ' + filepath + '\n' + src.replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1');
                     }

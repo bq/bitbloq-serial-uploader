@@ -28,15 +28,6 @@ function addDOMListeners() {
         window.chrome.app.window.current().close();
     });
 
-    // app.window.onfocus = function() {
-    //     console.log("focus");
-    //     focusTitlebars(true);
-    // }
-
-    // app.window.onblur = function() {
-    //     console.log("blur");
-    //     focusTitlebars(false);
-    // }
 }
 
 var init = function() {
