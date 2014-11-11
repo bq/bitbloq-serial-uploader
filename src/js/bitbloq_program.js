@@ -82,14 +82,14 @@ bitbloqSU.Program = (function() {
         //load commands
         var command = load_hex(hex);
         //Number of memory pages for current program that is needed
-        var page_number = Math.ceil(command.length / (bitbloqSU.Serial.getDeviceInfo().maxPageSize));
+        var page_number = Math.ceil(command.length / (bitbloqSU.Serial.getDeviceInfo().boardInfo.maxPageSize));
         logger.info({
             'Total page number': page_number
         });
         var i = 0;
         trimmed_commands = [];
         while (trimmed_commands.length < page_number) {
-            trimmed_commands.push(command.slice(bitbloqSU.Serial.getDeviceInfo().maxPageSize * i, (bitbloqSU.Serial.getDeviceInfo().maxPageSize) * (i + 1)));
+            trimmed_commands.push(command.slice(bitbloqSU.Serial.getDeviceInfo().boardInfo.maxPageSize * i, (bitbloqSU.Serial.getDeviceInfo().boardInfo.maxPageSize) * (i + 1)));
             i += 1;
         }
 
@@ -280,9 +280,9 @@ bitbloqSU.Program = (function() {
 
             var numberOfCurrentProgramPages = transform_data(code);
 
-            logger.info('Program size: ', sizeof(trimmed_commands), '. Max size available in the board: ', bitbloqSU.Serial.getDeviceInfo().max_size);
+            logger.info('Program size: ', sizeof(trimmed_commands), '. Max size available in the board: ', bitbloqSU.Serial.getDeviceInfo().boardInfo.max_size);
 
-            if (sizeof(trimmed_commands) < bitbloqSU.Serial.getDeviceInfo().max_size) {
+            if (sizeof(trimmed_commands) < bitbloqSU.Serial.getDeviceInfo().boardInfo.max_size) {
 
                 //TODO The promise must be resolve here
                 resetBoard().then(function() {

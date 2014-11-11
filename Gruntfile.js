@@ -53,7 +53,7 @@ module.exports = function(grunt) {
                     }
                 },
                 files: [{
-                    src: ['src/js/{,**/}*.js', 'src/bower_components/jquery/dist/jquery.js', '!src/js/init_dev.js'],
+                    src: ['src/js/{,**/}*.js', 'src/bower_components/jquery/dist/jquery.js', '!src/js/init_dev.js', '!src/js/banner_dev.js'],
                     dest: 'tmp/js/main.js'
                 }]
             },

@@ -55,11 +55,10 @@ bitbloqSU.Serial = (function() {
         }
         for (var i = 0; i < _boardList.length; i++) {
             var item = _boardList[i];
-            if (item.id === config.boardId) {
+            if (item.id === config.displayName) {
                 deviceInfo.boardInfo = item;
-                deviceInfo.port = config.port;
+                deviceInfo.port = config.path;
                 deviceInfo.connected = true;
-                deviceInfo.connectionId = config.connectionId;
                 return true;
             }
         }
@@ -90,18 +89,9 @@ bitbloqSU.Serial = (function() {
 
     var connect = function() {
 
-        //Disconnect before 10 seconds by safety
-        if (!bitbloqSU.disconnectTimer) {
-            bitbloqSU.disconnectTimer = setTimeout(function() {
-                bitbloqSU.Serial.disconnect();
-                clearTimeout(bitbloqSU.disconnectTimer);
-                bitbloqSU.disconnectTimer = null;
-            }, 10000);
-        }
-
         return new Promise(function(resolve, reject) {
 
-            if (!deviceInfo.connected) {
+            if (deviceInfo.connected) {
                 try {
                     logger.info('Connecting to board...');
                     bitbloqSU.SerialAPI.connect(deviceInfo.port, {
@@ -114,12 +104,16 @@ bitbloqSU.Serial = (function() {
                         if (info.connectionId !== -1) {
                             deviceInfo.connectionId = info.connectionId;
                             deviceInfo.connected = true;
-                            logger.info('Connection board TEST', 'OK', info);
+                            logger.info({
+                                'Connection board TEST OK': info
+                            });
                             resolve();
                         } else {
                             deviceInfo.connected = false;
                             deviceInfo.connectionId = -1;
-                            logger.error('Connection board TEST', 'KO');
+                            logger.error({
+                                'Connection board TEST KO': 'KO'
+                            });
                             reject();
                         }
                     });
@@ -127,11 +121,13 @@ bitbloqSU.Serial = (function() {
                     deviceInfo.connectionId = -1;
                     deviceInfo.connected = false;
                     deviceInfo.boardInfo = null;
-                    logger.error('Connection board TEST', 'KO');
+                    logger.error({
+                        'Connection board TEST KO': e
+                    });
                     reject(e);
                 }
             } else {
-                resolve();
+                rejected();
             }
         });
 
@@ -147,6 +143,16 @@ bitbloqSU.Serial = (function() {
 
                 if (statusOk) {
                     connect().then(function() {
+
+                        //Disconnect before 10 seconds by safety
+                        if (!bitbloqSU.disconnectTimer) {
+                            bitbloqSU.disconnectTimer = setTimeout(function() {
+                                bitbloqSU.Serial.disconnect();
+                                clearTimeout(bitbloqSU.disconnectTimer);
+                                bitbloqSU.disconnectTimer = null;
+                            }, 10000);
+                        }
+
                         resolve();
                     }).catch(function() {
                         setDeviceInfo(null);

@@ -21,9 +21,7 @@
         port.onMessage.addListener(function(request) {
 
             logger.info({
-                'request.msg': request.msg
-            });
-            logger.info({
+                'request.msg': request.msg,
                 'request.params': request.params
             });
 
@@ -44,10 +42,12 @@
                     responseMsg.msg = 'board.ready';
                     responseMsg.params = bitbloqSU.Serial.getDeviceInfo();
                     respondent(responseMsg);
-                }, function() {
+                    bitbloqSU.Serial.disconnect();
+                }).catch(function() {
                     responseMsg.msg = 'board.notready';
                     port.postMessage(responseMsg);
                     respondent(responseMsg);
+                    bitbloqSU.Serial.disconnect();
                 });
 
             } else if (request.msg === 'programming') {
@@ -58,6 +58,7 @@
                         responseMsg.msg = 'programming.ok';
                         respondent(responseMsg);
                         logger.info('bitbloqSU.Program.load finished');
+                        bitbloqSU.Serial.disconnect();
                     }).catch(function(e) {
                         logger.info(e);
                         responseMsg.msg = 'programming.ko';
@@ -69,6 +70,7 @@
                     responseMsg.msg = 'board.notready';
                     port.postMessage(responseMsg);
                     respondent(responseMsg);
+                    bitbloqSU.Serial.disconnect();
                 });
 
             }

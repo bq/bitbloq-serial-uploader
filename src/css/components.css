@@ -159,8 +159,21 @@
     font-size: 1.2em;
 }
 
-.button__test{
+.buttons__container{
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width:12em;
+    height:5em;
+}
+
+.button__program{
     position: absolute;
     bottom: 1em;
+    right: 1em;
+}
+.button__autoconfig{
+    position: absolute;
+    bottom: 3em;
     right: 1em;
 }
