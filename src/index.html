@@ -3,6 +3,8 @@
     <head>
         <meta charset="utf-8">
         <meta name="description" content="Serial Sketch Uploader for bitbloq">
+        <meta name="author" content="bq - bitbloq team developer">
+        <meta name="keywords" content="bq, bitbloq, zum, arduino, freaduino, serial, uploader, robotics">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title data-i18n="chromeapp-title"></title>
         <!-- build:css css/style.min.css -->
@@ -19,9 +21,9 @@
             <header class="window__title-bar title-bar">
                 <h1 data-i18n="chromeapp_title" class="title-bar__title"></h1>
                 <div class="title-bar__buttons">
-                    <a id="icon-minimize" class="icon-minus sml title-bar__button title-bar__button--minimize" title="Minimize Window" data-icon-order="1000"></a>
-                    <a id="icon-maximize" class="icon-window sml title-bar__button title-bar__button--maximize" title="Maximize / Restore Window" data-icon-order="1001"></a>
-                    <a id="icon-close" class="icon-cross sml title-bar__button title-bar__button--close" title="Close Window" data-icon-order="1002"></a>
+                    <a id="icon-minimize" title="Minimize Window" data-icon-order="1000"><svg class="icon-minus"><use xlink:href="img/icons.svg#icon-minus"></use></svg></a>
+                    <a id="icon-maximize" title="Maximize / Restore Window" data-icon-order="1001"><svg class="icon-maximize"><use xlink:href="img/icons.svg#icon-maximize"></use></svg></a>
+                    <a id="icon-close" title="Close Window" data-icon-order="1002"><svg class="icon-close"><use xlink:href="img/icons.svg#icon-close"></use></svg></a>
                 </div>
             </header>
 
@@ -33,10 +35,12 @@
                     <h2 data-i18n="chromeapp_info_title" class="chromeapp__info__title"></h2>
                     <div class="chromeapp__info__container">
                         <div class="chromeapp__info__item board">
+                            <svg class="icon-board"><use xlink:href="img/icons.svg#icon-board"></use></svg>
                             <h3 data-i18n="chromeapp_info_item_board_title" class="chromeapp__info__item__title"></h3>
                             <div data-i18n="chromeapp_info_item_board_value" class="chromeapp__info__item__value"></div>
                         </div>
                         <div class="chromeapp__info__item port">
+                            <svg class="icon-port"><use xlink:href="img/icons.svg#icon-port"></use></svg>
                             <h3 data-i18n="chromeapp_info_item_port_title" class="chromeapp__info__item__title"></h3>
                             <div data-i18n="chromeapp_info_item_port_value" class="chromeapp__info__item__value"></div>
                         </div>
@@ -45,17 +49,20 @@
 
             </content>
 
+            <footer class="button__test"></footer>
+
         </div>
         <!-- build:js js/main.min.js -->
         <script src="bower_components/jquery/dist/jquery.js"></script>
-        <script src="js/sizeof.js"></script>
-        <script src="js/logger.js"></script>
-        <script src="js/bitbloq-serial.js"></script>
-        <script src="js/bitbloq-program.js"></script>
-        <script src="js/bitbloq-comm.js"></script>
-        <script src="js/i18n.js"></script>
+        <script src="js/available_boards.js"></script>
+        <script src="js/lib/sizeof.js"></script>
+        <script src="js/lib/logger.js"></script>
+        <script src="js/lib/i18n.js"></script>
+        <script src="js/bitbloq_serial.js"></script>
+        <script src="js/bitbloq_program.js"></script>
+        <script src="js/bitbloq_comm.js"></script>
         <script src="js/init.js"></script>
-        <script src="js/initDev.js"></script>
+        <script src="js/init_dev.js"></script>
         <!-- endbuild -->
     </body>
 </html>

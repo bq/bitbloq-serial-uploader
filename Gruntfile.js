@@ -6,7 +6,7 @@ module.exports = function(grunt) {
 
     // Project configuration.
     grunt.initConfig({
-        // Metadata.
+        // Package config
         pkg: grunt.file.readJSON('package.json'),
         boardConfig: grunt.file.readJSON('src/board_list.json'),
         clean: {
@@ -46,14 +46,14 @@ module.exports = function(grunt) {
         concat: {
             dist_js: {
                 options: {
-                    footer: ';\nlogger.debugmode=0;document.addEventListener("DOMContentLoaded", function() {init();});',
-                    stripBanners: true,
+                    banner: 'if (!window.bitbloqSU) {window.bitbloqSU = {};}\n',
+                    footer: ';\n' + 'window.bitbloqSU.version = "<%= pkg.version %>";\nlogger.debugmode=0;\ndocument.addEventListener("DOMContentLoaded", function() {bitbloqSU.UI.init();});',
                     process: function(src, filepath) {
                         return '// Source: ' + filepath + '\n' + src.replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1');
                     }
                 },
                 files: [{
-                    src: ['src/js/*.js', 'src/bower_components/jquery/dist/*.js', '!src/js/initDev.js'],
+                    src: ['src/js/{,**/}*.js', 'src/bower_components/jquery/dist/jquery.js', '!src/js/init_dev.js'],
                     dest: 'tmp/js/main.js'
                 }]
             },
@@ -74,8 +74,8 @@ module.exports = function(grunt) {
             options: grunt.file.readJSON('.jshintrc'),
             src: {
                 src: [
-                    'src/**/*.js',
-                    '!src/bower_components/**/*.js'
+                    'src/{,**/}*.js',
+                    '!src/bower_components/jquery/{,**/}*.js'
                 ]
             }
         },
@@ -92,16 +92,26 @@ module.exports = function(grunt) {
         },
         usemin: {
             html: 'dist/index.html'
+        },
+        // make a zipfile
+        compress: {
+            main: {
+                options: {
+                    archive: 'dist/app_dist.zip'
+                },
+                files: [{
+                    expand: true,
+                    cwd: 'dist',
+                    src: ['**']
+                }]
+            }
         }
     });
 
     // Default task.
-    grunt.registerTask('default', [
-        'clean',
-        'build'
-    ]);
+    grunt.registerTask('default', ['dist']);
 
-    grunt.registerTask('build', [
+    grunt.registerTask('dist', [
         'clean',
         'jshint',
         'concat',
@@ -109,6 +119,7 @@ module.exports = function(grunt) {
         'uglify',
         'cssmin',
         'usemin',
+        'compress'
     ]);
 
 };

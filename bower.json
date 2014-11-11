@@ -1,19 +1,23 @@
 {
     "name": "bitbloq-serial-uploader",
     "description": "bitbloq serial uploader",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "main": "dist/roboblocks.js",
-    "keywords": "arduino bitbloq bq",
-    "author": {
-        "name": "bq"
-    },
+    "keywords": ["bq", "bitbloq", "zum", "arduino", "freaduino", "serial", "uploader", "robotics"],
+    "contributors": [{
+        "name": "Sergio Morcuende",
+        "email": "sergio.morcuende@bq.com"
+    }, {
+        "name": "Irene Sanz",
+        "email": "irene.sanz@bq.com"
+    }],
     "homepage": "https://bitbucket.org/mundoreader/bitbloq-arduino-serial-uploader.git",
     "repository": {
         "type": "git",
         "url": "https://bitbucket.org/mundoreader/bitbloq-arduino-serial-uploader.git"
     },
     "dependencies": {
-        "jquery": "2.1.1"
+        "jquery": "~2.1.1"
     },
     "devDependencies": {}
 }

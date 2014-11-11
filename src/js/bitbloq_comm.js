@@ -1,9 +1,11 @@
-'use strict';
-/* global bitbloqSerial, bitbloqProgram, logger, paintBoardInfo */
-
 /* *******************************************************
-bitbloqComm - Chrome Message Passing functionality
-********************************************************* */
+ * bitbloq Serial Uploader
+ * bitbloqComm - Chrome Message Passing functionality
+ ********************************************************* */
+
+'use strict';
+/* global bitbloqSU, logger */
+
 (function() {
 
     window.chrome.runtime.onConnectExternal.addListener(function(port) {
@@ -37,10 +39,10 @@ bitbloqComm - Chrome Message Passing functionality
 
             } else if (request.msg === 'board') {
 
-                bitbloqSerial.autoConfig().then(function() {
-                    paintBoardInfo();
+                bitbloqSU.Serial.autoConfig().then(function() {
+                    bitbloqSU.UI.paintBoardInfo();
                     responseMsg.msg = 'board.ready';
-                    responseMsg.params = bitbloqSerial.getCurrentBoard();
+                    responseMsg.params = bitbloqSU.Serial.getDeviceInfo();
                     respondent(responseMsg);
                 }, function() {
                     responseMsg.msg = 'board.notready';
@@ -50,30 +52,26 @@ bitbloqComm - Chrome Message Passing functionality
 
             } else if (request.msg === 'programming') {
 
-                bitbloqSerial.autoConfig().then(function() {
-                    paintBoardInfo();
-                    bitbloqProgram.load(request.params.code).then(function() {
-                        logger.info('bitbloqProgram.load finished');
+                bitbloqSU.Serial.autoConfig().then(function() {
+                    bitbloqSU.UI.paintBoardInfo();
+                    bitbloqSU.Program.load(request.params.code).then(function() {
                         responseMsg.msg = 'programming.ok';
                         respondent(responseMsg);
+                        logger.info('bitbloqSU.Program.load finished');
                     }).catch(function(e) {
                         logger.info(e);
                         responseMsg.msg = 'programming.ko';
                         respondent(responseMsg);
+                        logger.warn('bitbloqSU.Program.load failed');
                     });
 
                 }, function() {
                     responseMsg.msg = 'board.notready';
                     port.postMessage(responseMsg);
                     respondent(responseMsg);
-
-                    //@TODO
-                    //responseMsg.msg = 'programming.ko';
-                    //programming = false;
                 });
 
             }
-
 
         });
 

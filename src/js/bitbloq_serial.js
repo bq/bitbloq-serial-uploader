@@ -1,57 +1,36 @@
-'use strict';
-/* global logger, Promise */
-
 /* *******************************************************
-bitbloqSerial - Chrome.serial communication functionality
-********************************************************* */
+ * bitbloq Serial Uploader
+ * bitbloqSU.Serial - Chrome.serial communication functionality
+ ********************************************************* */
 
-var st = null;
-var SerialAPI = window.chrome.serial;
+'use strict';
+/* global logger, Promise, bitbloqSU*/
 
-var bitbloqSerial = (function() {
+bitbloqSU.Serial = (function() {
 
-    var currentBoard = null;
-    var currentPort = null;
-    var boardConnected = false;
-    var connectionId = -1;
+    bitbloqSU.SerialAPI = window.chrome.serial;
+    bitbloqSU.disconnectTimer = null;
 
-    var portsOnSystem = [];
-    //TODO Setting configuration on config file
-    var boardList = [{
-        id: 'Arduino_Uno',
-        name: 'Arduino Uno',
-        arch: 'arduino',
-        board: 'uno',
-        bitrate: 115200,
-        maxPageSize: 128,
-        delay_reset: 200,
-        delay_sendData: 150,
-        max_size: 32256
-    }, {
-        id: 'FT232R_USB_UART',
-        name: 'ZUM BT',
-        arch: 'arduino',
-        board: 'bt328',
-        bitrate: 19200,
-        maxPageSize: 128,
-        delay_reset: 200,
-        delay_sendData: 150,
-        max_size: 28672
-    }];
+    var deviceInfo = {
+        port: undefined,
+        connected: false,
+        connectionId: -1,
+        boardInfo: undefined
+    };
+
+    if (window.bitbloqSU.availableBoards) {
+        var _boardList = window.bitbloqSU.availableBoards;
+    } else {
+        throw 'Board configurations not available';
+    }
 
     var getDevicesList = function(callback) {
         try {
-            SerialAPI.getDevices(function(devices) {
-                portsOnSystem = devices;
-                for (var i = 0; i < portsOnSystem.length; i++) {
-                    var port = portsOnSystem[i];
-                    var boardInfo = {
-                        boardId: port.displayName
-                    };
-                    if (setConfig(boardInfo)) {
-                        currentPort = port.path;
-                        logger.info('Board detected -> ', currentBoard);
-                        logger.info('Board detected on port -> ', currentPort);
+            bitbloqSU.SerialAPI.getDevices(function(devices) {
+                for (var i = 0; i < devices.length; i++) {
+                    var info = devices[i];
+                    if (setDeviceInfo(info)) {
+                        logger.info('Board detected -> ', deviceInfo);
                         callback(true);
                         return true;
                     }
@@ -63,15 +42,33 @@ var bitbloqSerial = (function() {
         }
     };
 
-    var getCurrentBoard = function() {
-        return currentBoard;
+    var getDeviceInfo = function() {
+        return deviceInfo;
     };
-    var getCurrentPort = function() {
-        return currentPort;
+    var setDeviceInfo = function(config) {
+        if (!config) {
+            deviceInfo.port = undefined;
+            deviceInfo.connected = false;
+            deviceInfo.connectionId = -1;
+            deviceInfo.boardInfo = null;
+            return false;
+        }
+        for (var i = 0; i < _boardList.length; i++) {
+            var item = _boardList[i];
+            if (item.id === config.boardId) {
+                deviceInfo.boardInfo = item;
+                deviceInfo.port = config.port;
+                deviceInfo.connected = true;
+                deviceInfo.connectionId = config.connectionId;
+                return true;
+            }
+        }
+        return false;
     };
+
     var getConnections = function() {
         return new Promise(function(resolve) {
-            SerialAPI.getConnections(function(connections) {
+            bitbloqSU.SerialAPI.getConnections(function(connections) {
                 resolve(connections);
             });
         });
@@ -79,12 +76,12 @@ var bitbloqSerial = (function() {
 
     var disconnect = function() {
 
-        bitbloqSerial.getConnections().then(function(connections) {
+        getConnections().then(function(connections) {
             if (connections.length > 0) {
-                SerialAPI.disconnect(connectionId, function() {
+                bitbloqSU.SerialAPI.disconnect(deviceInfo.connectionId, function() {
+                    deviceInfo.connectionId = -1;
+                    deviceInfo.connected = false;
                     logger.info('Port disconnected!');
-                    connectionId = -1;
-                    boardConnected = false;
                 }); // Close port
             }
         });
@@ -94,41 +91,42 @@ var bitbloqSerial = (function() {
     var connect = function() {
 
         //Disconnect before 10 seconds by safety
-        if (!st) {
-            st = setTimeout(function() {
-                bitbloqSerial.disconnect();
-                clearTimeout(st);
-                st = null;
+        if (!bitbloqSU.disconnectTimer) {
+            bitbloqSU.disconnectTimer = setTimeout(function() {
+                bitbloqSU.Serial.disconnect();
+                clearTimeout(bitbloqSU.disconnectTimer);
+                bitbloqSU.disconnectTimer = null;
             }, 10000);
         }
 
         return new Promise(function(resolve, reject) {
 
-            if (!boardConnected) {
+            if (!deviceInfo.connected) {
                 try {
                     logger.info('Connecting to board...');
-                    SerialAPI.connect(currentPort, {
-                        bitrate: currentBoard.bitrate,
+                    bitbloqSU.SerialAPI.connect(deviceInfo.port, {
+                        bitrate: deviceInfo.boardInfo.bitrate,
                         sendTimeout: 2000,
                         receiveTimeout: 2000,
                         //ctsFlowControl: true,
                         name: 'bitbloqSerialConnection'
                     }, function(info) {
                         if (info.connectionId !== -1) {
-                            connectionId = info.connectionId;
-                            boardConnected = true;
+                            deviceInfo.connectionId = info.connectionId;
+                            deviceInfo.connected = true;
                             logger.info('Connection board TEST', 'OK', info);
                             resolve();
                         } else {
-                            boardConnected = false;
-                            connectionId = -1;
+                            deviceInfo.connected = false;
+                            deviceInfo.connectionId = -1;
                             logger.error('Connection board TEST', 'KO');
                             reject();
                         }
                     });
                 } catch (e) {
-                    connectionId = -1;
-                    boardConnected = false;
+                    deviceInfo.connectionId = -1;
+                    deviceInfo.connected = false;
+                    deviceInfo.boardInfo = null;
                     logger.error('Connection board TEST', 'KO');
                     reject(e);
                 }
@@ -148,39 +146,22 @@ var bitbloqSerial = (function() {
             getDevicesList(function(statusOk) {
 
                 if (statusOk) {
-
                     connect().then(function() {
                         resolve();
                     }).catch(function() {
-                        connectionId = -1;
-                        boardConnected = false;
-                        currentBoard = null;
+                        setDeviceInfo(null);
                         reject();
                     });
-
                 }
 
-                if (!currentPort || !statusOk) {
-                    connectionId = -1;
-                    boardConnected = false;
-                    currentBoard = null;
+                if (!deviceInfo.port || !statusOk) {
+                    setDeviceInfo(null);
                     reject();
-                    logger.error('currentPort is not defined');
+                    logger.error('None board detected!');
                 }
 
             });
         });
-    };
-
-    var setConfig = function(config) {
-        for (var i = 0; i < boardList.length; i++) {
-            var item = boardList[i];
-            if (item.id === config.boardId) {
-                currentBoard = item;
-                return true;
-            }
-        }
-        return false;
     };
 
     /*
@@ -191,34 +172,42 @@ var bitbloqSerial = (function() {
      */
     var setControlSignals = function(infoObject) {
         return new Promise(function(resolve) {
-            SerialAPI.setControlSignals(connectionId, infoObject, function() {
+            bitbloqSU.SerialAPI.setControlSignals(deviceInfo.connectionId, infoObject, function() {
                 setTimeout(function() {
                     resolve();
-                }, bitbloqSerial.getCurrentBoard().delay_reset);
+                }, bitbloqSU.Serial.getDeviceInfo().boardInfo.delay_reset);
             });
         });
     };
 
     var sendData = function(data) {
-
         return new Promise(function(resolve) {
-
             logger.info('Chrome is writing on board...');
-            if (boardConnected) {
-
-                SerialAPI.send(connectionId, data, function(sendInfo) {
+            if (deviceInfo.connected) {
+                bitbloqSU.SerialAPI.send(deviceInfo.connectionId, data, function(sendInfo) {
                     logger.info('sendInfo', sendInfo);
                     setTimeout(function() {
                         resolve();
                     }, 100);
                 });
-
             } else {
                 logger.error('sendData error');
             }
         });
     };
 
+    return {
+        setControlSignals: setControlSignals,
+        autoConfig: autoConfig,
+        getDeviceInfo: getDeviceInfo,
+        sendData: sendData,
+        connect: connect,
+        disconnect: disconnect
+    };
+
+
+    //@TODO REFACTOR SENDING DATA
+    //
     //var bitbloqSerialEvent;
     // var addChromeSerialListeners = function() {
 
@@ -228,10 +217,6 @@ var bitbloqSerial = (function() {
     //     } catch (e) {
     //         logger.info('UNABLE ADD CHROME.SERIAL LISTENERS', e);
     //     }
-    // };
-
-    // var deleteChromeSerialListeners = function() {
-    //     // body...
     // };
 
     //var onReceiveCallbackPromise = new Promise(function() {});
@@ -286,19 +271,5 @@ var bitbloqSerial = (function() {
     // var onReceiveErrorCallback = function(e) {
     //     logger.error('SerialAPI.onReceiveError', e);
     // };
-
-    return {
-        getDevicesList: getDevicesList,
-        setConfig: setConfig,
-        setControlSignals: setControlSignals,
-        autoConfig: autoConfig,
-        getCurrentBoard: getCurrentBoard,
-        getCurrentPort: getCurrentPort,
-        getConnections: getConnections,
-        portsOnSystem: portsOnSystem,
-        sendData: sendData,
-        connect: connect,
-        disconnect: disconnect
-    };
 
 })();

@@ -1,3 +1,8 @@
+/* *******************************************************
+ * bitbloq Serial Uploader
+ * Chrome App Launcher
+ ********************************************************* */
+
 'use strict';
 
 var createCustomWin = function(params) {

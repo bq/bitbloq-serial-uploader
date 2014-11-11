@@ -1,2 +1,2 @@
 
-# Bitbloq Serial Uploader
+# bitbloq Serial Uploader

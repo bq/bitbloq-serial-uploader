@@ -1,9 +1,14 @@
+/* *******************************************************
+ * bitbloq Serial Uploader
+ * bitbloqSU.Program - Programming functionality
+ ********************************************************* */
+
 'use strict';
-/* global sizeof, bitbloqSerial, logger, Promise */
-/* exported bitbloqProgram */
+/* global sizeof, bitbloqSU, logger, Promise */
+/* exported bitbloqSU */
 
 /* Board management functions */
-var bitbloqProgram = (function() {
+bitbloqSU.Program = (function() {
 
     var lineBuffer = 0;
     var progmodeflag = true;
@@ -77,14 +82,14 @@ var bitbloqProgram = (function() {
         //load commands
         var command = load_hex(hex);
         //Number of memory pages for current program that is needed
-        var page_number = Math.ceil(command.length / (bitbloqSerial.getCurrentBoard().maxPageSize));
+        var page_number = Math.ceil(command.length / (bitbloqSU.Serial.getDeviceInfo().maxPageSize));
         logger.info({
             'Total page number': page_number
         });
         var i = 0;
         trimmed_commands = [];
         while (trimmed_commands.length < page_number) {
-            trimmed_commands.push(command.slice(bitbloqSerial.getCurrentBoard().maxPageSize * i, (bitbloqSerial.getCurrentBoard().maxPageSize) * (i + 1)));
+            trimmed_commands.push(command.slice(bitbloqSU.Serial.getDeviceInfo().maxPageSize * i, (bitbloqSU.Serial.getDeviceInfo().maxPageSize) * (i + 1)));
             i += 1;
         }
 
@@ -124,9 +129,9 @@ var bitbloqProgram = (function() {
                 rts: false
             };
 
-            bitbloqSerial.setControlSignals(signalControlOn).then(function() {
+            bitbloqSU.Serial.setControlSignals(signalControlOn).then(function() {
                 logger.warn('DTR-RTS ON');
-                return bitbloqSerial.setControlSignals(signalControlOff);
+                return bitbloqSU.Serial.setControlSignals(signalControlOff);
             }).then(function() {
                 logger.warn('DTR-RTS OFF');
                 resolve();
@@ -144,7 +149,7 @@ var bitbloqProgram = (function() {
             buffer[0] = STK500.STK_ENTER_PROGMODE;
             buffer[1] = STK500.CRC_EOP;
 
-            bitbloqSerial.sendData(buffer.buffer).then(function() {
+            bitbloqSU.Serial.sendData(buffer.buffer).then(function() {
                 resolve();
             });
 
@@ -167,13 +172,13 @@ var bitbloqProgram = (function() {
                 'command': load_address
             });
 
-            bitbloqSerial.sendData(load_address.buffer).then(function() {
+            bitbloqSU.Serial.sendData(load_address.buffer).then(function() {
                 resolve(address);
             });
 
 
-            // return Promise.all([resolve(address), bitbloqSerial.onReceiveCallbackPromise]).then(function() {
-            //     bitbloqSerial.onReceiveCallbackPromise = new Promise();
+            // return Promise.all([resolve(address), bitbloqSU.Serial.onReceiveCallbackPromise]).then(function() {
+            //     bitbloqSU.Serial.onReceiveCallbackPromise = new Promise();
             //     resolve(address);
             // });
 
@@ -204,12 +209,12 @@ var bitbloqProgram = (function() {
                 buffer[i] = trimmed_commands[it][i];
             }
 
-            bitbloqSerial.sendData(buffer.buffer).then(function() {
+            bitbloqSU.Serial.sendData(buffer.buffer).then(function() {
                 resolve();
             });
 
-            // return Promise.all([sendDataPromise, bitbloqSerial.onReceiveCallbackPromise]).then(function() {
-            //     bitbloqSerial.onReceiveCallbackPromise = new Promise();
+            // return Promise.all([sendDataPromise, bitbloqSU.Serial.onReceiveCallbackPromise]).then(function() {
+            //     bitbloqSU.Serial.onReceiveCallbackPromise = new Promise();
             //     resolve();
             // });
 
@@ -225,7 +230,7 @@ var bitbloqProgram = (function() {
             leaveProgmodeValue[0] = STK500.STK_LEAVE_PROGMODE;
             leaveProgmodeValue[1] = STK500.CRC_EOP;
 
-            bitbloqSerial.sendData(leaveProgmodeValue.buffer).then(function() {
+            bitbloqSU.Serial.sendData(leaveProgmodeValue.buffer).then(function() {
                 logger.info('leave_progmode finished');
                 resolve();
             });
@@ -275,9 +280,9 @@ var bitbloqProgram = (function() {
 
             var numberOfCurrentProgramPages = transform_data(code);
 
-            logger.info('Program size: ', sizeof(trimmed_commands), '. Max size available in the board: ', bitbloqSerial.getCurrentBoard().max_size);
+            logger.info('Program size: ', sizeof(trimmed_commands), '. Max size available in the board: ', bitbloqSU.Serial.getDeviceInfo().max_size);
 
-            if (sizeof(trimmed_commands) < bitbloqSerial.getCurrentBoard().max_size) {
+            if (sizeof(trimmed_commands) < bitbloqSU.Serial.getDeviceInfo().max_size) {
 
                 //TODO The promise must be resolve here
                 resetBoard().then(function() {
@@ -297,7 +302,7 @@ var bitbloqProgram = (function() {
                 }).then(function() {
                     return resetBoard();
                 }).then(function() {
-                    bitbloqSerial.disconnect();
+                    bitbloqSU.Serial.disconnect();
                     resolve();
                 }).catch(function() {
                     logger.error('program flow error ', arguments);

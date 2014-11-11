@@ -1,10 +1,10 @@
 {
     "chromeapp_title": {
-        "message": "Serial Sketch Uploader para bitbloq",
+        "message": "Serial Uploader para bitbloq",
         "description": ""
     },
     "chromeapp_info_title": {
-        "message": "Serial Sketch Uploader",
+        "message": "Serial Uploader",
         "description": ""
     },
     "chromeapp_info_item_board_title": {
