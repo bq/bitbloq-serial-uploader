@@ -47,6 +47,7 @@ bitbloqSU.UI = (function() {
 
     var init = function() {
         addDOMListeners();
+        bitbloqSU.Serial.init();
         bitbloqSU.Serial.autoConfig().then(function() {
             bitbloqSU.UI.paintBoardInfo();
             bitbloqSU.Serial.disconnect();

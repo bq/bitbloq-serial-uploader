@@ -15,7 +15,7 @@ function paintAutoConfigButton() {
             logger.log(e);
             bitbloqSU.Serial.disconnect();
         });
-    })
+    });
 
 }
 

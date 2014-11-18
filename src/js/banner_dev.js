@@ -1,3 +1,3 @@
 if (!window.bitbloqSU) {
-    window.bitbloqSU = {}
+    window.bitbloqSU = {};
 }

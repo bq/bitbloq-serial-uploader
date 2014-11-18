@@ -8,6 +8,8 @@
 var createCustomWin = function(params) {
     var appList = window.chrome.app.window.getAll();
     var currentWin = null;
+    var WIDTH = 400,
+        HEIGHT = 300;
     console.log(appList);
     for (var i = 0; i < appList.length; i++) {
         console.log('appInfo', appList[i]);
@@ -23,8 +25,8 @@ var createCustomWin = function(params) {
         resizable: false,
         hidden: false,
         outerBounds: {
-            width: 300,
-            height: 180,
+            width: WIDTH,
+            height: HEIGHT,
             left: 0,
             top: 0
         }
@@ -38,7 +40,7 @@ var createCustomWin = function(params) {
 
     if (!currentWin) {
         currentWin = window.chrome.app.window.get('bitbloqSSU');
-        currentWin.resizeTo(400, 300);
+        currentWin.resizeTo(WIDTH, HEIGHT);
         currentWin.onClosed.addListener(function(data) {
             window.console.warn('bitbloqSSU closed', data);
             createCustomWin({

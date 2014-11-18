@@ -249,16 +249,23 @@ bitbloqSU.Program = (function() {
         });
     }
 
-    function writePage(address) {
-        return load_address(address).then(function(address) {
-            return program_page(address);
-        });
-    }
+    // function writePage(address) {
+    //     return load_address(address);
+    // }
 
     function addWriteStep(promise, it) {
-        return promise.then(function() {
-            return writePage(it);
-        });
+        if (!promise) {
+            return load_address(it).then(function(address) {
+                return program_page(address);
+            });
+        } else {
+
+            return promise.then(function() {
+                return load_address(it).then(function(address) {
+                    return program_page(address);
+                });
+            });
+        }
     }
 
 
@@ -274,7 +281,7 @@ bitbloqSU.Program = (function() {
         lineBuffer = 0;
         progmodeflag = true;
 
-        var p;
+        var p = undefined;
 
         return new Promise(function(resolve, reject) {
 
@@ -289,13 +296,10 @@ bitbloqSU.Program = (function() {
                     logger.info('enter_progmode');
                     return enter_progmode();
                 }).then(function() {
-
-                    p = writePage(0);
-                    for (var i = 1; i < numberOfCurrentProgramPages; i++) {
+                    for (var i = 0; i < numberOfCurrentProgramPages; i++) {
                         p = addWriteStep(p, i);
                     }
                     return p;
-
                 }).then(function() {
                     logger.info('leave_progmode');
                     return leave_progmode();
