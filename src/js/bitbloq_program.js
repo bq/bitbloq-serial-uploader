@@ -152,10 +152,7 @@ bitbloqSU.Program = (function() {
             bitbloqSU.Serial.sendData(load_address.buffer).then(function() {
                 resolve(address);
             });
-            // return Promise.all([resolve(address), bitbloqSU.Serial.onReceiveCallbackPromise]).then(function() {
-            //     bitbloqSU.Serial.onReceiveCallbackPromise = new Promise();
-            //     resolve(address);
-            // });
+
         });
     }
     // Create the command structure needed to program the current memory page
@@ -178,15 +175,12 @@ bitbloqSU.Program = (function() {
                 buffer[i] = trimmed_commands[it][i];
             }
             if (!buffer.buffer.byteLength) {
-                console.error('bitbloqProgram.buffer.empty');
+                logger.error('bitbloqProgram.buffer.empty');
             }
             bitbloqSU.Serial.sendData(buffer.buffer).then(function() {
                 resolve();
             });
-            // return Promise.all([sendDataPromise, bitbloqSU.Serial.onReceiveCallbackPromise]).then(function() {
-            //     bitbloqSU.Serial.onReceiveCallbackPromise = new Promise();
-            //     resolve();
-            // });
+
         });
     }
     // Send the commands to leave the programming mode
@@ -210,9 +204,7 @@ bitbloqSU.Program = (function() {
             return changeSignals();
         });
     }
-    // function writePage(address) {
-    //     return load_address(address);
-    // }
+
     function addWriteStep(promise, it) {
         if (!promise) {
             return load_address(it).then(function(address) {
@@ -241,7 +233,7 @@ bitbloqSU.Program = (function() {
             var numberOfCurrentProgramPages = transform_data(code);
             logger.info('Program size: ', sizeof(trimmed_commands), '. Max size available in the board: ', bitbloqSU.Serial.getDeviceInfo().boardInfo.max_size);
             if (sizeof(trimmed_commands) < bitbloqSU.Serial.getDeviceInfo().boardInfo.max_size) {
-                //TODO The promise must be resolve here
+
                 resetBoard().then(function() {
                     logger.info('enter_progmode');
                     return enter_progmode();
@@ -259,10 +251,11 @@ bitbloqSU.Program = (function() {
                     bitbloqSU.Serial.disconnect();
                     resolve();
                 }).
-                catch (function() {
+                catch(function() {
                     logger.error('program flow error ', arguments);
-                     disconnectTimerFunc(1000);
+                    disconnectTimerFunc(1000);
                 });
+
             } else {
                 reject();
                 logger.info('ERROR: program larger than available memory');
