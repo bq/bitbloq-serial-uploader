@@ -261,12 +261,12 @@ bitbloqSU.Program = (function() {
                 }).
                 catch (function() {
                     logger.error('program flow error ', arguments);
-                     disconnectTimerFunc(10000);
+                     disconnectTimerFunc(1000);
                 });
             } else {
                 reject();
                 logger.info('ERROR: program larger than available memory');
-                disconnectTimerFunc(10000);
+                disconnectTimerFunc(1000);
             }
         });
     };

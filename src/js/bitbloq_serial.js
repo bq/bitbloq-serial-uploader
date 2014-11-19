@@ -78,6 +78,7 @@ bitbloqSU.Serial = (function() {
         });
         bitbloqSU.SerialAPI.onReceiveError.addListener(function(event) {
             logger.error(event);
+            disconnectTimerFunc(1000);
         });
     };
     var getDevicesList = function(callback) {
@@ -181,12 +182,15 @@ bitbloqSU.Serial = (function() {
     };
     var disconnectTimerFunc = function(time) {
         //Disconnect before 10 seconds by safety
+        logger.warn({
+            'Disconnecting board in [ms] ': time
+        })
         if (!bitbloqSU.disconnectTimer) {
             bitbloqSU.disconnectTimer = setTimeout(function() {
                 bitbloqSU.Serial.disconnect();
                 clearTimeout(bitbloqSU.disconnectTimer);
                 bitbloqSU.disconnectTimer = null;
-            }, 20000);
+            }, time);
         }
     };
     var autoConfig = function() {
