@@ -2,7 +2,7 @@
     "name": "bitbloq-serial-uploader",
     "description": "bitbloq serial uploader",
     "version": "0.1.2",
-    "main": "dist/roboblocks.js",
+    "main": "dist/launch.js",
     "keywords": [
         "bq",
         "bitbloq",

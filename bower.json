@@ -1,8 +1,8 @@
 {
     "name": "bitbloq-serial-uploader",
     "description": "bitbloq serial uploader",
-    "version": "0.1.1",
-    "main": "dist/roboblocks.js",
+    "version": "0.1.2",
+    "main": "dist/launch.js",
     "keywords": ["bq", "bitbloq", "zum", "arduino", "freaduino", "serial", "uploader", "robotics"],
     "contributors": [{
         "name": "Sergio Morcuende",

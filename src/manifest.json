@@ -9,7 +9,7 @@
         "name": "Irene Sanz",
         "email": "irene.sanz@bq.com"
     }],
-    "version": "0.1.1",
+    "version": "0.1.2",
     "manifest_version": 2,
     "minimum_chrome_version": "23",
     "default_locale": "es",
@@ -24,7 +24,7 @@
         "128": "img/icon_128.png"
     },
     "externally_connectable": {
-        "matches": ["http://bitbloq.bq.com/*", "http://bitbloq.es/*", "http://localhost:9000/*", "http://int-bitbloq.com.s3-website-eu-west-1.amazonaws.com/*", "http://qa-bitbloq.com.s3-website-eu-west-1.amazonaws.com/*"]
+        "matches": ["http://localhost:9000/*", "http://bitbloq.bq.com/*", "http://www.bitbloq.es/*", "http://bitbloq.es/*", "http://bitbloq.org/*", "http://www.bitbloq.org/*", "http://int-bitbloq.com.s3-website-eu-west-1.amazonaws.com/*", "http://qa-bitbloq.com.s3-website-eu-west-1.amazonaws.com/*", "http://next-bitbloq.com.s3-website-eu-west-1.amazonaws.com/*", "http://staging-bitbloq.com.s3-website-eu-west-1.amazonaws.com/*", "http://prod-bitbloq.com.s3-website-eu-west-1.amazonaws.com/*"]
     },
     "offline_enabled": true
 
