@@ -228,7 +228,7 @@ bitbloqSU.Program = (function() {
     var load = function(code) {
         lineBuffer = 0;
         progmodeflag = true;
-        var p = undefined;
+        var p;
         return new Promise(function(resolve, reject) {
             var numberOfCurrentProgramPages = transform_data(code);
             logger.info('Program size: ', sizeof(trimmed_commands), '. Max size available in the board: ', bitbloqSU.Serial.getDeviceInfo().boardInfo.max_size);
@@ -253,13 +253,13 @@ bitbloqSU.Program = (function() {
                 }).
                 catch(function() {
                     logger.error('program flow error ', arguments);
-                    disconnectTimerFunc(1000);
+                    bitbloqSU.Serial.disconnectTimerFunc(1000);
                 });
 
             } else {
                 reject();
                 logger.info('ERROR: program larger than available memory');
-                disconnectTimerFunc(1000);
+                bitbloqSU.Serial.disconnectTimerFunc(1000);
             }
         });
     };

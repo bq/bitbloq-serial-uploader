@@ -8,7 +8,6 @@ module.exports = function(grunt) {
     grunt.initConfig({
         // Package config
         pkg: grunt.file.readJSON('package.json'),
-        boardConfig: grunt.file.readJSON('src/board_list.json'),
         clean: {
             tmp: ['tmp'],
             dist: ['dist']
