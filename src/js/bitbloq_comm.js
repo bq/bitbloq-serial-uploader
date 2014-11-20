@@ -4,7 +4,7 @@
  ********************************************************* */
 
 'use strict';
-/* global bitbloqSU, logger */
+/* global bitbloqSU, logger, $*/
 
 (function() {
 
@@ -41,6 +41,7 @@
                 respondent(responseMsg);
 
             } else if (request.msg === 'board') {
+
                 boardName = $('#board-picker').val(),
                 portName = $('#port-picker').val();
 
