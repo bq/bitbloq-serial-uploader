@@ -69,6 +69,7 @@ bitbloqSU.Program = (function() {
         var command = load_hex(hex);
         //Number of memory pages for current program that is needed
         var page_number = Math.ceil(command.length / (bitbloqSU.Serial.getDeviceInfo().boardInfo.maxPageSize));
+        logger.info(command.length);
         logger.info({
             'Total page number': page_number
         });

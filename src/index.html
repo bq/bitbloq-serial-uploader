@@ -37,12 +37,22 @@
                         <div class="chromeapp__info__item board">
                             <svg class="icon-board"><use xlink:href="img/icons.svg#icon-board"></use></svg>
                             <h3 data-i18n="chromeapp_info_item_board_title" class="chromeapp__info__item__title"></h3>
-                            <div data-i18n="chromeapp_info_item_board_value" class="chromeapp__info__item__value"></div>
+                            <br />
+                            <select id="board-picker" name="board-picker">
+                                <option value="" data-i18n="chromeapp_info_item_board_value" disabled selected></option>
+                                 <option value="Arduino_Uno" >Arduino Uno</option>
+                                  <option value="FT232R_USB_UART">bq ZUM</option>
+                            </select>
+                            <!-- <div data-i18n="chromeapp_info_item_board_value" class="chromeapp__info__item__value"></div> -->
                         </div>
                         <div class="chromeapp__info__item port">
                             <svg class="icon-port"><use xlink:href="img/icons.svg#icon-port"></use></svg>
                             <h3 data-i18n="chromeapp_info_item_port_title" class="chromeapp__info__item__title"></h3>
-                            <div data-i18n="chromeapp_info_item_port_value" class="chromeapp__info__item__value"></div>
+                            <br />
+                            <select id="port-picker" name="port-picker">
+                                <option value="" data-i18n="chromeapp_info_item_port_value" disabled selected="selected"></option>
+                            </select>
+                            <!-- <div data-i18n="chromeapp_info_item_port_value" class="chromeapp__info__item__value"></div> -->
                         </div>
                     </div>
                 </div>

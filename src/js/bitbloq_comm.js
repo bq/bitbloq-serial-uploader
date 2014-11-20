@@ -33,11 +33,20 @@
             if (request.msg === 'connect') {
 
                 responseMsg.msg = 'connect.ready';
+                responseMsg.params = bitbloqSU.SerialAPI.getDevices(function(devs) {
+                    return devs;
+                });
                 respondent(responseMsg);
 
             } else if (request.msg === 'board') {
+                var boardName = null,
+                    portName = null;
+                if (request.params) {
+                    boardName = request.params.board;
+                    portName = request.params.port;
+                }
 
-                bitbloqSU.Serial.autoConfig().then(function() {
+                bitbloqSU.Serial.autoConfig(boardName, portName).then(function() {
                     bitbloqSU.UI.paintBoardInfo();
                     responseMsg.msg = 'board.ready';
                     responseMsg.params = bitbloqSU.Serial.getDeviceInfo();
@@ -52,7 +61,7 @@
 
             } else if (request.msg === 'programming') {
 
-                bitbloqSU.Serial.autoConfig().then(function() {
+                bitbloqSU.Serial.autoConfig(request.params.boardName, request.params.portName).then(function() {
                     bitbloqSU.UI.paintBoardInfo();
                     bitbloqSU.Program.load(request.params.code).then(function() {
                         responseMsg.msg = 'programming.ok';
