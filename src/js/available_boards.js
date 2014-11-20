@@ -28,7 +28,7 @@ window.bitbloqSU.availableBoards = [
         board: 'bt328',
         bitrate: 19200,
         maxPageSize: 128,
-        delay_reset: 200,
+        delay_reset: 100,
         max_size: 28672
     }
 ];

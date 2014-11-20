@@ -9,6 +9,7 @@ bitbloqSU.Serial = (function() {
     bitbloqSU.SerialAPI = window.chrome.serial;
     bitbloqSU.disconnectTimer = null;
     bitbloqSU.lineBuffer = 0;
+
     var deviceInfo = {
         port: undefined,
         connected: false,
@@ -89,6 +90,7 @@ bitbloqSU.Serial = (function() {
     var getDevicesList = function(boardName, port, callback) {
         try {
             bitbloqSU.SerialAPI.getDevices(function(devices) {
+
                 for (var i = 0; i < devices.length; i++) {
                     var info = devices[i];
                     if (!info.displayName && boardName && port) {
@@ -212,11 +214,11 @@ bitbloqSU.Serial = (function() {
         return new Promise(function(resolve, reject) {
             logger.info('Detecting boards....');
             getDevicesList(boardName, port, function(statusOk) {
+
                 if (statusOk) {
                     connect().then(function() {
                         resolve();
-                    }).
-                    catch (function() {
+                    }).catch(function() {
                         setDeviceInfo(null);
                         reject();
                     });
@@ -273,7 +275,7 @@ bitbloqSU.Serial = (function() {
                     onReceivePromise.then(function() {
                         resolveSendData();
                     }).
-                    catch (function() {
+                    catch(function() {
                         rejectSendData();
                     });
                 });

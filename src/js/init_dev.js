@@ -9,8 +9,12 @@ function paintAutoConfigButton() {
     $('.button__autoconfig').on('click', function() {
         bitbloqSU.Serial.autoConfig().then(function() {
             bitbloqSU.UI.paintBoardInfo();
+            bitbloqSU.UI.paintPortInfo();
             bitbloqSU.Serial.disconnect();
         }, function(e) {
+
+            bitbloqSU.UI.buildPortPicker();
+
             logger.log('autoconfig rejected');
             logger.log(e);
             bitbloqSU.Serial.disconnect();

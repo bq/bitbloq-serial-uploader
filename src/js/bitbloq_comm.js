@@ -30,6 +30,8 @@
                 params: null
             };
 
+            var boardName, portName;
+
             if (request.msg === 'connect') {
 
                 responseMsg.msg = 'connect.ready';
@@ -39,9 +41,8 @@
                 respondent(responseMsg);
 
             } else if (request.msg === 'board') {
-                var boardName = $('#board-picker').val(),
-                    portName = $('#port-picker').val();
-
+                boardName = $('#board-picker').val(),
+                portName = $('#port-picker').val();
 
                 bitbloqSU.Serial.autoConfig(boardName, portName).then(function() {
                     bitbloqSU.UI.paintBoardInfo();
@@ -58,7 +59,11 @@
 
             } else if (request.msg === 'programming') {
 
-                bitbloqSU.Serial.autoConfig($('#board-picker').val(), $('#port-picker').val()).then(function() {
+                boardName = $('#board-picker').val(),
+                portName = $('#port-picker').val();
+
+                bitbloqSU.Serial.autoConfig(boardName, portName).then(function() {
+
                     bitbloqSU.UI.paintBoardInfo();
                     bitbloqSU.Program.load(request.params.code).then(function() {
                         responseMsg.msg = 'programming.ok';
