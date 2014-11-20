@@ -124,7 +124,7 @@ bitbloqSU.Serial = (function() {
 
         if (!info || !info.displayName) {
             deviceInfo.port = undefined;
-            deviceInfo.connected = false;
+            deviceInfo.connected = true;
             deviceInfo.connectionId = -1;
             deviceInfo.boardInfo = null;
             return false;
@@ -227,9 +227,10 @@ bitbloqSU.Serial = (function() {
                         reject();
                     });
                 }
-                if (!deviceInfo.port || !statusOk) {
+
+                if (!deviceInfo.port || !statusOk && !boardName && !port) {
                     setDeviceInfo(null);
-                    reject();
+                    resolve();
                     logger.error('None board detected!');
                 }
             });
