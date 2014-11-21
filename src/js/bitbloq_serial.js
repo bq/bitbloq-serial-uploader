@@ -25,7 +25,6 @@ bitbloqSU.Serial = (function() {
         return function(evt) {
             logger.info('bitbloqSU.callback');
             var str;
-
             if (evt.data.byteLength === 2) {
                 str = String.fromCharCode.apply(null, new Uint16Array(evt.data));
             } else {
@@ -86,19 +85,16 @@ bitbloqSU.Serial = (function() {
             logger.error(evt);
             disconnectTimerFunc(1000);
         });
-
     };
     var getDevicesList = function(boardName, port, callback) {
         try {
             bitbloqSU.SerialAPI.getDevices(function(devices) {
                 for (var i = 0; i < devices.length; i++) {
                     var info = devices[i];
-
                     if (!info.displayName && boardName && port) {
                         info.displayName = boardName;
                         info.path = port;
                     }
-
                     if (setDeviceInfo(info)) {
                         logger.info('Board detected -> ', deviceInfo);
                         callback(true);
@@ -121,7 +117,6 @@ bitbloqSU.Serial = (function() {
         deviceInfo.board = board;
     };
     var setDeviceInfo = function(info) {
-
         if (!info || !info.displayName) {
             deviceInfo.port = undefined;
             deviceInfo.connected = true;
@@ -129,7 +124,6 @@ bitbloqSU.Serial = (function() {
             deviceInfo.boardInfo = null;
             return false;
         }
-
         for (var i = 0; i < _boardList.length; i++) {
             var item = _boardList[i];
             if (item.id === info.displayName) {
@@ -222,12 +216,20 @@ bitbloqSU.Serial = (function() {
                     connect().then(function() {
                         resolve();
                     }).
-                    catch(function() {
+                    catch (function() {
                         setDeviceInfo(null);
                         reject();
                     });
+                } else {
+                    if (!bitbloqSU.disconnectTimer) {
+                        bitbloqSU.disconnectTimer = setTimeout(function() {
+                            reject();
+                            // bitbloqSU.Serial.disconnect();
+                            clearTimeout(bitbloqSU.disconnectTimer);
+                            bitbloqSU.disconnectTimer = null;
+                        }, 3000);
+                    }
                 }
-
                 if (!deviceInfo.port || !statusOk && !boardName && !port) {
                     setDeviceInfo(null);
                     resolve();
@@ -251,12 +253,10 @@ bitbloqSU.Serial = (function() {
             });
         });
     };
-
     var sendData = function(data) {
         logger.info({
             'bitbloqSU.sendData': data
         });
-
         return new Promise(function(resolveSendData, rejectSendData) {
             logger.info('Chrome is writing on board...');
             logger.info({
@@ -266,14 +266,14 @@ bitbloqSU.Serial = (function() {
                 var onReceivePromise = new Promise(function(resolveOnReceive) {
                     bitbloqSU.Serial.addReceiveDataListener(defaultOnReceiveDataCallback(resolveOnReceive));
                 });
-
                 bitbloqSU.SerialAPI.send(deviceInfo.connectionId, data, function(sendInfo) {
                     logger.info({
                         'sendInfo': sendInfo
                     });
                     onReceivePromise.then(function() {
                         resolveSendData();
-                    }).catch(function() {
+                    }).
+                    catch (function() {
                         rejectSendData();
                     });
                 });
@@ -298,5 +298,4 @@ bitbloqSU.Serial = (function() {
         removeReceiveDataListener: removeReceiveDataListener,
         disconnectTimerFunc: disconnectTimerFunc
     };
-
 })();

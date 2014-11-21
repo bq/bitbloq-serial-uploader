@@ -68,3 +68,9 @@ window.chrome.app.runtime.onRestarted.addListener(function(data) {
     window.console.log('onRestarted event', data);
     createCustomWin();
 });
+
+
+window.chrome.runtime.onUpdateAvailable.addListener(function (data){
+    window.console.log('onUpdateAvailable event', data);
+    window.chrome.runtime.reload()
+})

@@ -177,3 +177,9 @@
     bottom: 3em;
     right: 1em;
 }
+
+.button__reset{
+    position: absolute;
+    bottom: 8em;
+    right: 9em;
+}
