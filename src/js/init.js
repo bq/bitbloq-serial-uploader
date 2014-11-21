@@ -69,6 +69,10 @@ bitbloqSU.UI = (function() {
         $('body').on('contextmenu', function() {
             return false;
         });
+        $('.title-bar__icon').on('click', function() {
+            chrome.runtime.reload();
+        });
+
         $('#icon-minimize').on('click', function(event) {
             event.preventDefault();
             appWindow.minimize();
@@ -87,9 +91,7 @@ bitbloqSU.UI = (function() {
             appWindow.close();
         });
     }
-    document.querySelector('button').addEventListener('click', function() {
-        chrome.runtime.reload();
-    });
+
     var init = function() {
         addDOMListeners();
         bitbloqSU.Serial.init();

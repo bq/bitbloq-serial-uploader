@@ -30,34 +30,31 @@
             <div class="brandband"></div>
             <div class="chromeapp__info">
                 <h2 data-i18n="chromeapp_info_title" class="chromeapp__info__title"></h2>
+                <img class="title-bar__icon" src="img/refresh.png" alt="Refresh" title="Refrescar" />
                 <div class="chromeapp__info__container">
                     <div class="chromeapp__info__item board">
                         <svg class="icon-board"><use xlink:href="img/icons.svg#icon-board"></use></svg>
                         <h3 data-i18n="chromeapp_info_item_board_title" class="chromeapp__info__item__title"></h3>
-                        <br />
-                        <select id="board-picker" name="board-picker">
-                            <option value="" data-i18n="chromeapp_info_item_board_value" disabled selected></option>
-                            <option value="Arduino_Uno" >Arduino Uno</option>
-                            <option value="FT232R_USB_UART">bq ZUM</option>
-                        </select>
-                        <!-- <div data-i18n="chromeapp_info_item_board_value" class="chromeapp__info__item__value"></div> -->
+                        <div class="chromeapp__info__item__select__container">
+                            <select id="board-picker" name="board-picker" class="chromeapp__info__item__select">
+                                <option value="" data-i18n="chromeapp_info_item_board_value" disabled selected></option>
+                                <option value="Arduino_Uno" >Arduino Uno</option>
+                                <option value="FT232R_USB_UART">bq ZUM</option>
+                            </select>
+                        </div>
                     </div>
                     <div class="chromeapp__info__item port">
                         <svg class="icon-port"><use xlink:href="img/icons.svg#icon-port"></use></svg>
                         <h3 data-i18n="chromeapp_info_item_port_title" class="chromeapp__info__item__title"></h3>
-                        <br />
-                        <select id="port-picker" name="port-picker">
-                            <option value="" data-i18n="chromeapp_info_item_port_value" disabled selected="selected"></option>
-                        </select>
-                        <!-- <div data-i18n="chromeapp_info_item_port_value" class="chromeapp__info__item__value"></div> -->
+                        <div class="chromeapp__info__item__select__container">
+                            <select id="port-picker" name="port-picker" class="chromeapp__info__item__select">
+                                <option value="" data-i18n="chromeapp_info_item_port_value" disabled selected="selected"></option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
             </content>
-            <!-- <div class="buttons__container"> -->
-            <div class="button__reset">
-                <button style="position: absolute; bottom: 0">Reload</button>
-            </div>
         </div>
         <!-- build:js js/main.min.js -->
         <script src="js/banner_dev.js"></script>

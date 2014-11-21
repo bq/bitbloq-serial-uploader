@@ -226,9 +226,9 @@ bitbloqSU.Serial = (function() {
                     if (!bitbloqSU.disconnectTimer) {
                         bitbloqSU.disconnectTimer = setTimeout(function() {
                             reject();
-                            // bitbloqSU.Serial.disconnect();
                             clearTimeout(bitbloqSU.disconnectTimer);
                             bitbloqSU.disconnectTimer = null;
+                            //chrome.runtime.reload();
                         }, 3000);
                     }
                 }
