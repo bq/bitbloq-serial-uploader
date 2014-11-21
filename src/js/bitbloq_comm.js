@@ -5,7 +5,7 @@
 
 'use strict';
 /* global bitbloqSU, logger, $*/
-
+/* jshint -W030 */
 (function() {
 
     window.chrome.runtime.onConnectExternal.addListener(function(port) {

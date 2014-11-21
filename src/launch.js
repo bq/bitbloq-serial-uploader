@@ -70,7 +70,7 @@ window.chrome.app.runtime.onRestarted.addListener(function(data) {
 });
 
 
-window.chrome.runtime.onUpdateAvailable.addListener(function (data){
+window.chrome.runtime.onUpdateAvailable.addListener(function(data) {
     window.console.log('onUpdateAvailable event', data);
-    window.chrome.runtime.reload()
-})
+    window.chrome.runtime.reload();
+});
