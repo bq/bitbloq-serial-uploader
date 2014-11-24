@@ -52,7 +52,7 @@ module.exports = function(grunt) {
                     }
                 },
                 files: [{
-                    src: ['src/js/{,**/}*.js', 'src/bower_components/jquery/dist/jquery.js', '!src/js/init_dev.js', '!src/js/banner_dev.js'],
+                    src: ['src/bower_components/jquery/dist/jquery.js', 'src/js/available_boards.js', 'src/js/lib/sizeof.js', 'src/js/lib/logger.js', 'src/js/lib/i18n.js', 'src/js/bitbloq_serial.js', 'src/js/bitbloq_program.js', 'src/js/bitbloq_comm.js', 'js/init.js', '!src/js/init_dev.js', '!src/js/banner_dev.js'],
                     dest: 'tmp/js/main.js'
                 }]
             },
@@ -115,9 +115,9 @@ module.exports = function(grunt) {
         'jshint',
         'concat',
         'copy',
-        'uglify',
         'cssmin',
         'usemin',
+        'uglify',
         'compress'
     ]);
 
