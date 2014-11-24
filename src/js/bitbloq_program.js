@@ -85,10 +85,10 @@ bitbloqSU.Program = (function() {
             address_l.push(0x40);
             address_l.push(0x80);
             address_l.push(0xc0);
-            address_r.push('0x' + i);
-            address_r.push('0x' + i);
-            address_r.push('0x' + i);
-            address_r.push('0x' + i);
+            address_r.push( i);
+            address_r.push( i);
+            address_r.push( i);
+            address_r.push( i);
         }
         return page_number;
     }
