@@ -249,3 +249,7 @@ select {
     bottom: 8em;
     right: 9em;
 }
+
+.chromeapp_info_item_board_alert{
+    color:red;
+}

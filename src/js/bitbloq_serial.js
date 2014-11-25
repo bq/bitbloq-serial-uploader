@@ -83,6 +83,7 @@ bitbloqSU.Serial = (function() {
             }
         });
         bitbloqSU.SerialAPI.onReceiveError.addListener(function(evt) {
+
             logger.error(evt);
             disconnectTimerFunc(1000);
         });

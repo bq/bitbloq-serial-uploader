@@ -22,5 +22,9 @@
     "chromeapp_info_item_port_value": {
         "message": "Ninguno",
         "description": ""
+    },
+    "chromeapp_info_item_board_alert": {
+        "message": "Si estás usando Freaduino UNO y necesitas 5V, prográmala primero a 3,3v y luego cambialá a 5V",
+        "description": ""
     }
 }

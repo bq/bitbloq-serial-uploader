@@ -9,6 +9,7 @@
 bitbloqSU.Program = (function() {
     var lineBuffer = 0;
     var progmodeflag = true;
+    var currentCode = null;
     //var pageIndex = 0;
     //Useful parameters throughout the code:
     var trimmed_commands; // trimmed_commands store the hex commands that will be passed to the board.
@@ -85,10 +86,10 @@ bitbloqSU.Program = (function() {
             address_l.push(0x40);
             address_l.push(0x80);
             address_l.push(0xc0);
-            address_r.push( i);
-            address_r.push( i);
-            address_r.push( i);
-            address_r.push( i);
+            address_r.push(i);
+            address_r.push(i);
+            address_r.push(i);
+            address_r.push(i);
         }
         return page_number;
     }
@@ -249,7 +250,7 @@ bitbloqSU.Program = (function() {
                     bitbloqSU.Serial.disconnect();
                     resolve();
                 }).
-                catch (function() {
+                catch(function() {
                     logger.error('program flow error ', arguments);
                     bitbloqSU.Serial.disconnectTimerFunc(1000);
                 });

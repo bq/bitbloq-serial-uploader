@@ -73,6 +73,14 @@ bitbloqSU.UI = (function() {
             window.chrome.runtime.reload();
         });
 
+        $('#board-picker').change(function() {
+            if ($(this).val() === 'Arduino_Uno') {
+                showBoardAlert();
+            } else {
+                removeBoardAlert();
+            }
+        });
+
         $('#icon-minimize').on('click', function(event) {
             event.preventDefault();
             appWindow.minimize();
@@ -90,6 +98,14 @@ bitbloqSU.UI = (function() {
             event.preventDefault();
             appWindow.close();
         });
+    }
+    var $boardAlert = $('.chromeapp_info_item_board_alert');
+    var showBoardAlert = function() {
+        window.chrome.i18n.getMessage($boardAlert.attr('data-i18n'));
+        $boardAlert.text(window.chrome.i18n.getMessage($boardAlert.attr('data-i18n')));
+    }
+    var removeBoardAlert = function() {
+        $boardAlert.text('');
     }
 
     var init = function() {
