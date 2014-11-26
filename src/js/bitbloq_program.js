@@ -9,7 +9,6 @@
 bitbloqSU.Program = (function() {
     var lineBuffer = 0;
     var progmodeflag = true;
-    var currentCode = null;
     //var pageIndex = 0;
     //Useful parameters throughout the code:
     var trimmed_commands; // trimmed_commands store the hex commands that will be passed to the board.

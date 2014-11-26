@@ -103,10 +103,10 @@ bitbloqSU.UI = (function() {
     var showBoardAlert = function() {
         window.chrome.i18n.getMessage($boardAlert.attr('data-i18n'));
         $boardAlert.text(window.chrome.i18n.getMessage($boardAlert.attr('data-i18n')));
-    }
+    };
     var removeBoardAlert = function() {
         $boardAlert.text('');
-    }
+    };
 
     var init = function() {
         addDOMListeners();
