@@ -126,7 +126,9 @@ bitbloqSU.Program = (function() {
             buffer[0] = STK500.STK_ENTER_PROGMODE;
             buffer[1] = STK500.CRC_EOP;
             bitbloqSU.Serial.sendData(buffer.buffer).then(function() {
-                resolve();
+                setTimeout(function() {
+                    resolve();
+                }, bitbloqSU.Serial.getDeviceInfo().boardInfo.delay_send);
             });
         });
     }
@@ -152,7 +154,9 @@ bitbloqSU.Program = (function() {
                 'load_address.buffer': load_address.buffer
             });
             bitbloqSU.Serial.sendData(load_address.buffer).then(function() {
-                resolve(address);
+                setTimeout(function() {
+                    resolve(address);
+                }, bitbloqSU.Serial.getDeviceInfo().boardInfo.delay_send);
             });
         });
     }
@@ -250,7 +254,7 @@ bitbloqSU.Program = (function() {
                     bitbloqSU.Serial.disconnect();
                     resolve();
                 }).
-                catch(function() {
+                catch (function() {
                     logger.error('program flow error ', arguments);
                     bitbloqSU.Serial.disconnectTimerFunc(1000);
                 });

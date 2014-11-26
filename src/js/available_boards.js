@@ -18,6 +18,7 @@ window.bitbloqSU.availableBoards = [
         bitrate: 115200,
         maxPageSize: 128,
         delay_reset: 50,
+        delay_send:20,
         max_size: 32256
     },
     //bq ZUM
@@ -29,6 +30,7 @@ window.bitbloqSU.availableBoards = [
         bitrate: 19200,
         maxPageSize: 128,
         delay_reset: 100,
+        delay_send:0,
         max_size: 28672
     }
 ];
