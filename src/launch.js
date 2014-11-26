@@ -14,14 +14,14 @@ var createCustomWin = function(params) {
     for (var i = 0; i < appList.length; i++) {
         console.log('appInfo', appList[i]);
         currentWin = appList[i];
-        if (appList[i].id === 'bitbloqSSU') {
-            window.console.warn('bitbloqSSU is alredy running');
+        if (appList[i].id === 'bitbloqSU') {
+            window.console.warn('bitbloqSU is alredy running');
             return false;
         }
     }
     var _params = {
         frame: 'none',
-        id: 'bitbloqSSU',
+        id: 'bitbloqSU',
         resizable: false,
         hidden: false,
         outerBounds: {
@@ -39,10 +39,14 @@ var createCustomWin = function(params) {
     window.chrome.app.window.create('index.html', _params);
 
     if (!currentWin) {
-        currentWin = window.chrome.app.window.get('bitbloqSSU');
+        currentWin = window.chrome.app.window.get('bitbloqSU');
+        if(!currentWin){
+            window.setTimeout(createCustomWin, 1000); //try again in 1sec
+            return;
+        }
         currentWin.resizeTo(WIDTH, HEIGHT);
         currentWin.onClosed.addListener(function(data) {
-            window.console.warn('bitbloqSSU closed', data);
+            window.console.warn('bitbloqSU closed', data);
             createCustomWin({
                 'hidden': true
             });
@@ -56,12 +60,10 @@ var createCustomWin = function(params) {
 
 window.chrome.app.runtime.onLaunched.addListener(function(launchData) {
     window.console.log(launchData);
-    if (launchData.id === 'launcher') {
-        createCustomWin();
-    } else {
+    if (launchData.id !== 'launcher') {
         window.console.warn('Extension open from chrome extensions page');
-        createCustomWin();
     }
+    createCustomWin();
 });
 
 window.chrome.app.runtime.onRestarted.addListener(function(data) {
