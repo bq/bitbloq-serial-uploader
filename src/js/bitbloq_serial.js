@@ -196,7 +196,7 @@ bitbloqSU.Serial = (function() {
                         reject(e);
                     }
                 } else {
-                    disconnect();
+                    //disconnect();
                     reject();
                 }
             });
