@@ -159,44 +159,47 @@ bitbloqSU.Serial = (function() {
     };
     var connect = function() {
         return new Promise(function(resolve, reject) {
-            if (deviceInfo.connected) {
-                try {
-                    logger.info('Connecting to board...');
-                    bitbloqSU.SerialAPI.connect(deviceInfo.port, {
-                        bitrate: deviceInfo.boardInfo.bitrate,
-                        sendTimeout: 2000,
-                        receiveTimeout: 2000,
-                        //ctsFlowControl: true,
-                        name: 'bitbloqSerialConnection'
-                    }, function(info) {
-                        if (info.connectionId !== -1) {
-                            deviceInfo.connectionId = info.connectionId;
-                            deviceInfo.connected = true;
-                            logger.info({
-                                'Connection board TEST OK': info
-                            });
-                            resolve();
-                        } else {
-                            deviceInfo.connected = false;
-                            deviceInfo.connectionId = -1;
-                            logger.error({
-                                'Connection board TEST KO': 'KO'
-                            });
-                            reject();
-                        }
-                    });
-                } catch (e) {
-                    deviceInfo.connectionId = -1;
-                    deviceInfo.connected = false;
-                    deviceInfo.boardInfo = null;
-                    logger.error({
-                        'Connection board TEST KO': e
-                    });
-                    reject(e);
+            getConnections().then(function(connections){
+                if (!connections || connections.length === 0) {
+                    try {
+                        logger.info('Connecting to board...');
+                        bitbloqSU.SerialAPI.connect(deviceInfo.port, {
+                            bitrate: deviceInfo.boardInfo.bitrate,
+                            sendTimeout: 2000,
+                            receiveTimeout: 2000,
+                            //ctsFlowControl: true,
+                            name: 'bitbloqSerialConnection'
+                        }, function(info) {
+                            if (info.connectionId !== -1) {
+                                deviceInfo.connectionId = info.connectionId;
+                                deviceInfo.connected = true;
+                                logger.info({
+                                    'Connection board TEST OK': info
+                                });
+                                resolve();
+                            } else {
+                                deviceInfo.connected = false;
+                                deviceInfo.connectionId = -1;
+                                logger.error({
+                                    'Connection board TEST KO': 'KO'
+                                });
+                                reject();
+                            }
+                        });
+                    } catch (e) {
+                        deviceInfo.connectionId = -1;
+                        deviceInfo.connected = false;
+                        deviceInfo.boardInfo = null;
+                        logger.error({
+                            'Connection board TEST KO': e
+                        });
+                        reject(e);
+                    }
+                } else {
+                    disconnect();
+                    reject();
                 }
-            } else {
-                reject();
-            }
+            });
         });
     };
     /** @Deprecated: use disconnect */

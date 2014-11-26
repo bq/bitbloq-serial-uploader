@@ -113,7 +113,7 @@ bitbloqSU.Program = (function() {
                 return bitbloqSU.Serial.setControlSignals(signalControlOff);
             }).then(function() {
                 logger.warn('DTR-RTS OFF');
-                resolve();
+                setTimeout(resolve, 200);
             });
         });
     }
@@ -125,7 +125,7 @@ bitbloqSU.Program = (function() {
             buffer[0] = STK500.STK_ENTER_PROGMODE;
             buffer[1] = STK500.CRC_EOP;
             bitbloqSU.Serial.sendData(buffer.buffer).then(function() {
-                resolve();
+                setTimeout(resolve, 200);
             });
         });
     }
