@@ -8,7 +8,7 @@
 /* Board management functions */
 bitbloqSU.Program = (function() {
     var lineBuffer = 0;
-    var progmodeflag = true;
+    var progmodeflag = false;
     //var pageIndex = 0;
     //Useful parameters throughout the code:
     var trimmed_commands; // trimmed_commands store the hex commands that will be passed to the board.
@@ -259,8 +259,10 @@ bitbloqSU.Program = (function() {
                 bitbloqSU.Serial.disconnectTimerFunc(1000);
             }
         });
+        progmodeflag=false;
     };
     return {
-        load: load
+        load: load,
+        progmodeflag: progmodeflag
     };
 })();
