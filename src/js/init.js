@@ -102,6 +102,12 @@ bitbloqSU.UI = (function() {
             bitbloqSU.UI.paintBoardInfo();
             bitbloqSU.UI.paintPortInfo();
             bitbloqSU.Serial.disconnect();
+        }).catch(function() {
+            bitbloqSU.SerialAPI.getDevices(function(devices) {
+                bitbloqSU.UI.buildPortPicker(devices);
+            });
+            bitbloqSU.UI.paintBoardInfo();
+            bitbloqSU.UI.paintPortInfo();
         });
     };
     return {

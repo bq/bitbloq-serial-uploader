@@ -9,7 +9,7 @@
         "name": "Irene Sanz",
         "email": "irene.sanz@bq.com"
     }],
-    "version": "0.1.7.6",
+    "version": "0.1.7.7",
     "manifest_version": 2,
     "minimum_chrome_version": "23",
     "default_locale": "es",

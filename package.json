@@ -1,7 +1,7 @@
 {
     "name": "bitbloq-serial-uploader",
     "description": "bitbloq Serial Uploader is a Chrome Application that allows web users to load/program an arduino board like bq ZUM or freaduino UNO.",
-    "version": "0.1.7",
+    "version": "0.1.7.7",
     "main": "dist/launch.js",
     "keywords": [
         "bq",
