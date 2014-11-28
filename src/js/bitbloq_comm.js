@@ -26,12 +26,12 @@
                 params: null
             };
             var boardName, portName;
-            logger.info('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa--> FLAGS', CONNECTEDFLAG, PROGMODEFLAG);
+            logger.info('FLAGS', CONNECTEDFLAG, PROGMODEFLAG);
             if (CONNECTEDFLAG && PROGMODEFLAG) {
                 return;
             }
             if (request.msg === 'connect' && !CONNECTEDFLAG) {
-                CONNECTEDFLAG=true;
+                CONNECTEDFLAG = true;
                 responseMsg.msg = 'connect.ready';
                 responseMsg.params = bitbloqSU.SerialAPI.getDevices(function(devs) {
                     return devs;
@@ -46,7 +46,7 @@
                     responseMsg.msg = 'board.ready';
                     responseMsg.params = bitbloqSU.Serial.getDeviceInfo();
                     logger.info('board:message');
-                    logger.info('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa--> FLAGS to false board', CONNECTEDFLAG, PROGMODEFLAG);
+                    logger.info('FLAGS to false board', CONNECTEDFLAG, PROGMODEFLAG);
                     bitbloqSU.Serial.disconnect();
                     respondent(responseMsg);
                 }, function() {
@@ -56,7 +56,7 @@
                     bitbloqSU.Serial.disconnect();
                     CONNECTEDFLAG = false;
                     PROGMODEFLAG = false;
-                    logger.info('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa--> FLAGS to false board.not.ready', CONNECTEDFLAG, PROGMODEFLAG);
+                    logger.info('FLAGS to false board.not.ready', CONNECTEDFLAG, PROGMODEFLAG);
                     respondent(responseMsg);
                 });
             } else if (request.msg === 'programming' && !PROGMODEFLAG) {
@@ -70,7 +70,7 @@
                         logger.info('programming:ok');
                         CONNECTEDFLAG = false;
                         PROGMODEFLAG = false;
-                        logger.info('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa--> FLAGS to false programming', CONNECTEDFLAG, PROGMODEFLAG);
+                        logger.info('FLAGS to false programming', CONNECTEDFLAG, PROGMODEFLAG);
                         logger.info('bitbloqSU.Program.load finished');
                         respondent(responseMsg);
                         bitbloqSU.Serial.disconnect();
@@ -81,7 +81,7 @@
                         logger.warn('bitbloqSU.Program.load failed');
                         CONNECTEDFLAG = false;
                         PROGMODEFLAG = false;
-                        logger.info('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa--> FLAGS to false --> programming ko', CONNECTEDFLAG, PROGMODEFLAG);
+                        logger.info('FLAGS to false --> programming ko', CONNECTEDFLAG, PROGMODEFLAG);
                         respondent(responseMsg);
                     });
                 }, function() {
@@ -90,9 +90,12 @@
                     bitbloqSU.Serial.disconnect();
                     CONNECTEDFLAG = false;
                     PROGMODEFLAG = false;
-                    logger.info('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa--> FLAGS to false --> board.not.ready', CONNECTEDFLAG, PROGMODEFLAG);
+                    logger.info('FLAGS to false --> board.not.ready', CONNECTEDFLAG, PROGMODEFLAG);
                     respondent(responseMsg);
                 });
+            } else if (request.msg === 'reset') {
+                CONNECTEDFLAG = false;
+                PROGMODEFLAG = false;
             }
         });
     });

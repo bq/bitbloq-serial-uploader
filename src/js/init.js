@@ -14,14 +14,6 @@ bitbloqSU.UI = (function() {
         } else {
             $($('#board-picker option')[0]).attr('selected', 'true');
         }
-        // if (bitbloqSU.Serial.getDeviceInfo().connected) {
-        //     $('.board > .chromeapp__info__item__value').html(bitbloqSU.Serial.getDeviceInfo().boardInfo.name);
-        //     $('.port > .chromeapp__info__item__value').html(bitbloqSU.Serial.getDeviceInfo().port);
-        // } else {
-        //     var defaultMessage = window.chrome.i18n.getMessage($('.chromeapp__info__item__value').attr('data-i18n'));
-        //     $('.board > .chromeapp__info__item__value').html(defaultMessage);
-        //     $('.port > .chromeapp__info__item__value').html(defaultMessage);
-        // }
     }
 
     function paintPortInfo() {
@@ -31,14 +23,6 @@ bitbloqSU.UI = (function() {
         } else {
             $($('#port-picker option')[0]).attr('selected', 'true');
         }
-        // if (bitbloqSU.Serial.getDeviceInfo().connected) {
-        //     $('.board > .chromeapp__info__item__value').html(bitbloqSU.Serial.getDeviceInfo().boardInfo.name);
-        //     $('.port > .chromeapp__info__item__value').html(bitbloqSU.Serial.getDeviceInfo().port);
-        // } else {
-        //     var defaultMessage = window.chrome.i18n.getMessage($('.chromeapp__info__item__value').attr('data-i18n'));
-        //     $('.board > .chromeapp__info__item__value').html(defaultMessage);
-        //     $('.port > .chromeapp__info__item__value').html(defaultMessage);
-        // }
     }
     //// Portpicker
     function buildPortPicker(ports) {
