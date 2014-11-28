@@ -83,7 +83,7 @@ bitbloqSU.Serial = (function() {
             }
         });
         bitbloqSU.SerialAPI.onReceiveError.addListener(function(evt) {
-            logger.error('Connection '+evt.connectionId+' received error: '+evt.error);
+            logger.error('Connection ' + evt.connectionId + ' received error: ' + evt.error);
             disconnect();
         });
     };
@@ -147,7 +147,7 @@ bitbloqSU.Serial = (function() {
     var disconnect = function() {
         getConnections().then(function(connections) {
             if (connections.length > 0) {
-                connections.forEach(function(connection){
+                connections.forEach(function(connection) {
                     bitbloqSU.SerialAPI.disconnect(connection.connectionId, function() {
                         deviceInfo.connectionId = -1;
                         deviceInfo.connected = false;
@@ -159,7 +159,7 @@ bitbloqSU.Serial = (function() {
     };
     var connect = function() {
         return new Promise(function(resolve, reject) {
-            getConnections().then(function(connections){
+            getConnections().then(function(connections) {
                 if (!connections || connections.length === 0) {
                     try {
                         logger.info('Connecting to board...');
@@ -230,7 +230,7 @@ bitbloqSU.Serial = (function() {
                 }
                 if (!deviceInfo.port || !statusOk && !boardName && !port) {
                     setDeviceInfo(null);
-                    resolve();
+                    reject();
                     logger.error('None board detected!');
                 }
             });
@@ -252,7 +252,7 @@ bitbloqSU.Serial = (function() {
         });
     };
     var sendData = function(data) {
-        logger.info('Sending '+data.byteLength+' bytes.');
+        logger.info('Sending ' + data.byteLength + ' bytes.');
         if (data.byteLength === 0) {
             return Promise.reject();
         }
@@ -265,7 +265,7 @@ bitbloqSU.Serial = (function() {
                 var onReceivePromise = new Promise(function(resolveOnReceive) {
                     bitbloqSU.Serial.addReceiveDataListener(defaultOnReceiveDataCallback(resolveOnReceive));
                 });
-                window.chrome.serial.flush(deviceInfo.connectionId, function(){
+                window.chrome.serial.flush(deviceInfo.connectionId, function() {
                     bitbloqSU.SerialAPI.send(deviceInfo.connectionId, data, function(sendInfo) {
                         logger.info('sendInfo :', sendInfo);
                         onReceivePromise.then(function() {

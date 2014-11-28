@@ -26,7 +26,10 @@
                 params: null
             };
             var boardName, portName;
-            logger.info('FLAGS', CONNECTEDFLAG, PROGMODEFLAG);
+            logger.info({
+                'CONNECTEDFLAG': CONNECTEDFLAG,
+                'PROGMODEFLAG': PROGMODEFLAG
+            });
             if (CONNECTEDFLAG && PROGMODEFLAG) {
                 return;
             }
