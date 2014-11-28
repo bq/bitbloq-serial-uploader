@@ -8,7 +8,6 @@
 /* Board management functions */
 bitbloqSU.Program = (function() {
     var lineBuffer = 0;
-    var progmodeflag = false;
     //var pageIndex = 0;
     //Useful parameters throughout the code:
     var trimmed_commands; // trimmed_commands store the hex commands that will be passed to the board.
@@ -80,7 +79,7 @@ bitbloqSU.Program = (function() {
             i += 1;
         }
         // init adresses
-        for (i = 0; i < page_number / 4; i++) {
+        for (i = 0; i < page_number; i++) {
             address_l.push(0x00);
             address_l.push(0x40);
             address_l.push(0x80);
@@ -226,7 +225,6 @@ bitbloqSU.Program = (function() {
      */
     var load = function(code) {
         lineBuffer = 0;
-        progmodeflag = true;
         var p;
         return new Promise(function(resolve, reject) {
             var numberOfCurrentProgramPages = transform_data(code);
@@ -259,10 +257,8 @@ bitbloqSU.Program = (function() {
                 bitbloqSU.Serial.disconnectTimerFunc(1000);
             }
         });
-        progmodeflag=false;
     };
     return {
-        load: load,
-        progmodeflag: progmodeflag
+        load: load
     };
 })();
