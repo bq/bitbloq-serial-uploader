@@ -1,6 +1,6 @@
 {
     "chromeapp_title": {
-        "message": "Serial Uploader para bitbloq",
+        "message": "Serial Uploader per bitbloq",
         "description": ""
     },
     "chromeapp_info_title": {
@@ -8,19 +8,19 @@
         "description": ""
     },
     "chromeapp_info_item_board_title": {
-        "message": "Placa",
+        "message": "Scheda",
         "description": ""
     },
     "chromeapp_info_item_board_value": {
-        "message": "Ninguno",
+        "message": "Nessuno",
         "description": ""
     },
     "chromeapp_info_item_port_title": {
-        "message": "Puerto",
+        "message": "Porte",
         "description": ""
     },
     "chromeapp_info_item_port_value": {
-        "message": "Ninguno",
+        "message": "Nessuno",
         "description": ""
     }
 }

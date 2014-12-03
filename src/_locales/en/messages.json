@@ -22,9 +22,5 @@
     "chromeapp_info_item_port_value": {
         "message": "None",
         "description": ""
-    },
-    "chromeapp_info_item_board_alert": {
-        "message": "If you are using Freaduino UNO and you need 5V, program your board on 3,3V and then change it to 5V",
-        "description": ""
     }
 }
