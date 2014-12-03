@@ -12,15 +12,15 @@
         "description": ""
     },
     "chromeapp_info_item_board_value": {
-        "message": "Ninguno",
+        "message": "Nenhum",
         "description": ""
     },
     "chromeapp_info_item_port_title": {
-        "message": "Puerto",
+        "message": "Porta",
         "description": ""
     },
     "chromeapp_info_item_port_value": {
-        "message": "Ninguno",
+        "message": "Nenhum",
         "description": ""
     }
 }
