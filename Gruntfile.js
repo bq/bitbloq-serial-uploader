@@ -45,7 +45,6 @@ module.exports = function(grunt) {
         concat: {
             dist_js: {
                 options: {
-                    banner: 'if (!window.bitbloqSU) {window.bitbloqSU = {};}\n',
                     footer: ';\n' + 'window.bitbloqSU.version = "<%= pkg.version %>";\nlogger.debugmode=0;\ndocument.addEventListener("DOMContentLoaded", function() {bitbloqSU.UI.init();});',
                     process: function(src, filepath) {
                         return '// Source: ' + filepath + '\n' + src.replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1');

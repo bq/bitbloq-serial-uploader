@@ -44,7 +44,14 @@ var createCustomWin = function(params) {
             window.setTimeout(createCustomWin, 1000); //try again in 1sec
             return;
         }
-        currentWin.resizeTo(WIDTH, HEIGHT);
+        // currentWin.innerWidth = 100;
+        // currentWin.innerHeight = 100;
+        // currentWin.screenX = screen.width;
+        // currentWin.screenY = screen.height;
+        //alwaysLowered = true;
+
+        //currentWin.resizeTo(WIDTH, HEIGHT);
+        currentWin.resizeTo(250, 250);
         currentWin.onClosed.addListener(function(data) {
             window.console.warn('bitbloqSU closed', data);
             createCustomWin({

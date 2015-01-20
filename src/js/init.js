@@ -4,6 +4,10 @@
 /* *****************************
 Chrome App interface management
 ******************************** */
+if (!window.bitbloqSU) {
+    window.bitbloqSU = {};
+}
+
 bitbloqSU.UI = (function() {
     var appWindow = window.chrome.app.window.current();
     // Board Info
