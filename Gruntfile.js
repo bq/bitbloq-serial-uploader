@@ -91,6 +91,16 @@ module.exports = function(grunt) {
         usemin: {
             html: 'dist/index.html'
         },
+        replace: {
+            manifest: {
+                src: ['src/manifest.json'],
+                overwrite: true, // overwrite matched source files
+                replacements: [{
+                    from: /"version":[^,]*/g,
+                    to: '"version": "<%= pkg.version %>"'
+                }]
+            }
+        },
         // make a zipfile
         compress: {
             main: {
@@ -113,6 +123,7 @@ module.exports = function(grunt) {
         'clean',
         'jshint',
         'concat',
+        'replace',
         'copy',
         'cssmin',
         'usemin',
