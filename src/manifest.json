@@ -17,7 +17,13 @@
     "url_handlers": {
         "bitbloq": {
             "matches": [
-              "http://localhost:9000/chromeapp/*"
+                "http://localhost:9000/chromeapp/*",
+                "http://bitbloq.bq.com/chromeapp/*",
+                "http://int-bitbloq.com.s3-website-eu-west-1.amazonaws.com/chromeapp/*",
+                "http://qa-bitbloq.com.s3-website-eu-west-1.amazonaws.com/chromeapp/*",
+                "http://next-bitbloq.com.s3-website-eu-west-1.amazonaws.com/chromeapp/*",
+                "http://staging-bitbloq.com.s3-website-eu-west-1.amazonaws.com/chromeapp/*",
+                "http://bitbloq.bq.com.s3-website-eu-west-1.amazonaws.com/chromeapp/*"
             ],
             "title": "View Foo presentation"
         }
@@ -32,7 +38,15 @@
         "128": "img/icon_128.png"
     },
     "externally_connectable": {
-        "matches": ["http://localhost:9000/*", "http://bitbloq.bq.com/*", "http://www.bitbloq.es/*", "http://bitbloq.es/*", "http://bitbloq.org/*", "http://www.bitbloq.org/*", "http://int-bitbloq.com.s3-website-eu-west-1.amazonaws.com/*", "http://qa-bitbloq.com.s3-website-eu-west-1.amazonaws.com/*", "http://next-bitbloq.com.s3-website-eu-west-1.amazonaws.com/*", "http://staging-bitbloq.com.s3-website-eu-west-1.amazonaws.com/*", "http://bitbloq.bq.com.s3-website-eu-west-1.amazonaws.com/*"]
+        "matches": [
+            "http://localhost:9000/*",
+            "http://bitbloq.bq.com/*",
+            "http://int-bitbloq.com.s3-website-eu-west-1.amazonaws.com/*",
+            "http://qa-bitbloq.com.s3-website-eu-west-1.amazonaws.com/*",
+            "http://next-bitbloq.com.s3-website-eu-west-1.amazonaws.com/*",
+            "http://staging-bitbloq.com.s3-website-eu-west-1.amazonaws.com/*",
+            "http://bitbloq.bq.com.s3-website-eu-west-1.amazonaws.com/*"
+        ]
     },
     "offline_enabled": true
 
