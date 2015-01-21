@@ -1,5 +1,14 @@
 'use strict';
 /*global module:false*/
+
+var mountFolder = function(connect, dir, alias) {
+    if (alias) {
+        return connect().use(alias, connect.static(require('path').resolve(dir)));
+    } else {
+        return connect.static(require('path').resolve(dir));
+    }
+};
+
 module.exports = function(grunt) {
 
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
@@ -73,7 +82,7 @@ module.exports = function(grunt) {
             src: {
                 src: [
                     'src/{,**/}*.js',
-                    '!src/bower_components/jquery/{,**/}*.js'
+                    '!src/bower_components/{,**/}*.js'
                 ]
             }
         },
@@ -103,6 +112,43 @@ module.exports = function(grunt) {
                     src: ['**']
                 }]
             }
+        },
+        connect: {
+            options: {
+                port: '9001',
+                hostname: '0.0.0.0',
+                middleware: function(connect) {
+                    return [
+                        mountFolder(connect, 'test'),
+                        mountFolder(connect, 'src/bower_components', '/bower_components')
+                    ];
+                }
+            },
+            server: {
+                options: {
+                    keepalive: true
+                }
+            },
+            test: {
+            }
+        },
+        'mocha_phantomjs': {
+            options: {
+                urls: [
+                    'http://localhost:<%= connect.options.port %>'
+                ],
+                setting: [
+                    'webSecurityEnabled=false',
+                    'remote-debugger-autorun=true',
+                    'remote-debugger-port=9002',
+                    'ignore-ssl-errors=true'
+                ]
+            },
+            tap: {
+                options: {
+                    reporter: 'tap',
+                }
+            }
         }
     });
 
@@ -118,6 +164,17 @@ module.exports = function(grunt) {
         'usemin',
         'uglify',
         'compress'
+    ]);
+
+    grunt.registerTask('test', [
+        'jshint',
+        'connect:test',
+        'mocha_phantomjs:tap'
+    ]);
+
+    grunt.registerTask('server:test', [
+        'jshint',
+        'connect:server'
     ]);
 
 };
