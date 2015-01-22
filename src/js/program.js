@@ -229,7 +229,7 @@ ProgramBuilder.prototype.addWriteStep = function(promise, it) {
 ProgramBuilder.prototype.load = function(code, port, board) {
     var p;
     this.transform_data(code); // init()
-    console.info('Program size: ', sizeof(this.trimmed_commands), '. Max size available in the board: ', bitbloqSU.Serial.getDeviceInfo().boardInfo.max_size);
+    console.info('Program size: ', sizeof(this.trimmed_commands), '. Max size available in the board: ', board.max_size);
 
     if (sizeof(this.trimmed_commands) < board.max_size) {
 

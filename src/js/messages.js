@@ -6,7 +6,6 @@
 /* global bitbloqSU, chrome */
 /* jshint -W030 */
 
-
 var respondent = function(responseMsg, port) {
     console.info('Sending Response...');
     console.info({
@@ -27,25 +26,18 @@ var Handler = (function() {
             this.responders[message] = responder;
         },
         respond: function(request) {
+            request = request || {};
+            request.port = this.port;
             console.info({
                 'request.msg': request.msg,
                 'request.params': request.params
             });
 
-            var msg = request.msg;
-
-            if (this.responders[msg]) {
-
-                this.responders[msg](request, this.port);
-
-            } else {
-
-                var responseMsg = {
-                    msg: 'not-implemented'
-                };
-
-                respondent(responseMsg);
+            if (!this.responders[request.msg]) {
+                request.msg = 'defaultHandler';
             }
+            this.responders[request.msg](request);
+
         }
     };
 
@@ -58,18 +50,24 @@ var Handler = (function() {
 
 })();
 
-Handler.add('getPorts', function() {
+Handler.add('defaultHandler', function(request) {
 
     var responseMsg = {
-        msg: 'ports',
-        path: []
+        msg: 'not-implemented'
     };
 
+    respondent(responseMsg, request.port);
+
+});
+
+Handler.add('getPorts', function(request) {
+
     var onGetDevices = function(ports) {
-        for (var i = 0; i < ports.length; i++) {
-            responseMsg.path.push(ports[i].path);
-        }
-        respondent(responseMsg);
+        var responseMsg = {
+            msg: 'ports',
+            path: ports
+        };
+        respondent(responseMsg, request.port);
     };
 
     chrome.serial.getDevices(onGetDevices);
@@ -87,20 +85,20 @@ Handler.add('setPort', function(request) {
                 responseMsg = {
                     msg: 'connectingport:ok'
                 };
-                respondent(responseMsg);
+                respondent(responseMsg, request.port);
             }).fail(function(error) {
                 responseMsg = {
                     msg: 'connectingport:ko',
                     params: error
                 };
-                respondent(responseMsg);
+                respondent(responseMsg, request.port);
             });
 
         } else {
             responseMsg = {
                 msg: 'connectingport:ko'
             };
-            respondent(responseMsg);
+            respondent(responseMsg, request.port);
         }
     };
 
