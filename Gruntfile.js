@@ -131,7 +131,7 @@ module.exports = function(grunt) {
                 middleware: function(connect) {
                     return [
                         mountFolder(connect, 'test'),
-                        mountFolder(connect, 'src/bower_components', '/bower_components')
+                        mountFolder(connect, 'src')
                     ];
                 }
             },
