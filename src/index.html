@@ -19,40 +19,12 @@
             <!-- Title Bar -->
             <header class="window__title-bar title-bar">
                 <h1 data-i18n="chromeapp_title" class="title-bar__title"></h1>
-                <div class="title-bar__buttons">
-                    <a id="icon-minimize" title="Minimize Window" data-icon-order="1000"><svg class="icon-minus"><use xlink:href="img/icons.svg#icon-minus"></use></svg></a>
-                    <a id="icon-maximize" title="Maximize / Restore Window" data-icon-order="1001"><svg class="icon-maximize"><use xlink:href="img/icons.svg#icon-maximize"></use></svg></a>
-                    <a id="icon-close" title="Close Window" data-icon-order="1002"><svg class="icon-close"><use xlink:href="img/icons.svg#icon-close"></use></svg></a>
-                </div>
             </header>
             <!-- Main content -->
             <content class="window__viewport">
             <div class="brandband"></div>
             <div class="chromeapp__info">
                 <h2 data-i18n="chromeapp_info_title" class="chromeapp__info__title"></h2>
-                <img class="title-bar__icon" src="img/refresh.png" alt="Refresh" title="Refrescar" />
-                <div class="chromeapp__info__container">
-                    <div class="chromeapp__info__item board">
-                        <svg class="icon-board"><use xlink:href="img/icons.svg#icon-board"></use></svg>
-                        <h3 data-i18n="chromeapp_info_item_board_title" class="chromeapp__info__item__title"></h3>
-                        <div class="chromeapp__info__item__select__container">
-                            <select id="board-picker" name="board-picker" class="chromeapp__info__item__select">
-                                <option value="" data-i18n="chromeapp_info_item_board_value" disabled selected></option>
-                                <option value="Arduino_Uno" >Arduino Uno</option>
-                                <option value="FT232R_USB_UART">bq ZUM</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="chromeapp__info__item port">
-                        <svg class="icon-port"><use xlink:href="img/icons.svg#icon-port"></use></svg>
-                        <h3 data-i18n="chromeapp_info_item_port_title" class="chromeapp__info__item__title"></h3>
-                        <div class="chromeapp__info__item__select__container">
-                            <select id="port-picker" name="port-picker" class="chromeapp__info__item__select">
-                                <option value="" data-i18n="chromeapp_info_item_port_value" disabled selected="selected"></option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
             </div>
             </content>
         </div>

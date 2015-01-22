@@ -13,8 +13,8 @@ var AppWindow = {
         resizable: false,
         hidden: false,
         outerBounds: {
-            width: 400,
-            height: 300,
+            width: 300,
+            height: 150,
             left: 0,
             top: 0
         }
