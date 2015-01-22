@@ -1,15 +1,15 @@
 /* *******************************************************
  * bitbloq Serial Uploader
- * bitbloqComm - Chrome Message Passing functionality
+ * Chrome Message Passing functionality
  ********************************************************* */
 'use strict';
-/* global bitbloqSU, logger, chrome */
+/* global bitbloqSU, chrome */
 /* jshint -W030 */
 
 
 var respondent = function(responseMsg, port) {
-    logger.info('Sending Response...');
-    logger.info({
+    console.info('Sending Response...');
+    console.info({
         'responseMsg': responseMsg.msg
     });
 
@@ -27,7 +27,7 @@ var Handler = (function() {
             this.responders[message] = responder;
         },
         respond: function(request) {
-            logger.info({
+            console.info({
                 'request.msg': request.msg,
                 'request.params': request.params
             });
@@ -119,7 +119,7 @@ Handler.add('program', function(request) {
             msg: 'program:ok'
         };
 
-        logger.info('bitbloqSU.Program:ok');
+        console.info('bitbloqSU.Program:ok');
         respondent(responseMsg, request.port);
     }).fail(function() {
 
@@ -127,7 +127,7 @@ Handler.add('program', function(request) {
             msg: 'program:ko'
         };
 
-        logger.info('program:ko');
+        console.info('program:ko');
         respondent(responseMsg, request.port);
     });
 });
