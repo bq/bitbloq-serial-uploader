@@ -28,36 +28,44 @@ bitbloqSU.Serial = (function() {
         return function(evt) {
             if (evt.data.byteLength) {
                 if (bitbloqSU.lineBuffer) {
-                    logger.warn('bitbloqSU.lineBuffer set to 0');
+                    console.warn('bitbloqSU.lineBuffer set to 0');
                     removeReceiveDataListener();
-                    logger.info('bitbloqSU.SerialAPI.onReceive.addListener removed');
+                    console.info('bitbloqSU.SerialAPI.onReceive.addListener removed');
                     done();
                 }
             } else {
-                logger.error('Data receive byteLength === 0');
+                console.error('Data receive byteLength === 0');
             }
         };
     };
 
     var addReceiveDataListener = function(callback) {
-        logger.info('bitbloqSU.addReceiveDataListener');
+        console.info('bitbloqSU.addReceiveDataListener');
         receiverListener = callback;
     };
     var removeReceiveDataListener = function() {
-        logger.info('bitbloqSU.removeReceiveDataListener');
+        console.info('bitbloqSU.removeReceiveDataListener');
         receiverListener = undefined;
     };
 
     var init = function() {
-        logger.info('bitbloqSU.init');
+        console.info('bitbloqSU.init');
         bitbloqSU.SerialAPI.onReceive.addListener(function(evt) {
             if (receiverListener) {
                 receiverListener.call(this, evt);
             }
         });
         bitbloqSU.SerialAPI.onReceiveError.addListener(function(evt) {
-            logger.error('Connection ' + evt.connectionId + ' received error: ' + evt.error);
+            console.error('Connection ' + evt.connectionId + ' received error: ' + evt.error);
             disconnect();
+        });
+    };
+
+    var getDevices = function() {
+        return new Promise(function(resolve) {
+            bitbloqSU.SerialAPI.getDevices(function(connections) {
+                resolve(connections);
+            });
         });
     };
 
@@ -70,15 +78,19 @@ bitbloqSU.Serial = (function() {
     };
 
     var disconnect = function() {
-        getConnections().then(function(connections) {
-            if (connections.length > 0) {
-                connections.forEach(function(connection) {
-                    bitbloqSU.SerialAPI.disconnect(connectionId, function() {
-                        connectionId = -1;
-                        logger.info('Port disconnected!');
-                    }); // Close port
-                });
-            }
+        return new Promise(function(resolve) {
+            getConnections().then(function(connections) {
+                if (connections.length > 0) {
+                    connections.forEach(function(connection) {
+                        bitbloqSU.SerialAPI.disconnect(connection.connectionId, function() {
+                            connectionId = -1;
+                            console.info('Port disconnected!');
+
+                        });
+                    });
+                    resolve();
+                }
+            });
         });
     };
 
@@ -86,23 +98,24 @@ bitbloqSU.Serial = (function() {
     var connect = function(port, bitrate) {
         return new Promise(function(resolve, reject) {
             try {
-                logger.info('Connecting to board...');
+                console.info('Connecting to board...');
                 bitbloqSU.SerialAPI.connect(port, {
                     bitrate: bitrate,
-                    sendTimeout: 2000,
-                    receiveTimeout: 2000,
+                    //sendTimeout: 2000,
+                    //receiveTimeout: 2000,
                     //ctsFlowControl: true,
                     name: 'bitbloqSerialConnection'
                 }, function(info) {
                     if (info.connectionId !== -1) {
 
-                        logger.info({
+                        console.info({
                             'Connection board TEST OK': info
                         });
+                        connectionId = info.connectionId;
                         resolve(info.connectionId);
                         return;
                     } else {
-                        logger.error({
+                        console.error({
                             'Connection board TEST KO': 'KO'
                         });
                         reject(-1);
@@ -110,7 +123,7 @@ bitbloqSU.Serial = (function() {
                     }
                 });
             } catch (e) {
-                logger.error({
+                console.error({
                     'Connection board TEST KO': e
                 });
                 reject(-2);
@@ -119,24 +132,24 @@ bitbloqSU.Serial = (function() {
         });
     };
 
-    var sendData = function(data, connectionId) {
-        logger.info('Sending ' + data.byteLength + ' bytes.');
+    var sendData = function(data) {
+        console.info('Sending ' + data.byteLength + ' bytes.');
         if (data.byteLength === 0) {
             return Promise.reject();
         }
         return new Promise(function(resolveSendData, rejectSendData) {
-            logger.info('Chrome is writing on board...');
+            console.info('Chrome is writing on board...');
             var onReceivePromise = new Promise(function(resolveOnReceive) {
                 bitbloqSU.Serial.addReceiveDataListener(defaultOnReceiveDataCallback(resolveOnReceive));
             });
             window.chrome.serial.flush(connectionId, function() {
                 bitbloqSU.SerialAPI.send(connectionId, data, function(sendInfo) {
-                    logger.info('sendInfo :', sendInfo);
+                    console.info('sendInfo :', sendInfo);
                     onReceivePromise.then(function() {
                         resolveSendData();
                     }).
                     catch (function() {
-                        logger.eror(':(');
+                        console.eror(':(');
                         rejectSendData();
                     });
                 });
@@ -150,6 +163,8 @@ bitbloqSU.Serial = (function() {
         sendData: sendData,
         connect: connect,
         disconnect: disconnect,
+        getDevices: getDevices,
+        getConnections: getConnections,
         receiverListener: receiverListener,
         defaultOnReceiveDataCallback: defaultOnReceiveDataCallback,
         addReceiveDataListener: addReceiveDataListener,
