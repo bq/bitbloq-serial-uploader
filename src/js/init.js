@@ -15,31 +15,19 @@ bitbloqSU.UI = (function() {
         $('body').on('contextmenu', function() {
             return false;
         });
-
         //window.chrome.runtime.reload();
     }
 
     var init = function() {
+        console.log('bitbloqSU.UI.init');
         addDOMListeners();
-        bitbloqSU.Serial.init();
-        bitbloqSU.Serial.autoConfig().then(function() {
-            bitbloqSU.SerialAPI.getDevices(function(devices) {
-                bitbloqSU.UI.buildPortPicker(devices);
-            });
-            bitbloqSU.UI.paintBoardInfo();
-            bitbloqSU.UI.paintPortInfo();
-            bitbloqSU.Serial.disconnect();
-        }).catch(function() {
-            bitbloqSU.SerialAPI.getDevices(function(devices) {
-                bitbloqSU.UI.buildPortPicker(devices);
-            });
-            bitbloqSU.UI.paintBoardInfo();
-            bitbloqSU.UI.paintPortInfo();
-        });
     };
+
     return {
         addDOMListeners: addDOMListeners,
         appWindow: appWindow,
         init: init
     };
 })();
+
+bitbloqSU.UI.init();
