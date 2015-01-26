@@ -134,7 +134,7 @@ ProgramBuilder.prototype.enterProgMode = function() {
         buffer[0] = bitbloqSU.Program.STK500.STK_ENTER_PROGMODE;
         buffer[1] = bitbloqSU.Program.STK500.CRC_EOP;
         bitbloqSU.Serial.sendData(buffer.buffer).then(function() {
-            setTimeout(resolve, 200);
+            resolve();
         }).catch(reject);
     });
 };
@@ -169,7 +169,9 @@ ProgramBuilder.prototype.loadAddress = function(address) {
         'command': loadAddress,
         'loadAddress.buffer': loadAddress.buffer
     });
-    return bitbloqSU.Serial.sendData(loadAddress.buffer);
+    return bitbloqSU.Serial.sendData(loadAddress.buffer).then(function() {
+        return address;
+    });
 };
 // Create the command structure needed to program the current memory page
 ProgramBuilder.prototype.programPage = function(it) {
@@ -195,7 +197,14 @@ ProgramBuilder.prototype.programPage = function(it) {
     if (!buffer.buffer.byteLength) {
         console.error('bitbloqProgram.buffer.empty');
     }
-    return bitbloqSU.Serial.sendData(buffer.buffer);
+    return new Promise(function(resolve) {
+        bitbloqSU.Serial.sendData(buffer.buffer).then(function() {
+            setTimeout(function() {
+                resolve();
+            }, 50);
+        });
+
+    });
 };
 
 //////////////////////////////////////////////
@@ -230,7 +239,7 @@ ProgramBuilder.prototype.addWriteStep = function(promise, it) {
 ProgramBuilder.prototype.load = function(code, port, board) {
 
     if (bitbloqSU.Program.SEMAPHORE) {
-        return Promise.reject('busy');
+        //return Promise.reject('busy');
     }
     bitbloqSU.Program.SEMAPHORE = true;
 
@@ -256,7 +265,7 @@ ProgramBuilder.prototype.load = function(code, port, board) {
                 .catch(function() {
                     return Promise.reject('program:error:write');
                 });
-        }.bind(this)).then(function(){
+        }.bind(this)).then(function() {
             bitbloqSU.Program.SEMAPHORE = false;
             return bitbloqSU.Serial.disconnect();
         }).catch(function(error) {
