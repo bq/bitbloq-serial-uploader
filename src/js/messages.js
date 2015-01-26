@@ -38,6 +38,9 @@ var Handler = (function() {
             }
             this.responders[request.msg](request);
 
+        },
+        trigger: function(message, params) {
+            return this.responders[message](params);
         }
     };
 
@@ -141,8 +144,8 @@ Handler.programMock = function() {
         //'board': 'bt328',
         //'bitrate': 19200,
         //'maxPageSize': 128,
-        //'delay_reset': 100,
-        //'delay_send': 0,
+        //'delay_reset': 1,
+        //'delay_send': 1,
         //'max_size': 28672
     //};
     //request.path = '/dev/ttyUSB0';

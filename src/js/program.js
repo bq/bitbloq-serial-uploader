@@ -116,12 +116,16 @@ ProgramBuilder.prototype.changeSignals = function() {
             dtr: false,
             rts: false
         };
-        bitbloqSU.Serial.setControlSignals(signalControlOn, that.board['delay_reset']).then(function() {
+        bitbloqSU.Serial.setControlSignals(signalControlOn).then(function() {
             console.info('DTR-RTS ON');
-            return bitbloqSU.Serial.setControlSignals(signalControlOff, that.board['delay_reset']);
+            return bitbloqSU.Serial.setControlSignals(signalControlOff);
         }).then(function() {
             console.info('DTR-RTS OFF');
-            setTimeout(resolve, 200);
+            if (that.board['delay_reset']) {
+                setTimeout(resolve, that.board['delay_reset']);
+            } else {
+                resolve();
+            }
         }).catch(reject);
     });
 };
@@ -169,7 +173,7 @@ ProgramBuilder.prototype.loadAddress = function(address) {
         'command': loadAddress,
         'loadAddress.buffer': loadAddress.buffer
     });
-    return bitbloqSU.Serial.sendData(loadAddress.buffer).then(function() {
+    return bitbloqSU.Serial.sendData(loadAddress.buffer, this.board['delay_send']).then(function() {
         return address;
     });
 };
@@ -197,11 +201,16 @@ ProgramBuilder.prototype.programPage = function(it) {
     if (!buffer.buffer.byteLength) {
         console.error('bitbloqProgram.buffer.empty');
     }
+    var that = this;
     return new Promise(function(resolve) {
         bitbloqSU.Serial.sendData(buffer.buffer).then(function() {
-            setTimeout(function() {
+            if (that.board['delay_send']) {
+                setTimeout(function() {
+                    resolve();
+                }, that.board['delay_send']);
+            } else {
                 resolve();
-            }, 50);
+            }
         });
 
     });
