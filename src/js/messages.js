@@ -88,6 +88,10 @@ Messages.getPorts = function() {
     });
 };
 
+Messages.close = function() {
+    window.close();
+};
+
 var respondent = function(responseMsg, port) {
     console.info('Sending Response...');
     console.info({
@@ -184,10 +188,14 @@ Handler.add('program', function(request) {
             msg: response
         };
 
-        respondent(responseMsg, request.port);
+        respondent(responseMsg, request.params.port);
     };
 
-    Messages.program(request.path, request.board, request.data)
+    Messages.program(request.params.path, request.params.board, request.params.data)
         .then(programHandler)
         .catch(programHandler);
+});
+
+Handler.add('close', function() {
+    Messages.close();
 });
