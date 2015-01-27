@@ -126,7 +126,7 @@ bitbloqSU.Serial.connect = function(port, bitrate) {
     });
 };
 
-bitbloqSU.Serial.sendData = function(data, delay) {
+bitbloqSU.Serial.sendData = function(data) {
     console.info('bitbloqSU.serial.sendData', data.byteLength);
     if (data.byteLength === 0) {
         return Promise.reject();
@@ -140,13 +140,7 @@ bitbloqSU.Serial.sendData = function(data, delay) {
             bitbloqSU.SerialAPI.send(bitbloqSU.Serial.connectionId, data, function(response) {
                 console.info('bitbloqSU.serial.sendData.response', response);
                 onReceivePromise.then(function(response) {
-                    if (delay) {
-                        setTimeout(function() {
-                            resolveSendData(response);
-                        }, delay);
-                    } else {
-                        resolveSendData(response);
-                    }
+                    resolveSendData(response);
                 }).catch(function(response) {
                     rejectSendData(response);
                 });
