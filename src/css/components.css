@@ -12,30 +12,6 @@
   padding-top: 25px;
 }
 
-  .window--modal{
-    display: inline-block;
-    text-align: left;
-    background: white;
-    z-index: 200;
-    width: 350px;
-    min-height: 110px;
-    height: auto;
-  }
-
-  .window--modal.window--stretch{
-    display: block;
-    position: absolute;
-    top: 30px;
-    left: 30px;
-    right: 30px;
-    bottom: 30px;
-    width: auto;
-    height: auto;
-  }
-
-  .window--modal.window--center > .window__viewport{
-    max-height: 400px;
-  }
 
   .window__title-bar{
     position: absolute;
@@ -60,39 +36,12 @@
     overflow: auto;
   }
 
-.window__viewport__title{
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-  }
-
-  .window__overlay{
-    display: table;
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0,0,0,0.4);
-    z-index: 199;
-  }
-
-  .window__overlay-inner{
-    display: table-cell;
-    text-align: center;
-    vertical-align: middle;
-  }
-
 
 /* Title Bar */
 .title-bar{
   background: #333;
   color: #fff;
   height: 30px;
-}
-.chromeapp__info__container {
-    padding-left: 1em;
 }
 
   .title-bar__title{
@@ -104,152 +53,13 @@
     padding: 0 10px;
   }
 
-  .title-bar__icon{
-    height:30px;
-    width:30px;
-    position: absolute;
-    top: 7.2em;
-    right: 1.2em;
-    cursor: pointer;
-  }
-
-  .title-bar__buttons{
-    position: absolute;
-    top: 4px;
-    right: 5px;
-    height: 1.5em;
-  }
-
-  .title-bar__button{
-    display: inline-block;
-    -webkit-app-region: no-drag;
-  }
-
 
 /* brand band */
 .brandband{
     width: 100%;
-    height: 80px;
+    height: 100%;
     background-color:#94d31b;
     background-image: url('/img/logo-bitbloq.png');
-    background-position: 5% center;
+    background-position: 25%;
     background-repeat: no-repeat;
-}
-.chromeapp__info{
-    padding: 10px;
-    padding-top: 0;
-    color: #666666;
-}
-
-.chromeapp__info__title{
-    margin: 0;
-    padding-left: 10px;
-    font-size: 1.7em;
-    line-height: 2.2em;
-    font-weight: normal;
-    border-bottom: 1px solid #999;
-    font-family: Comfortaa, Helvetica,serif;
-}
-
-.chromeapp__info__item{
-    margin-bottom: 0.8em;
-
-}
-
-.chromeapp__info__item__select__container{
-    display:inline-block;
-    margin-left: 1em;
-    width:50%;
-    position:relative;
-}
-
-.chromeapp__info__item__select__container:after {
-    content:'<>';
-    font:11px "Consolas", monospace;
-    color:#aaa;
-    -webkit-transform:rotate(90deg);
-    -moz-transform:rotate(90deg);
-    -ms-transform:rotate(90deg);
-    transform:rotate(90deg);
-    right:8px; top:2px;
-    padding:0 0 2px;
-    border-bottom:1px solid #ddd;
-    position:absolute;
-    pointer-events:none;
-}
-.chromeapp__info__item__select__container:before {
-    content:'';
-    right:6px; top:0px;
-    width:20px; height:20px;
-    background:#f8f8f8;
-    position:absolute;
-    pointer-events:none;
-    display:block;
-}
-
-.chromeapp__info__item__select{
-    width:100%;
-}
-
-
-.chromeapp__info__item__title {
-    display: inline-block;
-    vertical-align: middle;
-    color: rgb(100, 100, 100);
-    font-weight: normal;
-    margin-left: 0.8em;
-}
-
-.chromeapp__info__item__value{
-    color: #729216;
-    font-size: 1.2em;
-}
-
-select {
-    padding:3px;
-    margin: 0;
-    -webkit-border-radius:4px;
-    -moz-border-radius:4px;
-    border-radius:4px;
-    -webkit-box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
-    -moz-box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
-    box-shadow: 0 3px 0 #ccc, 0 -1px #fff inset;
-    background: #f8f8f8;
-    color:#888;
-    border:none;
-    outline:none;
-    display: inline-block;
-    -webkit-appearance:none;
-    -moz-appearance:none;
-    appearance:none;
-    cursor:pointer;
-}
-
-.buttons__container{
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width:12em;
-    height:5em;
-}
-
-.button__program{
-    position: absolute;
-    bottom: 1em;
-    right: 1em;
-}
-.button__autoconfig{
-    position: absolute;
-    bottom: 3em;
-    right: 1em;
-}
-
-.button__reset{
-    position: absolute;
-    bottom: 8em;
-    right: 9em;
-}
-
-.chromeapp_info_item_board_alert{
-    color:red;
 }

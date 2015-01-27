@@ -13,15 +13,15 @@ var AppWindow = {
         resizable: false,
         hidden: false,
         outerBounds: {
-            width: 300,
-            height: 150,
+            width: 250,
+            height: 50,
             left: 0,
             top: 0
         }
     },
     set: function(createdWindow) {
         this.current = createdWindow;
-
+        this.current.resizeTo(this.defaultConfig.outerBounds.width, this.defaultConfig.outerBounds.height);
         this.current.minimize();
 
         //this.current.hide();

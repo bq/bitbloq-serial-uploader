@@ -54,13 +54,13 @@ module.exports = function(grunt) {
         concat: {
             dist_js: {
                 options: {
-                    footer: ';\n' + 'window.bitbloqSU.version = "<%= pkg.version %>";\nlogger.debugmode=0;\ndocument.addEventListener("DOMContentLoaded", function() {bitbloqSU.UI.init();});',
+                    footer: ';\n' + 'window.bitbloqSU.version = "<%= pkg.version %>";',
                     process: function(src, filepath) {
                         return '// Source: ' + filepath + '\n' + src.replace(/(^|\n)[ \t]*('use strict'|"use strict");?\s*/g, '$1');
                     }
                 },
                 files: [{
-                    src: ['src/bower_components/jquery/dist/jquery.js', 'src/js/available_boards.js', 'src/js/lib/sizeof.js', 'src/js/lib/logger.js', 'src/js/lib/i18n.js', 'src/js/bitbloq_serial.js', 'src/js/bitbloq_program.js', 'src/js/bitbloq_comm.js', 'src/js/init.js', '!src/js/init_dev.js', '!src/js/banner_dev.js'],
+                    src: ['src/bower_components/jquery/dist/jquery.js', 'src/js/init.js', 'src/js/messages.js', 'src/js/program.js', 'src/js/lib/sizeof.js', 'src/js/lib/i18n.js'],
                     dest: 'tmp/js/main.js'
                 }]
             },
@@ -140,8 +140,7 @@ module.exports = function(grunt) {
                     keepalive: true
                 }
             },
-            test: {
-            }
+            test: {}
         },
         'mocha_phantomjs': {
             options: {
