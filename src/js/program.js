@@ -173,7 +173,7 @@ ProgramBuilder.prototype.loadAddress = function(address) {
     //'command': loadAddress,
     //'loadAddress.buffer': loadAddress.buffer
     //});
-    return bitbloqSU.Serial.sendData(loadAddress.buffer, this.board['delay_send']).then(function() {
+    return bitbloqSU.Serial.sendData(loadAddress.buffer).then(function() {
         return address;
     });
 };
@@ -203,7 +203,7 @@ ProgramBuilder.prototype.programPage = function(it) {
     }
     var that = this;
     return new Promise(function(resolve) {
-        bitbloqSU.Serial.sendData(buffer.buffer).then(function() {
+        return bitbloqSU.Serial.sendData(buffer.buffer).then(function() {
             if (that.board['delay_send']) {
                 setTimeout(function() {
                     resolve();
@@ -212,7 +212,6 @@ ProgramBuilder.prototype.programPage = function(it) {
                 resolve();
             }
         });
-
     });
 };
 
@@ -295,4 +294,20 @@ bitbloqSU.Program.setBoard = function(board) {
     console.log('bitbloqSU.program.setBoard', board);
     bitbloqSU.Program.board = board;
     return new ProgramBuilder(board);
+};
+
+bitbloqSU.Program.testBoard = function(port, board) {
+    console.log('bitbloqSU.program.setBoard', board);
+    bitbloqSU.Program.board = board;
+    var builder = new ProgramBuilder(board);
+    return bitbloqSU.Serial.connect(port, board.bitrate)
+                .then(builder.resetBoard.bind(builder))
+                .then(builder.enterProgMode.bind(builder))
+                .then(builder.leaveProgMode.bind(builder))
+                .then(builder.resetBoard.bind(builder))
+                .then(bitbloqSU.Serial.disconnect).then(function() {
+                    return 'connectingport:ok';
+                }).catch(function() {
+                    return 'connectingport:ko';
+                });
 };
