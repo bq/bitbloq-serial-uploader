@@ -188,7 +188,7 @@ Handler.add('program', function(request) {
             msg: response
         };
 
-        respondent(responseMsg, request.params.port);
+        respondent(responseMsg, request.port);
     };
 
     Messages.program(request.params.path, request.params.board, request.params.data)
