@@ -160,19 +160,19 @@ ProgramBuilder.prototype.loadAddress = function(address) {
     loadAddress[1] = this.address_l[address];
     loadAddress[2] = this.address_r[address];
     loadAddress[3] = bitbloqSU.Program.STK500.CRC_EOP;
-    console.info('Accessing address', {
-        'address': address,
-        'address_l': this.address_l[address],
-        'address_r': this.address_r[address],
-        'command': loadAddress
-    });
-    console.info({
-        'address': address,
-        'address_l': this.address_l[address],
-        'address_r': this.address_r[address],
-        'command': loadAddress,
-        'loadAddress.buffer': loadAddress.buffer
-    });
+    //console.info('Accessing address', {
+    //'address': address,
+    //'address_l': this.address_l[address],
+    //'address_r': this.address_r[address],
+    //'command': loadAddress
+    //});
+    //console.info({
+    //'address': address,
+    //'address_l': this.address_l[address],
+    //'address_r': this.address_r[address],
+    //'command': loadAddress,
+    //'loadAddress.buffer': loadAddress.buffer
+    //});
     return bitbloqSU.Serial.sendData(loadAddress.buffer, this.board['delay_send']).then(function() {
         return address;
     });
@@ -276,7 +276,9 @@ ProgramBuilder.prototype.load = function(code, port, board) {
                 });
         }.bind(this)).then(function() {
             bitbloqSU.Program.SEMAPHORE = false;
-            return bitbloqSU.Serial.disconnect();
+            return bitbloqSU.Serial.disconnect().then(function() {
+                return 'program:ok';
+            });
         }).catch(function(error) {
             bitbloqSU.Program.SEMAPHORE = false;
             return Promise.reject(error);
@@ -290,6 +292,7 @@ ProgramBuilder.prototype.load = function(code, port, board) {
 };
 
 bitbloqSU.Program.setBoard = function(board) {
+    console.log('bitbloqSU.program.setBoard', board);
     bitbloqSU.Program.board = board;
     return new ProgramBuilder(board);
 };
