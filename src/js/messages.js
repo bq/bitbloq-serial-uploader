@@ -164,10 +164,11 @@ Handler.add('getPorts', function(request) {
         respondent(responseMsg, request.port);
     };
 
-    bitbloqSU.Serial.getDevices().then(onGetDevices).
-    catch (function() {
-        onGetDevices([]);
-    });
+    bitbloqSU.Serial.getDevices()
+        .then(onGetDevices)
+        .catch(function() {
+            onGetDevices([]);
+        });
 
 });
 
@@ -179,10 +180,9 @@ Handler.add('setPort', function(request) {
         }, request.port);
     };
 
-    return Messages.setPort(request.board, request.path)
+    return Messages.setPort(request.params.board, request.params.path)
         .then(handler)
-        .
-    catch (handler);
+        .catch(handler);
 
 });
 
@@ -200,8 +200,7 @@ Handler.add('program', function(request) {
 
     Messages.program(request.params.path, request.params.board, request.params.data)
         .then(programHandler)
-        .
-    catch (programHandler);
+        .catch(programHandler);
 });
 
 Handler.add('close', function() {
