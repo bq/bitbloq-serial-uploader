@@ -3,7 +3,7 @@
  * bitbloqSU.Serial - Chrome.serial communication functionality
  ********************************************************* */
 'use strict';
-/* global logger, Promise, bitbloqSU*/
+/* global Promise, bitbloqSU*/
 /* jshint unused:false */
 if (!window.bitbloqSU) {
     window.bitbloqSU = {};
@@ -14,6 +14,7 @@ bitbloqSU.Serial = {};
 bitbloqSU.SerialAPI = window.chrome.serial;
 bitbloqSU.Serial.connectionId = -1;
 bitbloqSU.Serial.TIMEOUT = 5000;
+bitbloqSU.Serial.lineBuffer = 0;
 
 bitbloqSU.Serial.receiverListener = undefined;
 
@@ -30,10 +31,26 @@ bitbloqSU.Serial.defaultOnReceiveDataCallback = function(resolve, reject) {
     }
 
     return function(evt) {
-        clearTimeout(timeout);
-        bitbloqSU.Serial.removeReceiveDataListener();
-        if (evt.data.byteLength > 0) {
-            resolve(evt);
+        console.info('bitbloqSU.callback');
+        var str;
+        if (evt.data.byteLength === 2) {
+            str = String.fromCharCode.apply(null, new Uint16Array(evt.data));
+        } else {
+            str = String.fromCharCode.apply(null, new Uint8Array(evt.data));
+        }
+        var responseCode = parseInt(str.charCodeAt(0).toString(16), 10);
+        console.info('onReceive.responseCode', responseCode);
+        if (evt.data.byteLength !== 0) {
+            bitbloqSU.Serial.lineBuffer += evt.data.byteLength;
+            console.warn('onReceive.evt.data.byteLength', evt.data.byteLength);
+            console.info('bitbloqSU.serial.lineBuffer', bitbloqSU.Serial.lineBuffer);
+            if (bitbloqSU.Serial.lineBuffer >= 2) {
+                console.info('lineBuffer >= 2');
+                bitbloqSU.Serial.lineBuffer = 0;
+                bitbloqSU.Serial.removeReceiveDataListener();
+                clearTimeout(timeout);
+                resolve();
+            }
         } else {
             console.error('Data receive byteLength === 0');
             reject('send:empty');
@@ -54,6 +71,7 @@ bitbloqSU.Serial.init = function() {
     console.log('bitbloqSU.serial.init');
     bitbloqSU.SerialAPI.onReceive.addListener(function(evt) {
         console.log('bitbloqSU.Serial.init.onReceive', evt);
+        console.log('bitbloqSU.Serial.init.onReceive.id', bitbloqSU.Serial.sendId);
         if (bitbloqSU.Serial.receiverListener) {
             bitbloqSU.Serial.receiverListener.call(this, evt);
         }
@@ -127,7 +145,9 @@ bitbloqSU.Serial.connect = function(port, bitrate) {
 };
 
 bitbloqSU.Serial.sendData = function(data) {
+    bitbloqSU.Serial.sendId = Math.random();
     console.info('bitbloqSU.serial.sendData', data.byteLength);
+    console.info('bitbloqSU.serial.sendData.id', bitbloqSU.Serial.sendId);
     if (data.byteLength === 0) {
         return Promise.reject();
     }
@@ -139,6 +159,7 @@ bitbloqSU.Serial.sendData = function(data) {
         window.chrome.serial.flush(bitbloqSU.Serial.connectionId, function() {
             bitbloqSU.SerialAPI.send(bitbloqSU.Serial.connectionId, data, function(response) {
                 console.info('bitbloqSU.serial.sendData.response', response);
+                console.info('bitbloqSU.serial.sendData.response.id', bitbloqSU.Serial.sendId);
                 onReceivePromise.then(function(response) {
                     resolveSendData(response);
                 }).catch(function(response) {

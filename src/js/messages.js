@@ -16,7 +16,6 @@ Mocks.freeduino.board = {
     'bitrate': 115200,
     'maxPageSize': 128,
     'delay_reset': 10,
-    'delay_send': 10,
     'max_size': 32256
 };
 Mocks.freeduino.port = '/dev/ttyACM0';
@@ -31,7 +30,6 @@ Mocks.zoom.board = {
     'bitrate': 19200,
     'maxPageSize': 128,
     'delay_reset': 1,
-    'delay_send': 1,
     'max_size': 28672
 };
 Mocks.zoom.port = '/dev/ttyUSB0';
@@ -46,7 +44,6 @@ Mocks.arduino.board = {
     'bitrate': 9600,
     'maxPageSize': 128,
     'delay_reset': 1,
-    'delay_send': 1,
     'max_size': 28672
 };
 Mocks.arduino.port = '/dev/ttyACM0';
