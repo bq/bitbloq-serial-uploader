@@ -16,7 +16,6 @@ Mocks.freeduino.board = {
     'bitrate': 115200,
     'maxPageSize': 128,
     'delay_reset': 10,
-    'delay_send': 1,
     'max_size': 32256
 };
 //Mocks.freeduino.port = 'COM3';
@@ -31,7 +30,6 @@ Mocks.zoom.board = {
     'bitrate': 19200,
     'maxPageSize': 128,
     'delay_reset': 1,
-    'delay_send': 1,
     'max_size': 28672
 };
 //Mocks.zoom.port = 'COM4';
@@ -46,7 +44,6 @@ Mocks.arduino.board = {
     'bitrate': 9600,
     'maxPageSize': 128,
     'delay_reset': 1,
-    'delay_send': 1,
     'max_size': 28672
 };
 //Mocks.arduino.port = '/dev/ttyACM0';
@@ -61,9 +58,9 @@ Messages.setPort = function(path, board) {
 
 Messages.setPortMock = function(type) {
     var board = Mocks[type].board;
-    //var port = Mocks[type].port;
 
     return bitbloqSU.Serial.getDevices().then(function(port) {
+        console.log('port', port[0].path);
         Messages.setPort(port[0].path, board).then(function(response) {
             console.log(response);
         });
@@ -82,8 +79,10 @@ Messages.programMock = function(type) {
     var board = Mocks[type].board;
 
     return bitbloqSU.Serial.getDevices().then(function(port) {
-        console.log(port[0].path);
-        Messages.program(port[0].path, board, code);
+        console.log('port', port[0].path);
+        Messages.program(port[0].path, board, code).then(function(response) {
+            console.log(response);
+        });
     });
 };
 

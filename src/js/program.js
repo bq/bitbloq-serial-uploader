@@ -134,15 +134,10 @@ ProgramBuilder.prototype.changeSignals = function() {
 ProgramBuilder.prototype.enterProgMode = function() {
     console.log('ProgramBuilder.enterProgMode');
 
-    return new Promise(function(resolve, reject) {
-        var buffer = new Uint8Array(2);
-        buffer[0] = bitbloqSU.Program.STK500.STK_ENTER_PROGMODE;
-        buffer[1] = bitbloqSU.Program.STK500.CRC_EOP;
-        bitbloqSU.Serial.sendData(buffer.buffer).then(function() {
-            resolve();
-        }).
-        catch (reject);
-    });
+    var buffer = new Uint8Array(2);
+    buffer[0] = bitbloqSU.Program.STK500.STK_ENTER_PROGMODE;
+    buffer[1] = bitbloqSU.Program.STK500.CRC_EOP;
+    return bitbloqSU.Serial.sendData(buffer.buffer);
 };
 
 // Send the commands to leave the programming mode
@@ -162,19 +157,6 @@ ProgramBuilder.prototype.loadAddress = function(address) {
     loadAddress[1] = this.address_l[address];
     loadAddress[2] = this.address_r[address];
     loadAddress[3] = bitbloqSU.Program.STK500.CRC_EOP;
-    //console.info('Accessing address', {
-    //'address': address,
-    //'address_l': this.address_l[address],
-    //'address_r': this.address_r[address],
-    //'command': loadAddress
-    //});
-    //console.info({
-    //'address': address,
-    //'address_l': this.address_l[address],
-    //'address_r': this.address_r[address],
-    //'command': loadAddress,
-    //'loadAddress.buffer': loadAddress.buffer
-    //});
     return bitbloqSU.Serial.sendData(loadAddress.buffer).then(function() {
         return address;
     });
@@ -203,18 +185,7 @@ ProgramBuilder.prototype.programPage = function(it) {
     if (!buffer.buffer.byteLength) {
         console.error('bitbloqProgram.buffer.empty');
     }
-    var that = this;
-    return new Promise(function(resolve) {
-        return bitbloqSU.Serial.sendData(buffer.buffer).then(function() {
-            if (that.board['delay_send']) {
-                setTimeout(function() {
-                    resolve();
-                }, that.board['delay_send']);
-            } else {
-                resolve();
-            }
-        });
-    });
+    return bitbloqSU.Serial.sendData(buffer.buffer);
 };
 
 //////////////////////////////////////////////
@@ -312,8 +283,7 @@ bitbloqSU.Program.testBoard = function(port, board) {
         .then(builder.resetBoard.bind(builder))
         .then(bitbloqSU.Serial.disconnect).then(function() {
             return 'connectingport:ok';
-        }).
-    catch (function() {
-        return 'connectingport:ko';
-    });
+        }).catch(function() {
+            return 'connectingport:ko';
+        });
 };
