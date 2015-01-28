@@ -59,11 +59,9 @@ bitbloqSU.Serial.defaultOnReceiveDataCallback = function(resolve, reject) {
 };
 
 bitbloqSU.Serial.addReceiveDataListener = function(callback) {
-    //console.info('bitbloqSU.addReceiveDataListener');
     bitbloqSU.Serial.receiverListener = callback;
 };
 bitbloqSU.Serial.removeReceiveDataListener = function() {
-    //console.info('bitbloqSU.removeReceiveDataListener');
     bitbloqSU.Serial.receiverListener = undefined;
 };
 
@@ -113,7 +111,6 @@ bitbloqSU.Serial.disconnect = function() {
     });
 };
 
-//First port: "/dev/ttyACM0"
 bitbloqSU.Serial.connect = function(port, bitrate) {
     return new Promise(function(resolve, reject) {
         try {
@@ -171,9 +168,13 @@ bitbloqSU.Serial.sendData = function(data) {
 };
 
 bitbloqSU.Serial.setControlSignals = function(data) {
-    return new Promise(function(resolve) {
-        bitbloqSU.SerialAPI.setControlSignals(bitbloqSU.Serial.connectionId, data, function() {
-            resolve();
+    return new Promise(function(resolve, reject) {
+        bitbloqSU.SerialAPI.setControlSignals(bitbloqSU.Serial.connectionId, data, function(response) {
+            if (response) {
+                resolve(response);
+            } else {
+                reject(response);
+            }
         });
     });
 };

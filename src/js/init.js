@@ -15,7 +15,6 @@ bitbloqSU.UI = (function() {
         $('body').on('contextmenu', function() {
             return false;
         });
-        //window.chrome.runtime.reload();
     }
 
     var init = function() {
