@@ -17,13 +17,13 @@
     "url_handlers": {
         "bitbloq": {
             "matches": [
-                "http://localhost:9000/chromeapp/*",
-                "http://bitbloq.bq.com/chromeapp/*",
-                "http://int-bitbloq.com.s3-website-eu-west-1.amazonaws.com/chromeapp/*",
-                "http://qa-bitbloq.com.s3-website-eu-west-1.amazonaws.com/chromeapp/*",
-                "http://next-bitbloq.com.s3-website-eu-west-1.amazonaws.com/chromeapp/*",
-                "http://staging-bitbloq.com.s3-website-eu-west-1.amazonaws.com/chromeapp/*",
-                "http://bitbloq.bq.com.s3-website-eu-west-1.amazonaws.com/chromeapp/*"
+                "http://localhost:9000/chromeapp.html",
+                "http://bitbloq.bq.com/chromeapp.html",
+                "http://int-bitbloq.com.s3-website-eu-west-1.amazonaws.com/chromeapp.html",
+                "http://qa-bitbloq.com.s3-website-eu-west-1.amazonaws.com/chromeapp.html",
+                "http://next-bitbloq.com.s3-website-eu-west-1.amazonaws.com/chromeapp.html",
+                "http://staging-bitbloq.com.s3-website-eu-west-1.amazonaws.com/chromeapp.html",
+                "http://bitbloq.bq.com.s3-website-eu-west-1.amazonaws.com/chromeapp.html"
             ],
             "title": "View Foo presentation"
         }
