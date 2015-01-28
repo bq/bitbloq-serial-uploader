@@ -126,8 +126,7 @@ ProgramBuilder.prototype.changeSignals = function() {
             } else {
                 resolve();
             }
-        }).
-        catch (reject);
+        }).catch(reject);
     });
 };
 // Send the commands to enter the programming mode
@@ -233,8 +232,7 @@ ProgramBuilder.prototype.load = function(code, port, board) {
             return bitbloqSU.Serial.connect(port, board.bitrate)
                 .then(this.resetBoard.bind(this))
                 .then(this.enterProgMode.bind(this))
-                .
-            catch (function() {
+                .catch(function() {
                 return Promise.reject('program:error:connection');
             });
         }.bind(this)).then(function() {
@@ -244,8 +242,7 @@ ProgramBuilder.prototype.load = function(code, port, board) {
             return p
                 .then(this.leaveProgMode.bind(this))
                 .then(this.resetBoard.bind(this))
-                .
-            catch (function() {
+                .catch(function() {
                 return Promise.reject('program:error:write');
             });
         }.bind(this)).then(function() {
@@ -253,8 +250,7 @@ ProgramBuilder.prototype.load = function(code, port, board) {
             return bitbloqSU.Serial.disconnect().then(function() {
                 return 'program:ok';
             });
-        }).
-        catch (function(error) {
+        }).catch(function(error) {
             bitbloqSU.Program.SEMAPHORE = false;
             return Promise.reject(error);
         });

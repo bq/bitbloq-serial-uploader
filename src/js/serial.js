@@ -13,7 +13,7 @@ bitbloqSU.Serial = {};
 
 bitbloqSU.SerialAPI = window.chrome.serial;
 bitbloqSU.Serial.connectionId = -1;
-bitbloqSU.Serial.TIMEOUT = 5000;
+bitbloqSU.Serial.TIMEOUT = 25000;
 bitbloqSU.Serial.lineBuffer = 0;
 
 bitbloqSU.Serial.receiverListener = undefined;
