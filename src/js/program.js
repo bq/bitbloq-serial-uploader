@@ -126,7 +126,8 @@ ProgramBuilder.prototype.changeSignals = function() {
             } else {
                 resolve();
             }
-        }).catch(reject);
+        }).
+        catch (reject);
     });
 };
 // Send the commands to enter the programming mode
@@ -139,7 +140,8 @@ ProgramBuilder.prototype.enterProgMode = function() {
         buffer[1] = bitbloqSU.Program.STK500.CRC_EOP;
         bitbloqSU.Serial.sendData(buffer.buffer).then(function() {
             resolve();
-        }).catch(reject);
+        }).
+        catch (reject);
     });
 };
 
@@ -260,9 +262,10 @@ ProgramBuilder.prototype.load = function(code, port, board) {
             return bitbloqSU.Serial.connect(port, board.bitrate)
                 .then(this.resetBoard.bind(this))
                 .then(this.enterProgMode.bind(this))
-                .catch(function() {
-                    return Promise.reject('program:error:connection');
-                });
+                .
+            catch (function() {
+                return Promise.reject('program:error:connection');
+            });
         }.bind(this)).then(function() {
             for (var i = 0; i < this.numPages; i++) {
                 p = this.addWriteStep(p, i);
@@ -270,15 +273,17 @@ ProgramBuilder.prototype.load = function(code, port, board) {
             return p
                 .then(this.leaveProgMode.bind(this))
                 .then(this.resetBoard.bind(this))
-                .catch(function() {
-                    return Promise.reject('program:error:write');
-                });
+                .
+            catch (function() {
+                return Promise.reject('program:error:write');
+            });
         }.bind(this)).then(function() {
             bitbloqSU.Program.SEMAPHORE = false;
             return bitbloqSU.Serial.disconnect().then(function() {
                 return 'program:ok';
             });
-        }).catch(function(error) {
+        }).
+        catch (function(error) {
             bitbloqSU.Program.SEMAPHORE = false;
             return Promise.reject(error);
         });
@@ -301,13 +306,14 @@ bitbloqSU.Program.testBoard = function(port, board) {
     bitbloqSU.Program.board = board;
     var builder = new ProgramBuilder(board);
     return bitbloqSU.Serial.connect(port, board.bitrate)
-                .then(builder.resetBoard.bind(builder))
-                .then(builder.enterProgMode.bind(builder))
-                .then(builder.leaveProgMode.bind(builder))
-                .then(builder.resetBoard.bind(builder))
-                .then(bitbloqSU.Serial.disconnect).then(function() {
-                    return 'connectingport:ok';
-                }).catch(function() {
-                    return 'connectingport:ko';
-                });
+        .then(builder.resetBoard.bind(builder))
+        .then(builder.enterProgMode.bind(builder))
+        .then(builder.leaveProgMode.bind(builder))
+        .then(builder.resetBoard.bind(builder))
+        .then(bitbloqSU.Serial.disconnect).then(function() {
+            return 'connectingport:ok';
+        }).
+    catch (function() {
+        return 'connectingport:ko';
+    });
 };
