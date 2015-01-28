@@ -233,8 +233,8 @@ ProgramBuilder.prototype.load = function(code, port, board) {
                 .then(this.resetBoard.bind(this))
                 .then(this.enterProgMode.bind(this))
                 .catch(function() {
-                return Promise.reject('program:error:connection');
-            });
+                    return Promise.reject('program:error:connection');
+                });
         }.bind(this)).then(function() {
             for (var i = 0; i < this.numPages; i++) {
                 p = this.addWriteStep(p, i);
@@ -243,8 +243,8 @@ ProgramBuilder.prototype.load = function(code, port, board) {
                 .then(this.leaveProgMode.bind(this))
                 .then(this.resetBoard.bind(this))
                 .catch(function() {
-                return Promise.reject('program:error:write');
-            });
+                    return Promise.reject('program:error:write');
+                });
         }.bind(this)).then(function() {
             bitbloqSU.Program.SEMAPHORE = false;
             return bitbloqSU.Serial.disconnect().then(function() {

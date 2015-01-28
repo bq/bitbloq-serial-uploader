@@ -154,6 +154,16 @@ Handler.add('defaultHandler', function(request) {
 
 });
 
+Handler.add('version', function(request) {
+
+    var responseMsg = {
+        msg: bitbloqSU.version || '0.0.1'
+    };
+
+    respondent(responseMsg, request.port);
+
+});
+
 Handler.add('getPorts', function(request) {
 
     var onGetDevices = function(ports) {
