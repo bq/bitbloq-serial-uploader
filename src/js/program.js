@@ -249,7 +249,12 @@ ProgramBuilder.prototype.addWriteStep = function(promise, it) {
  * @param  {String} port
  * @param  {Object} board
  * @param  {Number} board.bitrate
- * @return {Promise} A promise that resolves only when the programming is ok
+ * @return {Promise}   A promise that resolves only when the programming is ok with the following mesasges:
+ *                     program:ok               Programming process ok
+ *                     program:error:busy       The chromapp is programming
+ *                     program:error:connection Cannot connect to board in that port
+ *                     program:error:write      Error while writting pages
+ *                     program:error:size       Not enough spaces in board
  */
 ProgramBuilder.prototype.load = function(code, port, board) {
 
