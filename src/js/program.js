@@ -26,6 +26,11 @@ bitbloqSU.Program = {
     }
 };
 
+/**
+ * ProgramBuilder with program lifecycle methods
+ * @param {Object} board board object
+ * @param {Number} board.bitrate board bitrate
+ */
 function ProgramBuilder(board) {
     this.board = board;
     // Useful parameters throughout the code:
@@ -69,6 +74,10 @@ ProgramBuilder.prototype.load_hex = function(hex) {
     return prog;
 };
 
+/**
+ * Process string-code to calculate & build pages/address
+ * @param  {String} hex
+ */
 ProgramBuilder.prototype.transformData = function(hex) {
     console.log('ProgramBuilder.transformData');
     //load commands
@@ -99,9 +108,11 @@ ProgramBuilder.prototype.transformData = function(hex) {
 
     console.info('Program size: ', sizeof(this.trimmedCommands), '. Max size available in the board: ', this.board.max_size);
 };
-///////////////////////////////////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////////////////////////////////
-// Reset the board and trigger the next function
+
+/**
+ * Send change singnals to board
+ * @return {Promise} Returns a promise that resolves with the chansignals sended
+ */
 ProgramBuilder.prototype.changeSignals = function() {
     console.log('ProgramBuilder.changeSignals');
     var that = this;
@@ -129,7 +140,11 @@ ProgramBuilder.prototype.changeSignals = function() {
         }).catch(reject);
     });
 };
-// Send the commands to enter the programming mode
+
+/**
+ * Send the commands to enter the programming mode
+ * @return {Promise} A promise that resolves when the board is in prog mode
+ */
 ProgramBuilder.prototype.enterProgMode = function() {
     console.log('ProgramBuilder.enterProgMode');
 
@@ -139,7 +154,10 @@ ProgramBuilder.prototype.enterProgMode = function() {
     return bitbloqSU.Serial.sendData(buffer.buffer);
 };
 
-// Send the commands to leave the programming mode
+/**
+ * Send the commands to leave the programming mode
+ * @return {Promise} A promise that resolves when the board is not in prog mode
+ */
 ProgramBuilder.prototype.leaveProgMode = function() {
     console.log('ProgramBuilder.leaveProgMode');
     var buffer = new Uint8Array(2);
@@ -148,7 +166,11 @@ ProgramBuilder.prototype.leaveProgMode = function() {
     return bitbloqSU.Serial.sendData(buffer.buffer);
 };
 
-// Create and send the commands needed to specify in which memory address we are writting currently
+/**
+ * Create and send the commands needed to specify in which memory address we are writting currently
+ * @param  {Number} address adress index
+ * @return {Promise} A promise that resolves when the address is loaded in the board
+ */
 ProgramBuilder.prototype.loadAddress = function(address) {
     console.log('ProgramBuilder.loadAddress', address);
     var loadAddress = new Uint8Array(4);
@@ -160,7 +182,12 @@ ProgramBuilder.prototype.loadAddress = function(address) {
         return address;
     });
 };
-// Create the command structure needed to program the current memory page
+
+/**
+ * Create the command structure needed to program the current memory page
+ * @param  {Number} it
+ * @return {Promise} A promise that resolves with the program writed
+ */
 ProgramBuilder.prototype.programPage = function(it) {
     console.log('ProgramBuilder.programPage', it);
 
@@ -187,13 +214,20 @@ ProgramBuilder.prototype.programPage = function(it) {
     return bitbloqSU.Serial.sendData(buffer.buffer);
 };
 
-//////////////////////////////////////////////
-///Composite programming functions
-//////////////////////////////////////7
+/**
+ * Send reset to board
+ * @return {Promise} A promise that resolves with the board reset
+ */
 ProgramBuilder.prototype.resetBoard = function() {
     return this.changeSignals().then(this.changeSignals.bind(this));
 };
 
+/**
+ * writes a
+ * @param {Promise} [promise]   A promise that must be resolved to write this page
+ * @param {Number} it The page number to write in board
+ * @return {Promise} A promise that resolves with the page data wrote in board
+ */
 ProgramBuilder.prototype.addWriteStep = function(promise, it) {
     var that = this;
     if (!promise) {
@@ -211,10 +245,11 @@ ProgramBuilder.prototype.addWriteStep = function(promise, it) {
 
 /**
  * Load Trigger loading process on board
- * @param  {String} code  [description]
- * @param  {String} port  [description]
- * @param  {Object} board [description]
- * @return {Promise}       [description]
+ * @param  {String} code
+ * @param  {String} port
+ * @param  {Object} board
+ * @param  {Number} board.bitrate
+ * @return {Promise} A promise that resolves only when the programming is ok
  */
 ProgramBuilder.prototype.load = function(code, port, board) {
 
@@ -262,12 +297,25 @@ ProgramBuilder.prototype.load = function(code, port, board) {
 
 };
 
+/**
+ * Set the board config to ProgramBuilder and returns a instance of it
+ * @param {Object} board
+ * @param {Number} board.bitrate
+ * @return {ProgramBuilder}
+ */
 bitbloqSU.Program.setBoard = function(board) {
     console.log('bitbloqSU.program.setBoard', board);
     bitbloqSU.Program.board = board;
     return new ProgramBuilder(board);
 };
 
+/**
+ * Tries to veify if there is a board connected in a specific port/board
+ * @param  {String} port
+ * @param  {Object} board
+ * @param  {Number} board.bitrate
+ * @return {Promise} A promise that resolves only when a board is detected in the specific config
+ */
 bitbloqSU.Program.testBoard = function(port, board) {
     console.log('bitbloqSU.program.setBoard', board);
     bitbloqSU.Program.board = board;
