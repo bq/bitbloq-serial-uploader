@@ -219,7 +219,7 @@ ProgramBuilder.prototype.addWriteStep = function(promise, it) {
 ProgramBuilder.prototype.load = function(code, port, board) {
 
     if (bitbloqSU.Program.SEMAPHORE) {
-        //return Promise.reject('busy');
+        return Promise.reject('program:error:busy');
     }
     bitbloqSU.Program.SEMAPHORE = true;
 
