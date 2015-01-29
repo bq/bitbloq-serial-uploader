@@ -190,7 +190,7 @@ Handler.add('setPort', function(request) {
         }, request.port);
     };
 
-    return Messages.setPort(request.params.board, request.params.path)
+    return Messages.setPort(request.params.path, request.params.board)
         .then(handler)
         .catch(handler);
 
