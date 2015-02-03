@@ -23,7 +23,8 @@ bitbloqSU.Program = {
         STK_PROG_PAGE: 0x64, // 'd'
         STK_READ_PAGE: 0x74, // 't'
         STK_READ_SIGN: 0x75 // 'u'
-    }
+    },
+    SEMAPHORE: false
 };
 
 /**
@@ -129,7 +130,9 @@ ProgramBuilder.prototype.changeSignals = function() {
         };
         bitbloqSU.Serial.setControlSignals(signalControlOn).then(function() {
             console.info('DTR-RTS ON');
+            //return setTimeout(function() {
             return bitbloqSU.Serial.setControlSignals(signalControlOff);
+            //}, bitbloqSU.Program.board.delay_reset);
         }).then(function() {
             console.info('DTR-RTS OFF');
             if (that.board['delay_reset']) {
@@ -146,12 +149,26 @@ ProgramBuilder.prototype.changeSignals = function() {
  * @return {Promise} A promise that resolves when the board is in prog mode
  */
 ProgramBuilder.prototype.enterProgMode = function() {
+
     console.log('ProgramBuilder.enterProgMode');
 
-    var buffer = new Uint8Array(2);
-    buffer[0] = bitbloqSU.Program.STK500.STK_ENTER_PROGMODE;
-    buffer[1] = bitbloqSU.Program.STK500.CRC_EOP;
-    return bitbloqSU.Serial.sendData(buffer.buffer);
+    //Esperamos un delay despues de mandar los comandos de control
+    return new Promise(function(resolve, reject) {
+        var buffer = new Uint8Array(2);
+        buffer[0] = bitbloqSU.Program.STK500.STK_ENTER_PROGMODE;
+        buffer[1] = bitbloqSU.Program.STK500.CRC_EOP;
+        bitbloqSU.Serial.sendData(buffer.buffer).then(function() {
+            setTimeout(resolve, 200);
+        });
+    });
+
+
+    //Sin Espera
+    // var buffer = new Uint8Array(2);
+    // buffer[0] = bitbloqSU.Program.STK500.STK_ENTER_PROGMODE;
+    // buffer[1] = bitbloqSU.Program.STK500.CRC_EOP;
+    // return bitbloqSU.Serial.sendData(buffer.buffer);
+
 };
 
 /**
@@ -266,13 +283,14 @@ ProgramBuilder.prototype.load = function(code, port, board) {
     var p;
     this.transformData(code);
 
-    if (sizeof(this.trimmedCommands) < board.max_size) {
+    if (sizeof(this.trimmedCommands) < bitbloqSU.Program.board.max_size) {
 
         return Promise.resolve().then(function() {
-            return bitbloqSU.Serial.connect(port, board.bitrate)
+            return bitbloqSU.Serial.connect(port, bitbloqSU.Program.board.bitrate)
                 .then(this.resetBoard.bind(this))
                 .then(this.enterProgMode.bind(this))
                 .catch(function() {
+                    bitbloqSU.Program.SEMAPHORE = false;
                     return Promise.reject('program:error:connection');
                 });
         }.bind(this)).then(function() {
@@ -283,6 +301,7 @@ ProgramBuilder.prototype.load = function(code, port, board) {
                 .then(this.leaveProgMode.bind(this))
                 .then(this.resetBoard.bind(this))
                 .catch(function() {
+                    bitbloqSU.Program.SEMAPHORE = false;
                     return Promise.reject('program:error:write');
                 });
         }.bind(this)).then(function() {
