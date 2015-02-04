@@ -4,16 +4,25 @@
 
     describe('In Program module', function() {
 
-        it('provides all methods', function() {
+        it('provides all methods in bitbloqSU.Program', function() {
 
             expect(bitbloqSU.Program).to.include.keys(
                 'setBoard',
                 'testBoard'
             );
-            // expect(Messages).to.include.keys(
-            //     'program',
-            //     'programMock'
-            // );
+            expect(Messages).to.include.keys(
+                'program',
+                'programMock'
+            );
+
+        });
+        it('provides all methods in Messages', function() {
+
+            expect(Messages).to.include.keys(
+                'program',
+                'programMock'
+            );
+
         });
 
         /*        describe('i can set a board', function() {

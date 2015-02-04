@@ -9,23 +9,21 @@
 
 <body>
     <div id="mocha"></div>
-    <script src="bower_components/jquery/dist/jquery.js"></script>
-    <script src="bower_components/mocha/mocha.js"></script>
-    <script src="bower_components/chai/chai.js"></script>
-    <script src="bower_components/chai-as-promised/lib/chai-as-promised.js"></script>
-    <script src="bower_components/sinonjs/sinon.js"></script>
 
-    <script src="js/init.js"></script>
-    <script src="js/lib/sizeof.js"></script>
-    <script src="js/serial.js"></script>
-    <script src="js/program.js"></script>
-    <script src="js/messages.js"></script>
-    <script src="js/lib/i18n.js"></script>
+    <script src="bower_components/requirejs/require.js"></script>
+    <script src="define.js"></script>
 
-    <script src="testRunner.js"></script>
-    <!-- <script src="spec/serial.js"></script> -->
-    <script src="spec/program.js"></script>
-    <script src="spec/example.js"></script>
+<!--     <script>
+        (function() {
+            var po = document.createElement('script');
+            po.type = 'text/javascript';
+            po.async = true;
+            po.src = '//' + window.location.host.split(':')[0] + ':35729/livereload.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(po, s);
+        })();
+    </script> -->
+
 </body>
 
 </html>
