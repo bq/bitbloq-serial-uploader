@@ -65,8 +65,14 @@ bitbloqSU.Serial.removeReceiveDataListener = function() {
     bitbloqSU.Serial.receiverListener = undefined;
 };
 
-bitbloqSU.Serial.init = function() {
-    console.log('bitbloqSU.serial.init');
+bitbloqSU.Serial.removeOnReceiveListeners = function() {
+    console.log('bitbloqSU.Serial.removeOnReceiveListeners');
+    bitbloqSU.SerialAPI.onReceive.removeListener();
+    bitbloqSU.SerialAPI.onReceiveError.removeListener();
+};
+
+bitbloqSU.Serial.addOnReceiveListeners = function() {
+    console.log('bitbloqSU.Serial.addOnReceiveListeners');
     bitbloqSU.SerialAPI.onReceive.addListener(function(evt) {
         console.log('bitbloqSU.Serial.init.onReceive', evt);
         console.log('bitbloqSU.Serial.init.onReceive.id', bitbloqSU.Serial.sendId);
@@ -181,6 +187,11 @@ bitbloqSU.Serial.setControlSignals = function(data) {
             }
         });
     });
+};
+
+bitbloqSU.Serial.init = function(argument) {
+    bitbloqSU.Serial.addOnReceiveListeners();
+    bitbloqSU.Serial.removeOnReceiveListeners();
 };
 
 bitbloqSU.Serial.init();

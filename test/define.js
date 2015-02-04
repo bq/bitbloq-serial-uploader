@@ -16,7 +16,8 @@ require.config({
         sinonjs: '../bower_components/sinonjs/sinon',
         i18n: 'lib/i18n',
         sizeof: 'lib/sizeof',
-        serial_api_mock: 'lib/chrome.serial.mock',
+        chrome_serial_mock: 'lib/chrome.serial.mock',
+        board_config_mock: 'lib/board.config.mock',
         serial: 'serial',
         program: 'program',
         messages: 'messages',
@@ -32,7 +33,7 @@ require.config({
             ]
         },
         program: {
-            deps: ['serial']
+            deps: ['serial', 'chrome_serial_mock', 'board_config_mock']
         },
         bitbloqSU: {
             exports: 'bitbloqSU',

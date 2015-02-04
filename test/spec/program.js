@@ -10,10 +10,6 @@
                 'setBoard',
                 'testBoard'
             );
-            expect(Messages).to.include.keys(
-                'program',
-                'programMock'
-            );
 
         });
         it('provides all methods in Messages', function() {
