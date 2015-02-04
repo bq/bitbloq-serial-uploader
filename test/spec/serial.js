@@ -6,9 +6,11 @@
 
         it('provides all methods', function() {
             expect(bitbloqSU.Serial).to.include.keys(
-            'connect',
-            'disconnect'
-            //...
+                'connect',
+                'disconnect',
+                'getDevices',
+                'getConnections',
+                'sendData'
             );
         });
 
@@ -18,7 +20,13 @@
             });
 
             it('return connectionId with correct config', function() {
-                expect(true).to.equal(true);
+                bitbloqSU.Serial.connect('/dev/ttyACM0', 115200).then(function(argument) {
+                    console.log(argument);
+                    expect(true).to.equal(true);
+
+                    //expect(bitbloqSU.Serial.connectionId).to.be.below(1);
+
+                });
             });
 
             it('bitbloqSU.Serial.connectionId is saved with correct config', function() {
