@@ -3,7 +3,7 @@
  * Chrome Message Passing functionality
  ********************************************************* */
 'use strict';
-/* global bitbloqSU, Mocks */
+/* global bitbloqSU */
 /* jshint -W030 */
 
 var Messages = {};
@@ -11,8 +11,6 @@ var Messages = {};
 Messages.setPort = function(path, board) {
     return bitbloqSU.Program.testBoard(path, board);
 };
-
-
 
 Messages.program = function(path, board, code) {
     return bitbloqSU.Program.setBoard(board).load(code, path, board);
@@ -147,29 +145,3 @@ Handler.add('program', function(request) {
 Handler.add('close', function() {
     Messages.close();
 });
-
-
-/* Mocks */
-Messages.setPortMock = function(type) {
-    var board = Mocks[type].board;
-
-    return bitbloqSU.Serial.getDevices().then(function(port) {
-        console.log('port', port[0].path);
-        Messages.setPort(port[0].path, board).then(function(response) {
-            console.log(response);
-        });
-
-    });
-};
-
-Messages.programMock = function(type) {
-    var code = Mocks[type].code;
-    var board = Mocks[type].board;
-
-    return bitbloqSU.Serial.getDevices().then(function(port) {
-        console.log('port', port[0].path);
-        Messages.program(port[0].path, board, code).then(function(response) {
-            console.log(response);
-        });
-    });
-};

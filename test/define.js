@@ -17,7 +17,7 @@ require.config({
         i18n: 'lib/i18n',
         sizeof: 'lib/sizeof',
         chrome_serial_mock: 'lib/chrome.serial.mock',
-        board_config_mock: 'lib/board.config.mock',
+        bitbloqSU_program_mock: 'lib/bitbloqSU.program.mock',
         serial: 'serial',
         program: 'program',
         messages: 'messages',
@@ -33,11 +33,11 @@ require.config({
             ]
         },
         program: {
-            deps: ['serial', 'chrome_serial_mock', 'board_config_mock']
+            deps: ['serial', 'chrome_serial_mock', 'bitbloqSU_program_mock']
         },
         bitbloqSU: {
             exports: 'bitbloqSU',
-            deps: ['i18n', 'sizeof', 'serial_api_mock', 'serial', 'program', 'messages']
+            deps: ['i18n', 'sizeof', 'program', 'messages']
         }
     }
 });
