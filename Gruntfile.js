@@ -21,6 +21,16 @@ module.exports = function(grunt) {
             tmp: ['tmp'],
             dist: ['dist']
         },
+        watch: {
+            scripts: {
+                files: ['{,**/}*.js'],
+                tasks: ['jshint'],
+                options: {
+                    // spawn: false,
+                    interrupt: true
+                },
+            },
+        },
         copy: {
             img: {
                 expand: true,
@@ -185,7 +195,8 @@ module.exports = function(grunt) {
 
     grunt.registerTask('server:test', [
         'jshint',
-        'connect:server'
+        'connect:server',
+        'watch'
     ]);
 
 };
