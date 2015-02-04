@@ -192,6 +192,6 @@ bitbloqSU.Serial.setControlSignals = function(data) {
 bitbloqSU.Serial.init = function(argument) {
     bitbloqSU.Serial.addOnReceiveListeners();
     bitbloqSU.Serial.removeOnReceiveListeners();
-}
+};
 
 bitbloqSU.Serial.init();

@@ -3,7 +3,7 @@ Mocks.freaduinoUNO = {};
 Mocks.freaduinoUNO.board = {
     'id': 'Arduino_Uno',
     'name': 'Arduino Uno',
-    'arch': 'arduinoUNO',
+    'arch': 'arduino',
     'board': 'uno',
     'bitrate': 115200,
     'maxPageSize': 128,

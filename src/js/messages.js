@@ -3,7 +3,7 @@
  * Chrome Message Passing functionality
  ********************************************************* */
 'use strict';
-/* global bitbloqSU */
+/* global bitbloqSU, Mocks */
 /* jshint -W030 */
 
 var Messages = {};
@@ -12,32 +12,10 @@ Messages.setPort = function(path, board) {
     return bitbloqSU.Program.testBoard(path, board);
 };
 
-Messages.setPortMock = function(type) {
-    var board = Mocks[type].board;
 
-    return bitbloqSU.Serial.getDevices().then(function(port) {
-        console.log('port', port[0].path);
-        Messages.setPort(port[0].path, board).then(function(response) {
-            console.log(response);
-        });
-
-    });
-};
 
 Messages.program = function(path, board, code) {
     return bitbloqSU.Program.setBoard(board).load(code, path, board);
-};
-
-Messages.programMock = function(type) {
-    var code = Mocks[type].code;
-    var board = Mocks[type].board;
-
-    return bitbloqSU.Serial.getDevices().then(function(port) {
-        console.log('port', port[0].path);
-        Messages.program(port[0].path, board, code).then(function(response) {
-            console.log(response);
-        });
-    });
 };
 
 Messages.getPorts = function() {
@@ -169,3 +147,29 @@ Handler.add('program', function(request) {
 Handler.add('close', function() {
     Messages.close();
 });
+
+
+/* Mocks */
+Messages.setPortMock = function(type) {
+    var board = Mocks[type].board;
+
+    return bitbloqSU.Serial.getDevices().then(function(port) {
+        console.log('port', port[0].path);
+        Messages.setPort(port[0].path, board).then(function(response) {
+            console.log(response);
+        });
+
+    });
+};
+
+Messages.programMock = function(type) {
+    var code = Mocks[type].code;
+    var board = Mocks[type].board;
+
+    return bitbloqSU.Serial.getDevices().then(function(port) {
+        console.log('port', port[0].path);
+        Messages.program(port[0].path, board, code).then(function(response) {
+            console.log(response);
+        });
+    });
+};
