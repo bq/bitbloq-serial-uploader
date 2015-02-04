@@ -11,7 +11,7 @@ Mocks.freaduinoUNO = {};
 Mocks.freaduinoUNO.board = {
     'id': 'Arduino_Uno',
     'name': 'Arduino Uno',
-    'arch': 'arduinoUNO',
+    'arch': 'arduino',
     'board': 'uno',
     'bitrate': 115200,
     'maxPageSize': 128,
@@ -41,7 +41,7 @@ Mocks.arduinoUNO.board = {
     'name': 'Arduino Uno',
     'arch': 'arduino',
     'board': 'uno',
-    'bitrate': 19200,
+    'bitrate': 115200,
     'maxPageSize': 128,
     'delay_reset': 200,
     'max_size': 32256
