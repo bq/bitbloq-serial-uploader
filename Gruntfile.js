@@ -70,7 +70,7 @@ module.exports = function(grunt) {
                     }
                 },
                 files: [{
-                    src: ['src/bower_components/jquery/dist/jquery.js', 'src/js/init.js', 'src/js/messages.js', 'src/js/program.js', 'src/js/lib/sizeof.js', 'src/js/lib/i18n.js'],
+                    src: ['src/bower_components/jquery/dist/jquery.js', 'src/js/lib/bitbloqSU.program.mock.js', 'src/js/init.js', 'src/js/lib/sizeof.js', 'src/js/lib/i18n.js', 'src/js/serial.js', 'src/js/messages.js', 'src/js/program.js'],
                     dest: 'tmp/js/main.js'
                 }]
             },
