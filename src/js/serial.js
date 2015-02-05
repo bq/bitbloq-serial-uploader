@@ -166,7 +166,8 @@ bitbloqSU.Serial.sendData = function(data) {
                 onReceivePromise.then(function(response) {
                     console.info('------bitbloqSU.serial.onReceivePromise------- Ready to next step');
                     resolveSendData(response);
-                }).catch(function(response) {
+                }).
+                catch (function(response) {
                     rejectSendData(response);
                 });
             });
