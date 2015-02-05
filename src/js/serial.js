@@ -117,34 +117,35 @@ bitbloqSU.Serial.disconnect = function() {
     });
 };
 
-bitbloqSU.Serial.connect = function(port, bitrate) {
-    return new Promise(function(resolve, reject) {
-        try {
-            console.info('Connecting to board...', port, bitrate);
-            bitbloqSU.SerialAPI.connect(port, {
-                bitrate: bitrate,
-                sendTimeout: bitbloqSU.Serial.TIMEOUT,
-                receiveTimeout: bitbloqSU.Serial.TIMEOUT,
-                //ctsFlowControl: true,
-                name: 'bitbloqSerialConnection'
-            }, function(info) {
-                if (info && info.connectionId !== -1) {
-                    console.info('bitbloqSU.serial.connect.ok', info);
-                    bitbloqSU.Serial.connectionId = info.connectionId;
-                    resolve(info.connectionId);
-                    return;
-                } else {
-                    console.error('bitbloqSU.serial.connect.ko');
-                    reject(-1);
-                    return;
-                }
-            });
-        } catch (e) {
-            console.error('bitbloqSU.serial.connect.ko', e);
-            reject(-2);
-            return;
-        }
-    });
+bitbloqSU.Serial.connect = function(port, bitrate, callback) {
+
+    try {
+        console.info('Connecting to board...', port, bitrate);
+        bitbloqSU.SerialAPI.connect(port, {
+            bitrate: bitrate,
+            sendTimeout: bitbloqSU.Serial.TIMEOUT,
+            receiveTimeout: bitbloqSU.Serial.TIMEOUT,
+            //ctsFlowControl: true,
+            name: 'bitbloqSerialConnection'
+        }, function(info) {
+            if (info && info.connectionId !== -1) {
+                console.info('bitbloqSU.serial.connect.ok', info);
+                bitbloqSU.Serial.connectionId = info.connectionId;
+                callback(info.connectionId);
+                return;
+            } else {
+                console.error('bitbloqSU.serial.connect.ko');
+                bitbloqSU.Program.SEMAPHORE = false;
+                callback('program:error:connection');
+                return;
+            }
+        });
+    } catch (e) {
+        console.error('bitbloqSU.serial.connect.ko', e);
+        callback(-1);
+        return;
+    }
+
 };
 
 bitbloqSU.Serial.sendData = function(data) {
@@ -167,7 +168,7 @@ bitbloqSU.Serial.sendData = function(data) {
                     console.info('------bitbloqSU.serial.onReceivePromise------- Ready to next step');
                     resolveSendData(response);
                 }).
-                catch (function(response) {
+                catch(function(response) {
                     rejectSendData(response);
                 });
             });
@@ -175,19 +176,21 @@ bitbloqSU.Serial.sendData = function(data) {
     });
 };
 
-bitbloqSU.Serial.setControlSignals = function(data) {
-    return new Promise(function(resolve, reject) {
-        bitbloqSU.SerialAPI.setControlSignals(bitbloqSU.Serial.connectionId, data, function(response) {
-            if (response) {
-                resolve(response);
-                // setTimeout(function() {
-                //     resolve(response);
-                // }, bitbloqSU.Program.board.delay_reset);
-            } else {
-                reject(response);
-            }
-        });
+bitbloqSU.Serial.setControlSignals = function(data, callback) {
+    //return new Promise(function(resolve, reject) {
+    bitbloqSU.SerialAPI.setControlSignals(bitbloqSU.Serial.connectionId, data, function(response) {
+        if (response) {
+            // resolve(response);
+            callback(response);
+            // setTimeout(function() {
+            //     resolve(response);
+            // }, bitbloqSU.Program.board.delay_reset);
+        }
+        // else {
+        //     reject(response);
+        // }
     });
+    //});
 };
 
 bitbloqSU.Serial.init = function(argument) {
