@@ -3,7 +3,7 @@
  * bitbloqSU.Program - Programming functionality
  ********************************************************* */
 'use strict';
-/* global sizeof, bitbloqSU, Promise */
+/* global sizeof, bitbloqSU, Promise, $ */
 /* exported bitbloqSU */
 /* Board management functions */
 
@@ -268,44 +268,43 @@ ProgramBuilder.prototype.load = function(code, port) {
     }
     bitbloqSU.Program.SEMAPHORE = true;
 
-    var p;
+    var p = false,
+        that = this,
+        dfd = new $.Deferred();
 
     //Prepare code to write on board
     this.transformData(code);
 
     if (sizeof(this.trimmedCommands) < bitbloqSU.Program.board.max_size) {
 
-        var that = this;
-
-        //return Promise.resolve().then(function() {
         bitbloqSU.Serial.connect(port, bitbloqSU.Program.board.bitrate, function(response) {
 
             console.log(response);
             //No hay conexión con la placa
             if (response === 'program:error:connection') {
-                return response;
+                dfd.reject('program:error:connection');
             } else { //Programamos la placa
 
                 that.resetBoard(function() {
 
-                    that.enterProgMode().then(function() {
+                    return that.enterProgMode().then(function() {
 
-                        //Program pages
+                        //Program pages workflow
                         for (var i = 0; i < that.numPages; i++) {
                             p = that.addWriteStep(p, i);
                         }
                         return p
                             .then(that.leaveProgMode.bind(that))
                             .then(function() {
-                                return that.resetBoard(function() {
+                                that.resetBoard(function() {
                                     bitbloqSU.Program.SEMAPHORE = false;
                                     return bitbloqSU.Serial.disconnect().then(function() {
-                                        return 'program:ok';
+                                        dfd.resolve('program:ok');
                                     });
                                 });
                             }).catch(function() {
                                 bitbloqSU.Program.SEMAPHORE = false;
-                                return Promise.reject('program:error:write');
+                                dfd.reject('program:error:write');
                             });
 
                     });
@@ -316,40 +315,12 @@ ProgramBuilder.prototype.load = function(code, port) {
 
         });
 
-        // enterPromise.then(function() {
-
-        //     for (var i = 0; i < this.numPages; i++) {
-        //         p = this.addWriteStep(p, i);
-        //     }
-        //     return p
-        //         .then(this.leaveProgMode.bind(this))
-        //         .then(this.resetBoard.bind(this))
-        //         .catch(function() {
-        //             bitbloqSU.Program.SEMAPHORE = false;
-        //             return Promise.reject('program:error:write');
-        //         });
-
-        // }.bind(this)).then(function() {
-
-        //     bitbloqSU.Program.SEMAPHORE = false;
-        //     return bitbloqSU.Serial.disconnect().then(function() {
-        //         return 'program:ok';
-        //     });
-
-        // }).catch(function(error) {
-        //     bitbloqSU.Program.SEMAPHORE = false;
-        //     return Promise.reject(error);
-        // });
-
-        //         // .catch(function() {
-        //     bitbloqSU.Program.SEMAPHORE = false;
-        //     return Promise.reject('program:error:connection');
-        // });
-
     } else {
         bitbloqSU.Program.SEMAPHORE = false;
-        return Promise.reject('program:error:size');
+        dfd.reject('program:error:size');
     }
+
+    return dfd.promise();
 
 };
 
