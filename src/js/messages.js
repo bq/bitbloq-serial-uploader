@@ -114,12 +114,14 @@ Handler.add('getPorts', function(request) {
 Handler.add('setPort', function(request) {
 
     var handler = function(response) {
+
+        console.info('bitbloqSU.messages.setPort.response', response);
         respondent({
             msg: response
         }, request.port);
     };
 
-    return Messages.setPort(request.params.path, request.params.board)
+    Messages.setPort(request.params.path, request.params.board)
         .then(handler)
         .catch(handler);
 

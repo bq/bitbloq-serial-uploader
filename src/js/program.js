@@ -344,34 +344,37 @@ bitbloqSU.Program.setBoard = function(board) {
  * @return {Promise} A promise that resolves only when a board is detected in the specific config
  */
 bitbloqSU.Program.testBoard = function(port, board) {
+
     console.log('bitbloqSU.program.setBoard', board);
     bitbloqSU.Program.board = board;
     var builder = new ProgramBuilder(board);
 
-    bitbloqSU.Serial.connect(port, bitbloqSU.Program.board.bitrate, function(connectionId) {
-        console.log(connectionId);
+    return new Promise(function(resolve, reject) {
 
-        builder.resetBoard(function() {
+        bitbloqSU.Serial.connect(port, bitbloqSU.Program.board.bitrate, function(connectionId) {
+            console.log(connectionId);
 
-            setTimeout(function() {
+            builder.resetBoard(function() {
 
                 builder.enterProgMode().then(function() {
 
-                    return builder.resetBoard(function() {
-                        bitbloqSU.Program.SEMAPHORE = false;
-                        return bitbloqSU.Serial.disconnect().then(function() {
-                            return 'connectingport:ok';
-                        });
+                    bitbloqSU.Program.SEMAPHORE = false;
+                    bitbloqSU.Serial.disconnect().then(function() {
+                        console.log('connectingport:ok');
+                        resolve('connectingport:ok');
                     });
 
                 }).catch(function() {
                     bitbloqSU.Program.SEMAPHORE = false;
-                    return 'connectingport:ko';
+                    console.log('connectingport:ko');
+                    reject('connectingport:ko');
                 });
 
-            }, 100);
+            });
+
         });
 
     });
+
 
 };
