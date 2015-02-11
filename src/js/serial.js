@@ -135,7 +135,6 @@ bitbloqSU.Serial.connect = function(port, bitrate, callback) {
                 return;
             } else {
                 console.error('bitbloqSU.serial.connect.ko');
-                bitbloqSU.Program.SEMAPHORE = false;
                 callback('serial:error:connection');
                 return;
             }
@@ -177,20 +176,11 @@ bitbloqSU.Serial.sendData = function(data) {
 };
 
 bitbloqSU.Serial.setControlSignals = function(data, callback) {
-    //return new Promise(function(resolve, reject) {
     bitbloqSU.SerialAPI.setControlSignals(bitbloqSU.Serial.connectionId, data, function(response) {
         if (response) {
-            // resolve(response);
             callback(response);
-            // setTimeout(function() {
-            //     resolve(response);
-            // }, bitbloqSU.Program.board.delay_reset);
-        }
-        // else {
-        //     reject(response);
-        // }
+        } //TODO: Possible inconsistent status
     });
-    //});
 };
 
 bitbloqSU.Serial.init = function(argument) {
