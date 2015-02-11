@@ -111,8 +111,8 @@ bitbloqSU.Serial.disconnect = function() {
                 });
                 bitbloqSU.Serial.connectionId = -1;
                 console.info('Port disconnected!');
-                resolve();
             }
+            resolve();
         });
     });
 };

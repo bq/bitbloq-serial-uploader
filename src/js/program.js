@@ -305,12 +305,17 @@ ProgramBuilder.prototype.load = function(code, port) {
                                     });
                                 }).catch(function() {
                                     bitbloqSU.Program.SEMAPHORE = false;
-                                    reject('program:error:write');
+                                    return bitbloqSU.Serial.disconnect().then(function() {
+                                        reject('program:error:write');
+                                    });
                                 });
 
                         }).catch(function() {
                             bitbloqSU.Program.SEMAPHORE = false;
-                            resolve('program:error:connection');
+                            return bitbloqSU.Serial.disconnect().then(function() {
+                                resolve('program:error:connection');
+                            });
+
                         });
 
                     });
@@ -376,8 +381,10 @@ bitbloqSU.Program.testBoard = function(port, board) {
 
                 }).catch(function() {
                     bitbloqSU.Program.SEMAPHORE = false;
-                    console.log('connectingport:ko');
-                    reject('connectingport:ko');
+                    bitbloqSU.Serial.disconnect().then(function() {
+                        console.log('connectingport:ko');
+                        reject('connectingport:ko');
+                    });
                 });
 
             });
