@@ -142,7 +142,7 @@ bitbloqSU.Serial.connect = function(port, bitrate, callback) {
         });
     } catch (e) {
         console.error('bitbloqSU.serial.connect.ko', e);
-        callback(-1);
+        callback('serial:error:connection');
         return;
     }
 

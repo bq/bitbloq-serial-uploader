@@ -3,7 +3,7 @@
  * bitbloqSU.Program - Programming functionality
  ********************************************************* */
 'use strict';
-/* global sizeof, bitbloqSU, Promise, $ */
+/* global sizeof, bitbloqSU, Promise */
 /* exported bitbloqSU */
 /* Board management functions */
 
@@ -308,6 +308,9 @@ ProgramBuilder.prototype.load = function(code, port) {
                                     reject('program:error:write');
                                 });
 
+                        }).catch(function() {
+                            bitbloqSU.Program.SEMAPHORE = false;
+                            resolve('program:error:write');
                         });
 
                     });

@@ -1,5 +1,5 @@
 'use strict';
-/* global bitbloqSU, $ */
+/* global bitbloqSU */
 /* jshint unused:false */
 /* *****************************
 Chrome App interface management
@@ -12,7 +12,7 @@ bitbloqSU.UI = (function() {
     var appWindow = window.chrome.app.window.current();
 
     function addDOMListeners() {
-        $('body').on('contextmenu', function() {
+        document.body.addEventListener('contextmenu', function() {
             return false;
         });
     }
