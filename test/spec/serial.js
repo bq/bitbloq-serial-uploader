@@ -19,15 +19,16 @@
                 expect(true).to.equal(true);
             });
 
-            it('return connectionId with correct config', function() {
-                bitbloqSU.Serial.connect('/dev/ttyACM0', 115200).then(function(argument) {
-                    console.log(argument);
-                    expect(true).to.equal(true);
+            // it('return connectionId with correct config', function() {
+            //     bitbloqSU.Serial.connect('/dev/ttyACM0', 115200).then(function(argument) {
+            //         console.log(argument);
+            //         expect(true).to.equal(true);
 
-                    //expect(bitbloqSU.Serial.connectionId).to.be.below(1);
+            //         //expect(bitbloqSU.Serial.connectionId).to.be.below(1);
 
-                });
-            });
+            //     });
+            // });
+
 
             it('bitbloqSU.Serial.connectionId is saved with correct config', function() {
                 expect(true).to.equal(true);
