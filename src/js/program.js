@@ -310,7 +310,7 @@ ProgramBuilder.prototype.load = function(code, port) {
 
                         }).catch(function() {
                             bitbloqSU.Program.SEMAPHORE = false;
-                            resolve('program:error:write');
+                            resolve('program:error:connection');
                         });
 
                     });
