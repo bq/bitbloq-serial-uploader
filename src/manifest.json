@@ -27,7 +27,7 @@
         "name": "David Baena",
         "email": "david.baena@bq.com"
     }],
-    "version": "1.7.9",
+    "version": "1.7.13",
     "manifest_version": 2,
     "minimum_chrome_version": "23",
     "default_locale": "es",
@@ -35,6 +35,7 @@
     "url_handlers": {
         "bitbloq": {
             "matches": [
+                "http://localhost/chromeapp.html",
                 "http://bitbloq.bq.com/chromeapp.html",
                 "http://int-bitbloq.com.s3-website-eu-west-1.amazonaws.com/chromeapp.html",
                 "http://qa-bitbloq.com.s3-website-eu-west-1.amazonaws.com/chromeapp.html",

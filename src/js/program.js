@@ -304,7 +304,7 @@ ProgramBuilder.prototype.load = function(code, port) {
                                 });
                             }).catch(function() {
                                 bitbloqSU.Program.SEMAPHORE = false;
-                                dfd.reject('program:error:write');
+                                dfd.resolve('program:error:write');
                             });
 
                     });
@@ -373,7 +373,7 @@ bitbloqSU.Program.testBoard = function(port, board) {
                 }).catch(function() {
                     bitbloqSU.Program.SEMAPHORE = false;
                     console.log('connectingport:ko');
-                    reject('connectingport:ko');
+                    resolve('connectingport:ko');
                 });
 
             });

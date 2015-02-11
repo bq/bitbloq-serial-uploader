@@ -15,32 +15,32 @@
         it('provides all methods in Messages', function() {
 
             expect(Messages).to.include.keys(
-                'program',
-                'programMock'
+                'program'
             );
 
         });
 
-        /*        describe('i can set a board', function() {
+        describe('i can set a board', function() {
 
-                    it('port | board are required', function() {
-                        expect(true).to.equal(true);
-                    });
+            it('port | board are required', function() {
+                expect(true).to.equal(true);
+            });
 
-                    it('return connectionId with correct config', function() {
-                        expect(true).to.equal(true);
-                    });
+            it('return connectionId with correct config', function() {
+                expect(true).to.equal(true);
+            });
 
-                    it('bitbloqSU.Serial.connectionId is saved with correct config', function() {
-                        expect(true).to.equal(true);
-                    });
+            it('bitbloqSU.Serial.connectionId is saved with correct config', function() {
+                expect(true).to.equal(true);
+            });
 
-                    it('return undefined whin incorrect config', function() {
-                        expect(true).to.equal(true);
-                    });
+            it('return undefined whin incorrect config', function() {
+                expect(true).to.equal(true);
+            });
 
-                });*/
+        });
 
+        //SW+HW Testing
 
         // describe('when i send a program', function() {
         //     it('load OK for ZUM for blink_led_ZUM program', function() {
@@ -50,13 +50,11 @@
         //     });
         // });
 
-
         // describe('when sendData', function() {
         //     it('resolves with both ACK', function() {
         //         expect(true).to.equal(true);
         //     });
         // });
-
 
     });
 
