@@ -136,7 +136,7 @@ bitbloqSU.Serial.connect = function(port, bitrate, callback) {
             } else {
                 console.error('bitbloqSU.serial.connect.ko');
                 bitbloqSU.Program.SEMAPHORE = false;
-                callback('program:error:connection');
+                callback('serial:error:connection');
                 return;
             }
         });

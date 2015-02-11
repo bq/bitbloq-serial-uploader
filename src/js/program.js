@@ -281,7 +281,7 @@ ProgramBuilder.prototype.load = function(code, port) {
 
             console.log(response);
             //No hay conexión con la placa
-            if (response === 'program:error:connection') {
+            if (response === 'serial:error:connection') {
                 dfd.reject('program:error:connection');
             } else { //Programamos la placa
 
@@ -353,6 +353,12 @@ bitbloqSU.Program.testBoard = function(port, board) {
 
         bitbloqSU.Serial.connect(port, bitbloqSU.Program.board.bitrate, function(connectionId) {
             console.log(connectionId);
+
+            // Could not connect to board
+            if (connectionId === 'serial:error:connection') {
+                reject('connectingport:ko');
+                return;
+            }
 
             builder.resetBoard(function() {
 
