@@ -132,7 +132,9 @@ ProgramBuilder.prototype.changeSignals = function(callback) {
         console.info('DTR-RTS ON');
         bitbloqSU.Serial.setControlSignals(signalControlOff, function() {
             console.info('DTR-RTS OFF');
-            callback();
+            callback({
+                msg: 'ok'
+            });
         });
     });
 
@@ -140,9 +142,8 @@ ProgramBuilder.prototype.changeSignals = function(callback) {
 
 /**
  * Send the commands to enter the programming mode
- * @return {Promise} A promise that resolves when the board is in prog mode
  */
-ProgramBuilder.prototype.enterProgMode = function() {
+ProgramBuilder.prototype.enterProgMode = function(callback) {
 
     console.log('ProgramBuilder.enterProgMode');
 
@@ -150,45 +151,40 @@ ProgramBuilder.prototype.enterProgMode = function() {
     var buffer = new Uint8Array(2);
     buffer[0] = bitbloqSU.Program.STK500.STK_ENTER_PROGMODE;
     buffer[1] = bitbloqSU.Program.STK500.CRC_EOP;
-    return bitbloqSU.Serial.sendData(buffer.buffer);
+    bitbloqSU.Serial.sendData(buffer.buffer, callback);
 
 };
 
 /**
  * Send the commands to leave the programming mode
- * @return {Promise} A promise that resolves when the board is not in prog mode
  */
-ProgramBuilder.prototype.leaveProgMode = function() {
+ProgramBuilder.prototype.leaveProgMode = function(callback) {
     console.log('ProgramBuilder.leaveProgMode');
     var buffer = new Uint8Array(2);
     buffer[0] = bitbloqSU.Program.STK500.STK_LEAVE_PROGMODE;
     buffer[1] = bitbloqSU.Program.STK500.CRC_EOP;
-    return bitbloqSU.Serial.sendData(buffer.buffer);
+    bitbloqSU.Serial.sendData(buffer.buffer, callback);
 };
 
 /**
  * Create and send the commands needed to specify in which memory address we are writting currently
  * @param  {Number} address adress index
- * @return {Promise} A promise that resolves when the address is loaded in the board
  */
-ProgramBuilder.prototype.loadAddress = function(address) {
+ProgramBuilder.prototype.loadAddress = function(address, callback) {
     console.log('ProgramBuilder.loadAddress', address);
     var loadAddress = new Uint8Array(4);
     loadAddress[0] = bitbloqSU.Program.STK500.STK_LOAD_ADDRESS;
     loadAddress[1] = this.address_l[address];
     loadAddress[2] = this.address_r[address];
     loadAddress[3] = bitbloqSU.Program.STK500.CRC_EOP;
-    return bitbloqSU.Serial.sendData(loadAddress.buffer).then(function() {
-        return address;
-    });
+    return bitbloqSU.Serial.sendData(loadAddress.buffer, callback);
 };
 
 /**
  * Create the command structure needed to program the current memory page
  * @param  {Number} it
- * @return {Promise} A promise that resolves with the program writed
  */
-ProgramBuilder.prototype.programPage = function(it) {
+ProgramBuilder.prototype.programPage = function(it, callback) {
     console.log('ProgramBuilder.programPage', it);
 
     //console.info('Message length', this.trimmedCommands[it].length);
@@ -211,7 +207,7 @@ ProgramBuilder.prototype.programPage = function(it) {
     if (!buffer.buffer.byteLength) {
         console.error('bitbloqProgram.buffer.empty');
     }
-    return bitbloqSU.Serial.sendData(buffer.buffer);
+    bitbloqSU.Serial.sendData(buffer.buffer, callback);
 };
 
 /**
@@ -227,22 +223,22 @@ ProgramBuilder.prototype.resetBoard = function(callback) {
     });
 };
 
-/**
- * writes a
- * @param {Promise} [promise]   A promise that must be resolved to write this page
- * @param {Number} it The page number to write in board
- * @return {Promise} A promise that resolves with the page data wrote in board
- */
-ProgramBuilder.prototype.addWriteStep = function(promise, it) {
+ProgramBuilder.prototype.writePage = function(it, callback) {
     var that = this;
-    if (!promise) {
-        return this.loadAddress(it).then(function(address) {
-            return that.programPage(address);
+    if (it === this.numPages) {
+        callback({
+            msg: 'ok'
         });
     } else {
-        return promise.then(function() {
-            return that.loadAddress(it).then(function(address) {
-                return that.programPage(address);
+        this.loadAddress(it, function(response) {
+            if (response && response.error) {
+                return callback(response);
+            }
+            that.programPage(it, function(response) {
+                if (response && response.error) {
+                    return callback(response);
+                }
+                that.writePage(++it, callback);
             });
         });
     }
@@ -261,75 +257,103 @@ ProgramBuilder.prototype.addWriteStep = function(promise, it) {
  *                     program:error:write      Error while writting pages
  *                     program:error:size       Not enough spaces in board
  */
-ProgramBuilder.prototype.load = function(code, port) {
+ProgramBuilder.prototype.load = function(code, port, board, callback) {
 
     if (bitbloqSU.Program.SEMAPHORE) {
-        return Promise.reject('program:error:busy');
+        return callback({
+            msg: 'program:error:busy'
+        });
     }
     bitbloqSU.Program.SEMAPHORE = true;
 
     //Prepare code to write on board
     this.transformData(code);
 
-    var p = false,
-        that = this;
+    var that = this;
 
-    return new Promise(function(resolve, reject) {
+    if (sizeof(that.trimmedCommands) < bitbloqSU.Program.board.max_size) {
 
-        if (sizeof(that.trimmedCommands) < bitbloqSU.Program.board.max_size) {
+        bitbloqSU.Serial.connect(port, bitbloqSU.Program.board.bitrate, function(response) {
 
-            bitbloqSU.Serial.connect(port, bitbloqSU.Program.board.bitrate, function(response) {
+            if (response && response.error) {
+                bitbloqSU.Program.SEMAPHORE = false;
+                bitbloqSU.Serial.disconnect(function() {
+                    callback({
+                        msg: 'program:error:connection'
+                    });
+                });
+                return;
+            }
 
-                console.log(response);
-                //No hay conexión con la placa
-                if (response === 'serial:error:connection') {
-                    reject('program:error:connection');
-                } else { //Programamos la placa
+            that.resetBoard(function(response) {
 
-                    that.resetBoard(function() {
+                if (response && response.error) {
+                    bitbloqSU.Program.SEMAPHORE = false;
+                    bitbloqSU.Serial.disconnect(function() {
+                        callback({
+                            msg: 'program:error:connection'
+                        });
+                    });
+                    return;
+                }
 
-                        return that.enterProgMode().then(function() {
+                return that.enterProgMode(function(response) {
 
-                            //Program pages workflow
-                            for (var i = 0; i < that.numPages; i++) {
-                                p = that.addWriteStep(p, i);
-                            }
-                            return p
-                                .then(that.leaveProgMode.bind(that))
-                                .then(function() {
-                                    that.resetBoard(function() {
-                                        bitbloqSU.Program.SEMAPHORE = false;
-                                        return bitbloqSU.Serial.disconnect().then(function() {
-                                            resolve('program:ok');
-                                        });
-                                    });
-                                }).catch(function() {
-                                    bitbloqSU.Program.SEMAPHORE = false;
-                                    return bitbloqSU.Serial.disconnect().then(function() {
-                                        reject('program:error:write');
+                    if (response && response.error) {
+                        bitbloqSU.Program.SEMAPHORE = false;
+                        bitbloqSU.Serial.disconnect(function() {
+                            callback({
+                                msg: 'program:error:connection'
+                            });
+                        });
+                        return;
+                    }
+
+                    //Program pages workflow
+                    that.writePage(0, function(response) {
+                        if (response && response.error) {
+                            bitbloqSU.Program.SEMAPHORE = false;
+                            bitbloqSU.Serial.disconnect(function() {
+                                callback({
+                                    msg: 'program:error:write'
+                                });
+                            });
+                            return;
+                        }
+                        that.leaveProgMode(function(response) {
+                            if (response && response.error) {
+                                bitbloqSU.Program.SEMAPHORE = false;
+                                bitbloqSU.Serial.disconnect(function() {
+                                    callback({
+                                        msg: 'program:error:connection'
                                     });
                                 });
-
-                        }).catch(function() {
-                            bitbloqSU.Program.SEMAPHORE = false;
-                            return bitbloqSU.Serial.disconnect().then(function() {
-                                resolve('program:error:connection');
+                                return;
+                            }
+                            that.resetBoard(function() {
+                                bitbloqSU.Program.SEMAPHORE = false;
+                                bitbloqSU.Serial.disconnect(function() {
+                                    callback({
+                                        msg: 'program:ok'
+                                    });
+                                });
+                                return;
                             });
-
                         });
-
                     });
 
-                } //else
+                });
 
             });
 
-        } else {
-            bitbloqSU.Program.SEMAPHORE = false;
-            reject('program:error:size');
-        }
+        });
 
-    });
+    } else {
+        bitbloqSU.Program.SEMAPHORE = false;
+        callback({
+            msg: 'program:error:size'
+        });
+    }
 
 };
 
@@ -352,38 +376,50 @@ bitbloqSU.Program.setBoard = function(board) {
  * @param  {Number} board.bitrate
  * @return {Promise} A promise that resolves only when a board is detected in the specific config
  */
-bitbloqSU.Program.testBoard = function(port, board) {
+bitbloqSU.Program.testBoard = function(port, board, callback) {
 
     console.log('bitbloqSU.program.setBoard', board);
     bitbloqSU.Program.board = board;
     var builder = new ProgramBuilder(board);
 
-    return new Promise(function(resolve, reject) {
 
-        bitbloqSU.Serial.connect(port, bitbloqSU.Program.board.bitrate, function(connectionId) {
-            console.log(connectionId);
+    bitbloqSU.Serial.connect(port, bitbloqSU.Program.board.bitrate, function(response) {
 
-            // Could not connect to board
-            if (connectionId === 'serial:error:connection') {
-                reject('connectingport:ko');
+        if (response && response.error) {
+            bitbloqSU.Serial.disconnect(function() {
+                callback({
+                    msg: 'connectingport:ko'
+                });
+            });
+            return;
+        }
+
+        builder.resetBoard(function(response) {
+
+            if (response && response.error) {
+                bitbloqSU.Serial.disconnect(function() {
+                    callback({
+                        msg: 'connectingport:ko'
+                    });
+                });
                 return;
             }
 
-            builder.resetBoard(function() {
+            builder.enterProgMode(function(response) {
 
-                builder.enterProgMode().then(function() {
-
-                    bitbloqSU.Program.SEMAPHORE = false;
-                    bitbloqSU.Serial.disconnect().then(function() {
-                        console.log('connectingport:ok');
-                        resolve('connectingport:ok');
+                if (response && response.error) {
+                    bitbloqSU.Serial.disconnect(function() {
+                        callback({
+                            msg: 'connectingport:ko'
+                        });
                     });
+                    return;
+                }
 
-                }).catch(function() {
-                    bitbloqSU.Program.SEMAPHORE = false;
-                    bitbloqSU.Serial.disconnect().then(function() {
-                        console.log('connectingport:ko');
-                        reject('connectingport:ko');
+                bitbloqSU.Serial.disconnect(function() {
+                    console.log('connectingport:ok');
+                    callback({
+                        msg: 'connectingport:ok'
                     });
                 });
 
@@ -392,6 +428,7 @@ bitbloqSU.Program.testBoard = function(port, board) {
         });
 
     });
+
 
 
 };

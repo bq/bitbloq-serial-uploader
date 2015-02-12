@@ -8,18 +8,12 @@
 
 var Messages = {};
 
-Messages.setPort = function(path, board) {
-    return bitbloqSU.Program.testBoard(path, board);
+Messages.setPort = function(path, board, callback) {
+    return bitbloqSU.Program.testBoard(path, board, callback);
 };
 
-Messages.program = function(path, board, code) {
-    return bitbloqSU.Program.setBoard(board).load(code, path, board);
-};
-
-Messages.getPorts = function() {
-    bitbloqSU.Serial.getDevices().then(function(ports) {
-        console.log(ports);
-    });
+Messages.program = function(path, board, code, callback) {
+    return bitbloqSU.Program.setBoard(board).load(code, path, board, callback);
 };
 
 Messages.close = function() {
@@ -95,53 +89,33 @@ Handler.add('version', function(request) {
 
 Handler.add('getPorts', function(request) {
 
-    var onGetDevices = function(ports) {
+    bitbloqSU.SerialAPI.getDevices(function(ports) {
+        ports = ports || [];
         var responseMsg = {
             msg: 'ports',
             path: ports
         };
         respondent(responseMsg, request.port);
-    };
-
-    bitbloqSU.Serial.getDevices()
-        .then(onGetDevices)
-        .catch(function() {
-            onGetDevices([]);
-        });
+    });
 
 });
 
 Handler.add('setPort', function(request) {
 
-    var handler = function(response) {
-
+    Messages.setPort(request.params.path, request.params.board, function(response) {
         console.info('bitbloqSU.messages.setPort.response', response);
-        respondent({
-            msg: response
-        }, request.port);
-    };
-
-    Messages.setPort(request.params.path, request.params.board)
-        .then(handler)
-        .catch(handler);
+        respondent(response, request.port);
+    });
 
 });
 
 Handler.add('program', function(request) {
 
-    var programHandler = function(response) {
-
+    Messages.program(request.params.path, request.params.board, request.params.data, function(response) {
         console.info('bitbloqSU.messages.program.response', response);
-        var responseMsg = {
-            msg: response
-        };
+        respondent(response, request.port);
+    });
 
-        respondent(responseMsg, request.port);
-    };
-
-    Messages.program(request.params.path, request.params.board, request.params.data)
-        .then(programHandler)
-        .catch(programHandler);
 });
 
 Handler.add('close', function() {
