@@ -263,10 +263,10 @@ ProgramBuilder.prototype.addWriteStep = function(promise, it) {
  */
 ProgramBuilder.prototype.load = function(code, port) {
 
-    if (bitbloqSU.Program.SEMAPHORE) {
-        return Promise.reject('program:error:busy');
-    }
-    bitbloqSU.Program.SEMAPHORE = true;
+    // if (bitbloqSU.Program.SEMAPHORE) {
+    //     return Promise.reject('program:error:busy');
+    // }
+    //bitbloqSU.Program.SEMAPHORE = true;
 
     //Prepare code to write on board
     this.transformData(code);
@@ -298,20 +298,20 @@ ProgramBuilder.prototype.load = function(code, port) {
                                 .then(that.leaveProgMode.bind(that))
                                 .then(function() {
                                     that.resetBoard(function() {
-                                        bitbloqSU.Program.SEMAPHORE = false;
+                                        //bitbloqSU.Program.SEMAPHORE = false;
                                         return bitbloqSU.Serial.disconnect().then(function() {
                                             resolve('program:ok');
                                         });
                                     });
                                 }).catch(function() {
-                                    bitbloqSU.Program.SEMAPHORE = false;
+                                    //bitbloqSU.Program.SEMAPHORE = false;
                                     return bitbloqSU.Serial.disconnect().then(function() {
                                         reject('program:error:write');
                                     });
                                 });
 
                         }).catch(function() {
-                            bitbloqSU.Program.SEMAPHORE = false;
+                            //bitbloqSU.Program.SEMAPHORE = false;
                             return bitbloqSU.Serial.disconnect().then(function() {
                                 resolve('program:error:connection');
                             });
@@ -325,7 +325,7 @@ ProgramBuilder.prototype.load = function(code, port) {
             });
 
         } else {
-            bitbloqSU.Program.SEMAPHORE = false;
+            //bitbloqSU.Program.SEMAPHORE = false;
             reject('program:error:size');
         }
 
@@ -373,14 +373,14 @@ bitbloqSU.Program.testBoard = function(port, board) {
 
                 builder.enterProgMode().then(function() {
 
-                    bitbloqSU.Program.SEMAPHORE = false;
+                    //bitbloqSU.Program.SEMAPHORE = false;
                     bitbloqSU.Serial.disconnect().then(function() {
                         console.log('connectingport:ok');
                         resolve('connectingport:ok');
                     });
 
                 }).catch(function() {
-                    bitbloqSU.Program.SEMAPHORE = false;
+                    //bitbloqSU.Program.SEMAPHORE = false;
                     bitbloqSU.Serial.disconnect().then(function() {
                         console.log('connectingport:ko');
                         reject('connectingport:ko');
