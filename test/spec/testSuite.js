@@ -6,7 +6,8 @@ define(function() {
     return {
         specs: [
             'spec/program',
-            'spec/serial'
+            'spec/serial',
+            'spec/messages',
         ]
     };
 });

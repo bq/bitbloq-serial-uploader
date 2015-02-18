@@ -9,7 +9,7 @@ require.config({
         scripts: '.',
         spec: '../spec',
         requirejs: '../bower_components/requirejs/require',
-        jquery: '../bower_components/jquery/dist/jquery',
+        jquery: '../src/bower_components/jquery/dist/jquery.min',
         mocha: '../bower_components/mocha/mocha',
         chai: '../bower_components/chai/chai',
         'chai-as-promised': '../bower_components/chai-as-promised/lib/chai-as-promised',

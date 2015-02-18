@@ -1,0 +1,6 @@
+{
+    "name": "bitbloq-serial-uploader",
+    "devDependencies": {
+        "jquery": "2.1.0"
+    }
+}

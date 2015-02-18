@@ -19,20 +19,17 @@ var AppWindow = {
             top: 0
         }
     },
-    set: function (createdWindow) {
+    set: function(createdWindow) {
         this.current = createdWindow;
         this.current.resizeTo(this.defaultConfig.outerBounds.width, this.defaultConfig.outerBounds.height);
         this.current.hide();
-
-        //this.current.hide();
-        //this.current.clearAttention();
-
+        // this.current.minimize();
         this.addWindowListerners();
     },
-    get: function () {
+    get: function() {
         return this.current;
     },
-    initialize: function (params) {
+    initialize: function(params) {
         var appList = window.chrome.app.window.getAll();
 
         for (var i = 0; i < appList.length; i++) {
@@ -55,9 +52,9 @@ var AppWindow = {
         window.chrome.app.window.create('index.html', this.defaultConfig, this.set.bind(this));
 
     },
-    addWindowListerners: function () {
+    addWindowListerners: function() {
 
-        this.current.onClosed.addListener(function (data) {
+        this.current.onClosed.addListener(function(data) {
             window.console.warn('bitbloqSU closed', data);
         });
 
@@ -66,7 +63,7 @@ var AppWindow = {
 };
 
 //Live cycle handler
-window.chrome.app.runtime.onLaunched.addListener(function (launchData) {
+window.chrome.app.runtime.onLaunched.addListener(function(launchData) {
     window.console.log(launchData);
     if (launchData.id !== 'launcher') {
         window.console.warn('Extension open from chrome extensions page');
@@ -74,12 +71,12 @@ window.chrome.app.runtime.onLaunched.addListener(function (launchData) {
     AppWindow.initialize();
 });
 
-window.chrome.app.runtime.onRestarted.addListener(function (data) {
+window.chrome.app.runtime.onRestarted.addListener(function(data) {
     window.console.log('onRestarted event', data);
     AppWindow.initialize();
 });
 
-window.chrome.runtime.onUpdateAvailable.addListener(function (data) {
+window.chrome.runtime.onUpdateAvailable.addListener(function(data) {
     window.console.log('onUpdateAvailable event', data);
     window.chrome.runtime.reload();
 });
