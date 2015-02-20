@@ -11,7 +11,7 @@ var AppWindow = {
         frame: 'none',
         id: 'bitbloqSU',
         resizable: false,
-        hidden: false,
+        hidden: true,
         outerBounds: {
             width: 250,
             height: 50,
