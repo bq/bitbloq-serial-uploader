@@ -228,6 +228,19 @@ ProgramBuilder.prototype.resetBoard = function(callback) {
 };
 
 /**
+ * Send reset to board
+ * @return {Promise} A promise that resolves with the board reset
+ */
+ProgramBuilder.prototype.resetBoardPromise = function() {
+    var that = this;
+    var def = q.defer;
+    that.changeSignals(function() {
+        that.changeSignals(function() {
+            setTimeout(def.resolve(), bitbloqSU.Program.board.delay_reset);
+        });
+    });
+};
+/**
  * writes a
  * @param {Promise} [promise]   A promise that must be resolved to write this page
  * @param {Number} it The page number to write in board
@@ -286,7 +299,7 @@ ProgramBuilder.prototype.load = function(code, port) {
                     reject('program:error:connection');
                 } else { //Programamos la placa
 
-                    that.resetBoard(function() {
+                    that.resetBoardPromise().then(function() {
 
                         return that.enterProgMode().then(function() {
 
