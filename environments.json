@@ -1,4 +1,11 @@
 {
+    "dev": {
+        "id": "",
+        "version": "1.0.0",
+        "name": "bitbloq Serial Uploader - DEV",
+        "short_name": "bitbloqSU - DEV",
+        "url": "http://localhost:9000/"
+    },
     "int": {
         "id": "pfkoapmhofbcaigaccpnnchdgncjipmi",
         "version": "1.0.0",
