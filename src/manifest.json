@@ -2,31 +2,16 @@
     "name": "bitbloq Serial Uploader",
     "short_name": "bitbloqSU",
     "description": "Serial Uploader for bitbloq",
-    "author": [{
-        "name": "Sergio Morcuende",
-        "email": "sergio.morcuende@bq.com"
-    }, {
-        "name": "Irene Sanz",
-        "email": "irene.sanz@bq.com"
-    }, {
-        "name": "Diego Segura",
-        "email": "diego.segura@bq.com"
-    }, {
-        "name": "Laura Del Río",
-        "email": "laura.delrio@bq.com"
-    }, {
-        "name": "Abraham Sanchez",
-        "email": "abraham.sanchez@bq.com"
-    }, {
-        "name": "Fernando Martín",
-        "email": "fernando.martin@bq.com"
-    }, {
-        "name": "Anthanh Pham",
-        "email": "anthanh.pham@bq.com"
-    }, {
-        "name": "David Baena",
-        "email": "david.baena@bq.com"
-    }],
+    "author": [
+        "Sergio Morcuende <sergio.morcuende@bq.com>",
+        "Irene Sanz <irene.sanz@bq.com>",
+        "Diego Segura <diego.segura@bq.com>",
+        "Laura Del Río <laura.delrio@bq.com>",
+        "Abraham Sanchez <abraham.sanchez@bq.com>",
+        "Fernando Martín <fernando.martin@bq.com>",
+        "Anthanh Pham <anthanh.pham@bq.com>",
+        "David Baena <david.baena@bq.com>"
+    ],
     "version": "1.7.13",
     "manifest_version": 2,
     "minimum_chrome_version": "23",
@@ -35,11 +20,7 @@
     "url_handlers": {
         "bitbloq": {
             "matches": [
-                "http://bitbloq.bq.com/chromeapp.html",
-                "http://int-bitbloq.com.s3-website-eu-west-1.amazonaws.com/chromeapp.html",
-                "http://qa-bitbloq.com.s3-website-eu-west-1.amazonaws.com/chromeapp.html",
-                "http://next-bitbloq.com.s3-website-eu-west-1.amazonaws.com/chromeapp.html",
-                "http://staging-bitbloq.com.s3-website-eu-west-1.amazonaws.com/chromeapp.html"
+                "matches_handler"
             ],
             "title": "View Foo presentation"
         }
@@ -55,13 +36,7 @@
     },
     "externally_connectable": {
         "matches": [
-            "http://localhost:9000/*",
-            "http://bitbloq.bq.com/*",
-            "http://int-bitbloq.com.s3-website-eu-west-1.amazonaws.com/*",
-            "http://qa-bitbloq.com.s3-website-eu-west-1.amazonaws.com/*",
-            "http://next-bitbloq.com.s3-website-eu-west-1.amazonaws.com/*",
-            "http://staging-bitbloq.com.s3-website-eu-west-1.amazonaws.com/*",
-            "http://bitbloq.bq.com.s3-website-eu-west-1.amazonaws.com/*"
+            "matches_externally_connectable"
         ]
     },
     "offline_enabled": true

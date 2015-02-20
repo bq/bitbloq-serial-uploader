@@ -13,10 +13,16 @@ module.exports = function(grunt) {
 
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
+    if (grunt.option('env') === undefined) {
+        grunt.option('env', 'int');
+    }
+
     // Project configuration.
     grunt.initConfig({
         // Package config
         pkg: grunt.file.readJSON('package.json'),
+        environments: grunt.file.readJSON('environments.json'),
+        env: grunt.option('env'),
         clean: {
             tmp: ['tmp'],
             dist: ['dist']
@@ -35,14 +41,14 @@ module.exports = function(grunt) {
             img: {
                 expand: true,
                 src: 'src/img/*',
-                dest: 'dist/img',
+                dest: 'dist/' + grunt.option('env') + '/img',
                 flatten: true,
                 filter: 'isFile'
             },
             fonts: {
                 expand: true,
                 src: 'src/css/fonts/*',
-                dest: 'dist/css/fonts',
+                dest: 'dist/' + grunt.option('env') + '/css/fonts',
                 flatten: true,
                 filter: 'isFile'
             },
@@ -50,12 +56,12 @@ module.exports = function(grunt) {
                 expand: true,
                 cwd: 'src/_locales',
                 src: '**/*.json',
-                dest: 'dist/_locales/'
+                dest: 'dist/' + grunt.option('env') + '/_locales/'
             },
             index: {
                 expand: true,
                 src: 'src/*',
-                dest: 'dist',
+                dest: 'dist/' + grunt.option('env') + '',
                 flatten: true,
                 filter: 'isFile'
             }
@@ -70,21 +76,21 @@ module.exports = function(grunt) {
                     }
                 },
                 files: [{
-                    src: ['src/bower_components/jquery/dist/jquery.js', 'src/js/lib/bitbloqSU.program.mock.js', 'src/js/init.js', 'src/js/lib/sizeof.js', 'src/js/lib/i18n.js', 'src/js/serial.js', 'src/js/messages.js', 'src/js/program.js'],
-                    dest: 'tmp/js/main.js'
+                    src: ['src/js/init.js', 'src/js/lib/sizeof.js', 'src/js/lib/i18n.js', 'src/js/serial.js', 'src/js/messages.js', 'src/js/program.js'],
+                    dest: 'tmp/' + grunt.option('env') + '/js/main.js'
                 }]
             },
             dist_css: {
                 files: [{
                     src: ['src/css/*.css'],
-                    dest: 'tmp/css/style.css'
+                    dest: 'tmp/' + grunt.option('env') + '/css/style.css'
                 }]
             }
         },
         uglify: {
             dist: {
-                src: 'tmp/js/*.js',
-                dest: 'dist/js/main.min.js'
+                src: 'tmp/' + grunt.option('env') + '/js/*.js',
+                dest: 'dist/' + grunt.option('env') + '/js/main.min.js'
             }
         },
         jshint: {
@@ -102,23 +108,36 @@ module.exports = function(grunt) {
             dist: {
                 files: [{
                     expand: true,
-                    cwd: 'tmp/css',
+                    cwd: 'tmp/' + grunt.option('env') + '/css',
                     src: ['*.css', '!*.min.css'],
-                    dest: 'dist/css',
+                    dest: 'dist/' + grunt.option('env') + '/css',
                     ext: '.min.css'
                 }]
             }
         },
         usemin: {
-            html: 'dist/index.html'
+            html: 'dist/' + grunt.option('env') + '/index.html'
         },
         replace: {
+
             manifest: {
-                src: ['src/manifest.json'],
+                src: ['dist/' + grunt.option('env') + '/manifest.json'],
                 overwrite: true, // overwrite matched source files
                 replacements: [{
                     from: /"version":[^,]*/g,
-                    to: '"version": "<%= pkg.version %>"'
+                    to: '"version": "<%= environments.' + grunt.option('env') + '.version %>"'
+                }, {
+                    from: /"name":[^,]*/g,
+                    to: '"name":' + '"<%= environments.' + grunt.option("env") + '.name %>"'
+                }, {
+                    from: /"short_name":[^,]*/g,
+                    to: '"short_name":' + '"<%= environments.' + grunt.option("env") + '.short_name %>"'
+                }, {
+                    from: "matches_handler",
+                    to: '<%= environments.' + grunt.option("env") + '.url %>' + 'chromeapp.html'
+                }, {
+                    from: "matches_externally_connectable",
+                    to: '<%= environments.' + grunt.option("env") + '.url %>' + '*'
                 }]
             }
         },
@@ -126,11 +145,11 @@ module.exports = function(grunt) {
         compress: {
             main: {
                 options: {
-                    archive: 'dist/app_dist_<%= pkg.version %>.zip'
+                    archive: 'dist/' + grunt.option('env') + '/app_dist_' + grunt.option('env') + '_<%= environments.' + grunt.option('env') + '.version %>.zip'
                 },
                 files: [{
                     expand: true,
-                    cwd: 'dist',
+                    cwd: 'dist/' + grunt.option('env'),
                     src: ['**']
                 }]
             }
@@ -180,8 +199,8 @@ module.exports = function(grunt) {
         'clean',
         'jshint',
         'concat',
-        'replace',
         'copy',
+        'replace',
         'cssmin',
         'usemin',
         'uglify',
