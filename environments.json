@@ -8,31 +8,45 @@
     },
     "int": {
         "id": "pfkoapmhofbcaigaccpnnchdgncjipmi",
-        "version": "1.0.0",
+        "version": "1.0.2",
         "name": "bitbloq Serial Uploader - integration",
         "short_name": "bitbloqSU - int",
         "url": "http://int-bitbloq.com.s3-website-eu-west-1.amazonaws.com/"
     },
     "qa": {
         "id": "icehgnnogegedlkkialiialldjekbacj",
-        "version": "1.0.0",
+        "version": "1.0.2",
         "name": "bitbloq Serial Uploader - qa",
         "short_name": "bitbloqSU - qa",
         "url": "http://qa-bitbloq.com.s3-website-eu-west-1.amazonaws.com/"
     },
     "next": {
         "id": "llkpgabmmipibpfdgffjmaambgbecgif",
-        "version": "1.0.0",
+        "version": "1.0.2",
         "name": "bitbloq Serial Uploader - next",
         "short_name": "bitbloqSU - next",
         "url": "http://next-bitbloq.com.s3-website-eu-west-1.amazonaws.com/"
     },
+    "mvp": {
+        "id": "aedpijmcgpgojnhhcijecifkjifeeako",
+        "version": "1.0.2",
+        "name": "bitbloq Serial Uploader - MVP",
+        "short_name": "bitbloqSU - mvp",
+        "url": "http://mvp-bitbloq.com.s3-website-eu-west-1.amazonaws.com/"
+    },
     "staging": {
         "id": "becocdibmkolohkagpnlkkbgbmpgdkhf",
-        "version": "1.0.0",
+        "version": "1.0.2",
         "name": "bitbloq Serial Uploader - staging",
         "short_name": "bitbloqSU - staging",
         "url": "http://staging-bitbloq.com.s3-website-eu-west-1.amazonaws.com/"
+    },
+    "beta": {
+        "id": "cbelillflmhopbbdjjdcfoiccfgjfehf",
+        "version": "1.0.2",
+        "name": "bitbloq Serial Uploader - beta",
+        "short_name": "bitbloqSU - beta",
+        "url": "http://beta.bitbloq.bq.com/"
     },
     "production": {
         "id": "aelblickomcgmcaophaegpmakaelgjll",
